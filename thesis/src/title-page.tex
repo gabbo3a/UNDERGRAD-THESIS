@@ -1,0 +1,63 @@
+\begin{titlepage}
+    % Remove headers and footers from the title page
+    \thispagestyle{empty}
+
+    % University Logo: positioned at specific coordinates (x, y)
+    \begin{textblock*}{4cm}(8.65cm, 1.03cm)
+        \centerline{
+            \includegraphics[width=3.67cm]{assets/unito.png}}
+    \end{textblock*}
+
+    % University Name
+    \begin{textblock*}{21cm}(0cm, 8.98cm)
+        \fontsize{18}{22}\selectfont
+        \centerline{\textbf{Universit\`a degli Studi di Torino}}
+    \end{textblock*}
+    
+    % Degree Course
+    \begin{textblock*}{21cm}(0cm, 9.97cm)
+        \fontsize{18}{22}\selectfont
+        \centerline{
+            \textit{Corso di Laurea in Informatica}}
+    \end{textblock*}
+
+    % Thesis Title
+    \begin{textblock*}{21cm}(0cm, 13.66cm)
+        \fontsize{20}{24}\selectfont
+        \centerline{
+            \textbf{Semi-automatic proofs with type systems}}
+    \end{textblock*}
+
+    % Document Type
+    \begin{textblock*}{21cm}(0cm, 14.46cm)
+        \fontsize{18}{22}\selectfont
+        \centerline{\Large{Tesi di Laurea}}
+    \end{textblock*}
+
+    % Set font size for the Supervisor and Candidate sections
+    \fontsize{14}{17}\selectfont
+
+    % Supervisor Section (Left aligned)
+    \begin{textblock*}{8cm}(3.04cm, 18.26cm)
+        \noindent 
+        \textbf{Relatore} \\ 
+        Prof. Ugo De' Liguoro
+    \end{textblock*}
+
+    % Candidate Section (Right aligned)
+    \begin{textblock*}{8cm}(12.33cm, 22.95cm)
+        \noindent \textbf{Candidato} \\ 
+        \textbf{Gabriele Amara}      \\ 
+        Matricola 1044619
+    \end{textblock*}
+
+    % Academic Year (Bottom centered)
+    \begin{textblock*}{21cm}(0cm, 27.34cm)
+        \centerline{Anno Accademico 2025/2026}
+    \end{textblock*}
+
+    % Page Layout Reset
+    \phantom{.}                % Invisible anchor to ensure the page is not considered "empty"
+    \newpage                   % Force the start of a new page for the Table of Contents
+    \TPoptions{absolute=false} % Restore standard positioning for the rest of the thesis
+\end{titlepage}
