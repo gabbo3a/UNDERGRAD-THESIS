@@ -1,16 +1,81 @@
 % !TEX root = main.tex
+
+% Languages and encode
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[italian]{babel}                         % Set the language to Italian
-\usepackage{amsmath, amssymb, amsthm}               % Mathematical packages
-\usepackage{graphicx}                               % For the images
+\usepackage{csquotes}                               % For language-sensitive quotations
+
+% Graphics and bibliography
+\usepackage{graphicx}                               % For images
 \usepackage{hyperref}                               % For clickable links
-\usepackage{csquotes}                               % Recommended for language-sensitive quotations and biblatex integration
-\usepackage[style=numeric, backend=biber]{biblatex} % Manages bibliography (Numeric style [1], Biber engine)
+\usepackage[style=numeric, backend=biber]{biblatex} % Bibliography management
     \addbibresource{references.bib}                 % Set bibliography file
-\usepackage{geometry}                               % For the margins
-    \geometry{a4paper, margin=3cm}                  % Set A4 paper and 3cm margins on all sides
-\usepackage{lmodern}                                % Modern version of standard fonts, scales perfectly
-\usepackage[absolute]{textpos}                      % Allows placing text blocks at absolute coordinates on the page
-\usepackage[T1]{fontenc}                            % Ensures correct font encoding for special characters and professional printing
-\newcommand{\lean}[1]{\texttt{#1}}                  % To write Lean code in text
+
+% Layout and characters
+\usepackage{geometry}                               % For margins
+    \geometry{a4paper, margin=3cm}                  % A4 paper and 3cm margins
+\usepackage{lmodern}                                % Scalable modern fonts
+\usepackage[absolute]{textpos}                      % For absolute positioning on title page
+
+% Theorem Environments with UniTo Style
+\usepackage{amsmath, amssymb, amsthm}   % Mathematical packages
+\theoremstyle{plain}
+    \newtheorem{thm}{Theorem}[chapter]  % Main theorems, numbered by chapter (e.g., 1.1)
+    \newtheorem{lem}[thm]{Lemma}        % Lemmas, sharing the same counter as theorems
+    \newtheorem{prop}[thm]{Proposition} % Propositions, sharing the same counter as theorems
+\theoremstyle{definition}
+    \newtheorem{defn}[thm]{Definition}  % Definitions, sharing the counter with theorems
+    \newtheorem{ex}[thm]{Example}       % Examples, numbered consistently with theorems
+    \newtheorem{rmk}[thm]{Remark}       % Remarks or notes, numbered consistently
+
+% Code aspect
+\usepackage{xcolor}                 % For colors in code and text
+\usepackage{listings}               % Main package for code snippets
+\usepackage{caption}                % Required for customizing captions of floating environments
+    \captionsetup[lstlisting]{
+        format=plain,               % Use a simple, non-indented format for captions
+        justification=raggedright,  % Force the caption text to be left-aligned
+        singlelinecheck=false,      % Prevent automatic centering of short (single-line) captions
+        font=small,                 % Set caption text size slightly smaller than main text
+        labelfont=bf                % Set the label (e.g., "Listing 1.1") in bold face
+    }
+
+
+% Lean Language Configuration (Safe for UTF-8)
+\lstdefinelanguage{lean}{
+    keywords={
+        def,
+        theorem,
+        lemma,
+        example,
+        variable,
+        instance,
+        class,
+        import,
+        open,
+        induction,
+        cases, 
+        simp, 
+        rw, 
+        apply, 
+        exact, 
+        intro, 
+        show, 
+        by},
+    keywordstyle=\color{purple}\bfseries,
+    comment=[l]{--},
+    morecomment=[s]{/-}{-/},
+    commentstyle=\color{gray}\itshape,
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    extendedchars=false,
+    literate={
+        {α}{{$\alpha$}}1      {β}{{$\beta$}}1        {γ}{{$\gamma$}}1           {λ}{{$\lambda$}}1
+        {→}{{$\to$}}1         {∀}{{$\forall$}}1      {∃}{{$\exists$}}1          {⊢}{{$\vdash$}}1
+        {:=}{{$:=$}}1         {Π}{{$\Pi$}}1          {Σ}{{$\Sigma$}}1           {∧}{{$\wedge$}}1
+        {∨}{{$\vee$}}1        {¬}{{$\neg$}}1         {↔}{{$\leftrightarrow$}}1  {∘}{{$\circ$}}1
+        {₁}{{$_1$}}1          {₂}{{$_2$}}1           {₃}{{$_3$}}1               {…}{{$\dots$}}1
+        {⟨}{{$\langle$}}1     {⟩}{{$\rangle$}}1      {⦃}{{$\{\!\{$}}1           {⦄}{{$\}\!\}$}}1
+    } 
+}
