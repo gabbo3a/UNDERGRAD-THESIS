@@ -1,0 +1,13 @@
+% !TEX root = main.tex
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}                         % Set the language to Italian
+\usepackage{amsmath, amssymb, amsthm}               % Mathematical packages
+\usepackage{graphicx}                               % For the images
+\usepackage{hyperref}                               % For clickable links
+\usepackage{csquotes}                               % Recommended for language-sensitive quotations and biblatex integration
+\usepackage[style=numeric, backend=biber]{biblatex} % Manages bibliography (Numeric style [1], Biber engine)
+    \addbibresource{references.bib}                 % Set bibliography file
+\usepackage{geometry}                               % For the margins
+    \geometry{a4paper, margin=3cm}                  % Set A4 paper and 3cm margins on all sides
+\newcommand{\lean}[1]{\texttt{#1}}                  % To write Lean code in text

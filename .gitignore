@@ -1,0 +1,26 @@
+# LaTeX (Thesis)
+thesis/build/
+thesis/src/*.aux
+thesis/src/*.log
+thesis/src/*.toc
+thesis/src/*.bbl
+thesis/src/*.blg
+thesis/src/*.out
+thesis/src/*.fdb_latexmk
+thesis/src/*.fls
+thesis/src/*.synctex.gz
+thesis/src/*.bcf
+thesis/src/*.run.xml
+
+# Lean & Lake (General)
+.lake/
+lake-packages/
+build/
+*.olean
+*.ast
+*.ilean
+
+# System & Editors
+.DS_Store
+*.tmp
+.vscode/
