@@ -115,10 +115,15 @@ example : ¬(p ∨ q) ↔ ¬p ∧ ¬q :=
 example : ¬p ∨ ¬q ↔ ¬(p ∧ q) :=
   ⟨
     (fun
-      | .inl np => (fun ⟨hp, hq⟩ => np hp)
-      | .inr nq => (fun ⟨hp, hq⟩ => nq hq)
+      | .inl np => (fun ⟨hp, _⟩ => np hp)
+      | .inr nq => (fun ⟨_, hq⟩ => nq hq)
     ),
-    (sorry)
+    (fun h =>
+      match Classical.em p with
+      | .inl hp =>
+          .inr (fun hq => h ⟨hp, hq⟩)
+      | .inr hnp => .inl hnp
+    )
   ⟩
 
 example : ¬(p ∧ ¬p) :=
@@ -140,7 +145,7 @@ example : (¬p ∨ q) → (p → q) :=
   (fun (hor: ¬p ∨ q) =>
     match hor with
     | .inl hnp => (fun hp: p => absurd hp hnp)
-    | .inr hq  => (fun hp: p => hq)
+    | .inr hq  => (fun _: p => hq)
   )
 
 example : p ∨ False ↔ p :=
