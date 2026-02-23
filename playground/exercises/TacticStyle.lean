@@ -185,3 +185,98 @@ example : p ∧ False ↔ False := by
 example : (p → q) → (¬q → ¬p) := by
   intro hf hnq hp
   exact hnq (hf hp)
+
+-- FirstOrderLogic
+variable (α : Type) (p q : α → Prop)
+variable (r : Prop)
+
+example : (∃ _ : α, r) → r := by
+  intro ⟨w, hr⟩; exact hr
+
+example (a : α) : r → (∃ _ : α, r) := by
+  intro h; exact ⟨a, h⟩
+
+example : (∃ x, p x ∧ r) ↔ (∃ x, p x) ∧ r := by
+  constructor
+  · intro ⟨w, ⟨hpw, hr⟩⟩
+    exact ⟨⟨w, hpw⟩, hr⟩
+  · intro ⟨⟨w, hpw⟩, hr⟩
+    exact ⟨w, ⟨hpw, hr⟩⟩
+
+example : (∃ x, p x ∨ q x) ↔ (∃ x, p x) ∨ (∃ x, q x) := by
+  constructor
+  · intro ⟨w, hor⟩
+    match hor with
+    | .inl hp => exact .inl ⟨w, hp⟩
+    | .inr hq => exact .inr ⟨w, hq⟩
+  · intro hor
+    match hor with
+    | .inl ⟨w, hp⟩ => exact ⟨w, .inl hp⟩
+    | .inr ⟨w, hq⟩ => exact ⟨w, .inr hq⟩
+
+example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) := by
+  constructor
+  · intro h₁ ⟨w, hnpw⟩
+    exact hnpw (h₁ w)
+  · intro h w
+    by_cases hpw : p w
+    · exact hpw
+    · exact absurd ⟨w, hpw⟩ h
+
+example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) := by
+  constructor
+  · intro ⟨w, hpw⟩ h
+    exact h w hpw
+  · intro h
+    apply byContradiction
+    intro hngoal
+    have hnpx : ∀ x, ¬ p x :=
+      (fun x hpx => hngoal ⟨x, hpx⟩)
+    exact h hnpx
+
+example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) := by
+  constructor
+  · intro h x hpx
+    exact h ⟨x, hpx⟩
+  · intro h ⟨w, hpw⟩
+    exact h w hpw
+
+example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) := by
+  constructor
+  · intro h
+    apply byContradiction
+    intro hng
+    have hall: ∀ x, p x :=
+      (fun x =>
+        byContradiction
+        (fun hnpx => hng ⟨x, hnpx⟩))
+    exact absurd hall h
+  · intro ⟨w, hnpw⟩ h
+    exact hnpw (h w)
+
+example : (∀ x, p x → r) ↔ (∃ x, p x) → r := by
+  constructor
+  · intro h ⟨w, hpw⟩
+    exact h w hpw
+  · intro h w hpw
+    exact h ⟨w, hpw⟩
+
+-- Not constructive proof are difficult
+example (a : α) : (∃ x, p x → r) ↔ (∀ x, p x) → r := by
+  constructor
+  · intro ⟨w, hw⟩ hux
+    exact hw (hux w)
+  · sorry
+
+example (a : α) : (∃ x, r → p x) ↔ (r → ∃ x, p x) := by
+  constructor
+  · intro ⟨w, hw⟩ hr
+    have f : r → p w :=
+      fun hr => hw hr
+    exact ⟨w, f hr⟩
+  · intro h
+    by_cases hr: r
+    · have hex := h hr
+      match hex with
+      | ⟨w, hpw⟩ => exact ⟨w, (fun _ => hpw)⟩
+    · exact ⟨a, fun hr_falsa => (hr hr_falsa).elim⟩
