@@ -1,5 +1,3 @@
--- TODO: ex 1
-
 namespace MyList
 
 inductive List (α : Type) where
@@ -131,4 +129,60 @@ example : reverse (reverse xs) = xs := by
 
 end MyList
 
--- TODO: ex 3 and 4
+namespace MyExp
+
+inductive Term where
+  | const (n : Nat)    : Term
+  | var   (n : Nat)    : Term
+  | plus  (s t : Term) : Term
+  | times (s t : Term) : Term
+open Term
+
+def eval (env : Nat → Nat) : Term → Nat
+  | const n   => n
+  | var n     => env n
+  | plus s t  => eval env s + eval env t
+  | times s t => eval env s * eval env t
+
+-- Test with (var 0 + 2) * var 1
+def tenv : Nat → Nat
+  | 0 => 5
+  | 1 => 10
+  | _ => 0
+
+def tterm : Term :=
+  Term.times (Term.plus (Term.var 0) (Term.const 2)) (Term.var 1)
+
+#eval eval tenv tterm
+
+end MyExp
+
+namespace MyProp
+
+inductive PropExp where
+  | trh                  : PropExp
+  | fls                  : PropExp
+  | var  (n : Nat)       : PropExp
+  | conj (p q : PropExp) : PropExp
+  | disj (p q : PropExp) : PropExp
+  | impl (p q : PropExp) : PropExp
+open PropExp
+
+def eval (env : Nat → Bool) : PropExp → Bool
+  | trh      => true
+  | fls      => false
+  | var n    => env n
+  | conj p q => eval env p && eval env q
+  | disj p q => eval env p || eval env q
+  | impl p q => !(eval env p) || eval env q
+
+def tenv : Nat → Bool
+  | 0 => true
+  | 1 => false
+  | _ => false
+
+#eval eval tenv (impl (var 0) (var 1))
+#eval eval tenv (impl (var 1) fls)
+#eval eval tenv (disj (var 0) (var 1))
+
+end MyProp
