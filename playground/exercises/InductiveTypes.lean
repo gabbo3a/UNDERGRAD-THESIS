@@ -1,3 +1,175 @@
+namespace Hidden
+
+inductive Nat where
+  | zero : Nat
+  | succ : Nat → Nat
+open Nat
+
+def sum (n m : Nat) : Nat :=
+  match n with
+  | zero    => m
+  | succ n' => succ (sum n' m)
+
+def mult (n m : Nat) : Nat :=
+  match n with
+  | zero    => zero
+  | succ n' => sum m (mult n' m)
+
+def pred (n : Nat) : Nat :=
+  match n with
+  | zero => zero
+  | succ n' => n'
+
+def sub (n m : Nat) : Nat :=
+  match m with
+  | zero    => n
+  | succ m' => pred (sub n m')
+
+def exp (base power : Nat) : Nat :=
+  match power with
+  | zero        => succ zero
+  | succ power' => mult base (exp base power')
+
+theorem sum_zero (n : Nat) : sum n zero = n := by
+  induction n with
+  | zero       => rfl
+  | succ n' ih =>
+    calc
+      sum (succ n') zero
+        = succ (sum n' zero)  := by rw[sum]
+      _ = succ n'             := by rw[ih]
+
+theorem sum_succ (m n : Nat) : sum m (succ n) = succ (sum m n) := by
+  induction m with
+  | zero => rfl
+  | succ m' ih =>
+    calc
+      sum (succ m') (succ n)
+          = succ (sum m' (succ n)) := by rw [sum]
+        _ = succ (succ (sum m' n)) := by rw [ih]
+        _ = succ (sum (succ m') n) := by rw [sum]
+
+theorem sum_comm (n m : Nat) : sum n m = sum m n := by
+  induction n with
+  | zero =>
+    calc
+      sum zero m
+        = m          := by rw[sum]
+      _ = sum m zero := by rw[sum_zero]
+  | succ n' ih =>
+    calc
+      sum (succ n') m
+        = succ (sum n' m) := by rw[sum]
+      _ = succ (sum m n') := by rw[ih]
+      _ = sum m (succ n') := by rw[sum_succ]
+
+theorem sum_assoc (n m k : Nat) : sum n (sum m k) = sum (sum n m) k := by
+  induction n with
+  | zero =>
+    calc
+      sum zero (sum m k)
+        = sum m k             := by rw[sum]
+      _ = sum (sum zero m) k  := by rw[sum]
+  | succ n' ih =>
+    calc
+      sum (succ n') (sum m k)
+        = succ (sum n' (sum m k))   := by rw[sum]
+      _ = succ (sum (sum n' m) k)   := by rw[ih]
+      _ = succ (sum k (sum n' m))   := by rw[sum_comm]
+      _ = sum k (succ (sum n' m))   := by rw[sum_succ]
+      _ = sum k (sum (succ n') m)   := by rw[sum]
+      _ = sum (sum (succ n') m) k   := by rw[sum_comm]
+
+theorem mult_zero (n : Nat) : mult n zero = zero := by
+  induction n with
+  | zero =>
+    calc
+      mult zero zero = zero := by rfl
+  | succ n' ih =>
+    calc
+      mult (succ n') zero
+        = sum zero (mult n' zero) := by rw[mult]
+      _ = sum zero zero           := by rw[ih]
+      _ = zero                    := by rw[sum]
+
+theorem mult_distrib_right (n m k : Nat) : mult (sum n m) k = sum (mult n k) (mult m k) := by
+  induction n with
+  | zero       => rfl
+  | succ n' ih =>
+    calc
+      mult (sum (succ n') m) k
+        = mult (succ (sum n' m)) k            := by rw[sum]
+      _ = sum k (mult (sum n' m) k)           := by rw[mult]
+      _ = sum k (sum (mult n' k) (mult m k))  := by rw[ih]
+      _ = sum (sum k (mult n' k)) (mult m k)  := by rw[sum_assoc]
+      _ = sum ((mult (succ n') k)) (mult m k)  := by rw[mult]
+
+theorem succ_eq_sum_one (n : Nat) : sum n (succ zero) = succ n := by
+  induction n with
+  | zero    => rfl
+  | succ n' ih =>
+    calc
+      sum (succ n') (succ zero)
+        = succ (sum n' (succ zero)) := by rw[sum]
+      _ = succ (succ n')            := by rw[ih]
+
+/-
+  To make the proof less verbose and convoluted, you should define
+  a tactic/macro that receives a parse tree of Expr (defined in Lean)
+  and returns a list or multiset of addends.
+
+  To be able to process and permute them without going crazy,
+  you would obviously also need theorems of invariance of the
+  sum and a function for reversing.
+-/
+theorem mult_succ (m n : Nat) : mult m (succ n) = sum m (mult m n) := by
+  induction m with
+  | zero =>
+    calc
+      mult zero (succ n)
+        = zero                    := by rw [mult]
+      _ = sum zero zero           := by rw [sum]
+      _ = sum zero (mult zero n)  := by rw [mult]
+  | succ m' ih =>
+    calc
+      mult (succ m') (succ n)
+        = sum (succ n) (mult m' (succ n))               := by rw[mult]
+      _ = sum (succ n) (sum m' (mult m' n))             := by rw[ih]
+      _ = sum (sum n (succ zero)) (sum m' (mult m' n))  := by rw[succ_eq_sum_one]
+      _ = sum (sum (succ zero) n) (sum m' (mult m' n))  := by rw[sum_comm (succ zero) n]
+      _ = sum (succ zero) (sum n (sum m' (mult m' n)))  := by rw[sum_assoc (succ zero)]
+      _ = sum (succ zero) (sum (sum m' (mult m' n)) n)  := by rw[sum_comm n]
+      _ = sum (succ zero) (sum m' (sum (mult m' n) n))  := by rw[sum_assoc m']
+      _ = sum (sum (succ zero) m') (sum (mult m' n) n)  := by rw[sum_assoc (succ zero)]
+      _ = sum (succ m') (sum (mult m' n) n)             := by simp[sum]
+      _ = sum (succ m') (sum n (mult m' n))             := by rw[sum_comm n]
+      _ = sum (succ m') (mult (succ m') n)              := by rw[mult]
+
+theorem mult_comm (n m : Nat) : mult n m = mult m n := by
+  induction n with
+  | zero    =>
+    calc
+      mult zero m
+        = zero        := by rw[mult]
+      _ = mult m zero := by rw[mult_zero]
+  | succ n' ih =>
+    calc
+      mult (succ n') m
+        = sum m (mult n' m) := by rw[mult]
+      _ = sum m (mult m n') := by rw[ih]
+      _ =  mult m (succ n') := by rw[mult_succ]
+
+
+theorem mult_distrib_left (m n k : Nat) :
+  mult m (sum n k) = sum (mult m n) (mult m k) := by
+  calc
+    mult m (sum n k)
+      = mult (sum n k) m          := by rw [mult_comm]
+    _ = sum (mult n m) (mult k m) := by rw [mult_distrib_right]
+    _ = sum (mult m n) (mult m k) := by rw [mult_comm n m, mult_comm k m]
+
+end Hidden
+
 namespace MyList
 
 inductive List (α : Type) where
@@ -185,4 +357,5 @@ def tenv : Nat → Bool
 #eval eval tenv (impl (var 1) fls)
 #eval eval tenv (disj (var 0) (var 1))
 
+-- TODO: complexity and replacement
 end MyProp
