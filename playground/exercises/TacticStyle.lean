@@ -280,3 +280,7 @@ example (a : α) : (∃ x, r → p x) ↔ (r → ∃ x, p x) := by
       match hex with
       | ⟨w, hpw⟩ => exact ⟨w, (fun _ => hpw)⟩
     · exact ⟨a, fun hr_falsa => (hr hr_falsa).elim⟩
+
+-- Use tactic combinators to obtain a one-line proof of the following:
+example (p q r : Prop) (hp : p) : (p ∨ q ∨ r) ∧ (q ∨ p ∨ r) ∧ (q ∨ r ∨ p) := by
+  repeat constructor <;> simp [hp]

@@ -174,3 +174,7 @@ example : (p → q) → (¬q → ¬p) :=
       )
     )
   )
+
+-- This example is another way to write functions args
+example (p q r : Prop) (hp : p) : (p ∨ q ∨ r) ∧ (q ∨ p ∨ r) ∧ (q ∨ r ∨ p) :=
+  ⟨Or.inl hp, Or.inr (Or.inl hp), Or.inr (Or.inr hp)⟩
