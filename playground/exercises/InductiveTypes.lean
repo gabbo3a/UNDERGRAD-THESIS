@@ -327,6 +327,69 @@ def tterm : Term :=
 
 #eval eval tenv tterm
 
+def simpc : Term → Term
+  | plus  (const n₁) (const n₂) => const (n₁ + n₂)
+  | times (const n₁) (const n₂) => const (n₁ * n₂)
+  | e                           => e
+
+def fuse : Term → Term
+  | const n   => const n
+  | var n     => var n
+  | plus s t  => simpc (plus  (fuse s) (fuse t))
+  | times s t => simpc (times (fuse s) (fuse t))
+
+theorem simp_eq (env : Nat → Nat) : ∀ e : Term, eval env (simpc e) = eval env e := by
+  intro e
+  induction e with
+  | const n  => rfl
+  | var n    => rfl
+  | plus s t =>
+    unfold simpc
+    split
+    · rename_i _ n₁ n₂ h
+      calc
+        eval env (const (n₁ + n₂))
+          = n₁ + n₂                                     := by rfl
+          _ = eval env (const n₁) + eval env (const n₂) := by rfl
+          _ = eval env (plus (const n₁) (const n₂))     := by rfl
+          _ = eval env (plus s t)                       := by rw[h]
+    · contradiction
+    · rfl
+  | times s t ih_s ih_t =>
+    unfold simpc
+    split
+    · contradiction
+    · rename_i _ n₁ n₂ h
+      calc
+        eval env (const (n₁ * n₂))
+          = n₁ * n₂                                     := by rfl
+          _ = eval env (const n₁) * eval env (const n₂) := by rfl
+          _ = eval env (times (const n₁) (const n₂))    := by rfl
+          _ = eval env (times s t)                      := by rw[h]
+    · rfl
+
+theorem fuse_eq (env : Nat → Nat) : ∀ e : Term, eval env (fuse e) = eval env e := by
+  intro e
+  induction e with
+  | const n => rfl
+  | var n   => rfl
+  | plus s t ih_s ih_t =>
+      calc
+        eval env (fuse (plus s t))
+          = eval env (simpc (plus (fuse s) (fuse t)))   := by rw[fuse]
+        _ = eval env (plus (fuse s) (fuse t))           := by rw[simp_eq]
+        _ = eval env (fuse s) + eval env (fuse t)       := by rfl
+        _ = eval env s + eval env t                     := by rw[ih_s, ih_t]
+        _ = eval env (plus s t)                         := by rw[eval]
+  | times s t ih_s ih_t =>
+     calc
+        eval env (fuse (times s t))
+          = eval env (simpc (times (fuse s) (fuse t)))  := by rw[fuse]
+        _ = eval env (times (fuse s) (fuse t))          := by rw[simp_eq]
+        _ = eval env (fuse s) * eval env (fuse t)       := by rfl
+        _ = eval env s * eval env t                     := by rw[ih_s, ih_t]
+        _ = eval env (times s t)                        := by rw[eval]
+
 end MyExp
 
 namespace MyProp
