@@ -44,8 +44,8 @@ occorenza libera della variabile x allinterno del corpo della funzione M.
     (\lambda x. M) N \to_\beta M[x := N]
     \label{eq:beta_reduction}
 \end{equation}
-Un ternine che presenta questa struttura si dice \textbf{redex} (reducible expression). Il calcolo consiste dell'applicazione ripetura di questa regola, 
-quando un termine non contiene piu redex si dice che è in \textbf{forma normale}. La forma normale è il risultato concreto della computazione.
+Un ternine che presenta questa struttura si dice \emph{redex} (reducible expression). Il calcolo consiste dell'applicazione ripetura di questa regola, 
+quando un termine non contiene piu redex si dice che è in \emph{forma normale}. La forma normale è il risultato concreto della computazione.
 
 \subsubsection{$\eta$-conversione}
 La $\eta$-conversione ($\to_\eta$) introduce il principio di estensionalità, secondo il quale due funzioni sono uguali se, 
@@ -63,8 +63,8 @@ il termine è in forma normale, ovvero il risultato della computazione. Tuttavia
 casi la riduzione può proseguire indefinitivamente. 
 
 
-\subsubsection{Definizione di Divergenza}
-L'assenza di una forma normale è ciò che definisce formalmente la \textbf{divergenza}. 
+\subsubsection{Definizione di divergenza}
+L'assenza di una forma normale è ciò che definisce formalmente la \emph{divergenza}. 
 In un sistema Turing-completo come il $\lambda$-calcolo non tipato, la divergenza è 
 l'equivalente funzionale di un ciclo infinito (loop) in un linguaggio di programmazione imperativo.
 
@@ -77,6 +77,102 @@ L'esempio piu semplice di termine divergente è il combinatore $\Omega$. Esso vi
 Dalla regola di $\beta$-riduzione appare evidente che l'auto-applicazione del termine $\omega$ sia divergente, la contrazione del redex non conduce a una forma normale ma 
 riporta al termine iniziale.
 
-\section{Teoria dei sistemi di tipi}
-% \subsection{Il \texorpdfstring{$\lambda$}{Lambda}-calcolo semplicemente tipato (\texorpdfstring{$\lambda^{\to}$}{Lambda-to})}
+\section{Sistemi di Tipi e Normalizzazione}
+
+\subsection{Il \texorpdfstring{$\lambda$}{Lambda}-calcolo semplicemente tipato (\texorpdfstring{$\lambda^{\to}$}{Lambda-to})}
+Il $\lambda$-calcolo semplicemente tipato ($\lambda^{\to}$), come suggerisce il nome, si distingue dal sistema puro per l'introduzione dei tipi.
+In questo sistema di riscrittura i tipi sono della annotazioni sulla varibile vincolata della astrazione
+
+\subsubsection{Grammatica del \texorpdfstring{$\lambda$}{Lambda}-calcolo semplicemente tipato}
+La grammatica BNF del $\lambda$-calcolo semplicemente tipato ($\lambda^{\to}$), estende il calcolo puro tramite
+la categoria sintattica dedicata ai tipi \eqref{eq:simple_type_grammar}, legando le categorie sintattice tramite 
+il costrutto dell'astrazione \eqref{eq:simple_typed_lambda_grammar}.
+\begin{equation}
+    \tau ::= \iota \mid \tau_1 \to \tau_2
+    \label{eq:simple_type_grammar}
+\end{equation}
+\begin{equation}
+    e ::= x \mid \lambda x : \tau . e \mid e \, e
+    \label{eq:simple_typed_lambda_grammar}
+\end{equation}
+Si osservi come la sintassi dell'astrazione includa il tipo, cio garantiche che ogni variabile vincolata sia univovamete tipata 
+all'interno del proprio scope. Inoltre è opportuno ribadire che la grammatica non fornisce semantica.
+
+\subsubsection{Il giudizio di tipizzazione o type checking}
+Il giudizio di tipizzazione o \emph{type checking} ($\Gamma \vdash e : \tau$) è il processo d'\emph{inferenza} mediante il quale si determina se un termine appertiene a un determinato tipo sotto un insieme di assunzioni.
+Tale processo opera in modo induttivo sulla grammatica dei termini, visitando l'intera struttura verificandone le componenti. Le applicazioni ricorsive delle regole per verificare il tipo finale,
+garantendo la correttezza formale dell'intera computazione.
+\begin{equation}
+    \text{type}(\Gamma, e) = 
+    \begin{cases} 
+        \tau & \text{if } e = x \text{ e } (x : \tau) \in \Gamma \\
+        \sigma \to \text{type}(\Gamma, x:\sigma, e') & \text{if } e = \lambda x : \sigma . e' \\
+        \tau & \text{if } 
+            \begin{cases} 
+            e = e_1 e_2 \\
+            \text{type}(\Gamma, e_1) = \sigma \to \tau \\
+            \text{type}(\Gamma, e_2) = \sigma 
+            \end{cases} \\
+        \perp & \text{otherwise}
+    \end{cases}
+    \label{eq:simple_typed_lambda_type_cheking_algorithm}
+\end{equation}
+Il contesto di tipizzazione, denotato con $\Gamma$, è un insieme finito di assunzioni di tipo nella forma $x : \sigma$.
+L'estensione del contesto, indicata con $\Gamma, x : \sigma$, rappresenta l'aggiunta di una nuova assunzione, con la clausola 
+che se $x$ era già presente in $\Gamma$, la nuova assegnazione sovrascrive la precedente (\emph{meccanismo di shadowing}). Il contesto
+può essere modellizato come una funzione parziale. Il simbolo $\perp$ (leggasi bottom) invece rapresenta il fallimento dell'algoritmo
+di verifica, questo in seguito rapresentera una specifica condizione sul termine, limitiamoci a dire che è mal tipato (\emph{ill-typed}).
+
+\subsubsection{L'inferenza di tipo o type inference}
+L'inferenza di tipo o \emph{type inference}  è il prcesso mediante il quale si ricostruisce automanticamente il tipo piu generale di un termine,
+utilizando al struttura sintattica e le relazioni tra componenti.
+
+\begin{equation}
+    \text{gen}(\Gamma, e) = 
+    \begin{cases} 
+        (\tau, \emptyset) & \text{if } e = x \land (x : \tau) \in \Gamma \\
+        (\alpha \to \tau, \mathcal{C}) & \text{if } e = \lambda x. e' \land (\tau, \mathcal{C}) = \text{gen}(\Gamma, x : \alpha, e') \\
+        (\beta, \mathcal{C}_{all}) & \text{if } e = e_1 e_2 \text{ where:} \\ & 
+        \begin{cases} 
+            (\tau_1, \mathcal{C}_1) = \text{gen}(\Gamma, e_1) \\
+            (\tau_2, \mathcal{C}_2) = \text{gen}(\Gamma, e_2) \\
+            \mathcal{C}_{all} = \mathcal{C}_1 \cup \mathcal{C}_2 \cup \{\tau_1 = \tau_2 \to \beta\}
+        \end{cases}
+    \end{cases}
+    \label{eq:constraint_generation}
+\end{equation}
+Il risultato del processo d'inferenza di tipo è un insieme di equazioni $\mathcal{C}$ che rapresentano i vincoli tra tipi delle componenti del termine.
+Se il sistema di equazioni dei vicoli di tipi ha soluzione allora è possibile dimostrare che il risoltato è il tipo piu generale che rispetta tali vincoli 
+(\emph{MGU}). L'insieme di equasioni $\mathcal{C}$ viene anche chiamato \emph{probela di unificazione del primo ordine}.
+\begin{equation}
+    \mathcal{U}(\mathcal{C}) = 
+    \begin{cases} 
+        id & \text{if } \mathcal{C} = \emptyset \\
+        \mathcal{U}(\mathcal{C}') & \text{if } \mathcal{C} = \{\tau = \tau\} \cup \mathcal{C}' \\
+        \mathcal{U}(\mathcal{C}'[\alpha \mapsto \tau]) \circ [\alpha \mapsto \tau] & \text{if } \mathcal{C} = \{\alpha = \tau\} \cup \mathcal{C}' \text{ e } \alpha \notin FV(\tau) \\
+        \mathcal{U}(\mathcal{C}'[\alpha \mapsto \tau]) \circ [\alpha \mapsto \tau] & \text{if } \mathcal{C} = \{\tau = \alpha\} \cup \mathcal{C}' \text{ e } \alpha \notin FV(\tau) \\
+        \mathcal{U}(\{\tau_1 = \sigma_1, \tau_2 = \sigma_2\} \cup \mathcal{C}') & \text{if }    \mathcal{C} = \{\tau_1 \to \tau_2 = \sigma_1 \to \sigma_2\} \cup \mathcal{C}' \\
+        \perp & \text{otherwise (failed)}
+    \end{cases}
+    \label{eq:unification_algorithm}
+\end{equation}
+La risoluzione del sistema di vincoli poggia su principi logici intuitivi ma rigorosi: 
+l'impossibilità di far coincidere tipi atomici distinti (assenza di collisioni tra costruttori) e 
+il divieto di formulare definizioni ricorsive, per cui un tipo non può essere definito in funzione di se stesso (occurs check).
+\begin{table}[h]
+    \centering \small
+    \begin{tabular}{lp{5cm}l}
+        \hline
+        \textbf{Errore} & \textbf{Descrizione}                   & \textbf{Esempio di Vincolo}  \\ \hline
+        Clash Error     & Unificazione di costruttori diversi    & $Bool = \sigma \to \tau$     \\
+        Occurs Check    & Definizione di tipi ricorsivi infiniti & $\alpha = \alpha \to \beta$  \\
+        Type Mismatch   & Incongruenza tra tipi base differenti  & $Nat = Bool$                 \\ \hline
+    \end{tabular}
+    \caption{Fallimenti dell'algoritmo di unificazione.}
+    \label{tab:unification_failures}
+\end{table}
+
+\subsubsection{Normalizzazione forte (Teorema)}
+
+
 % \section{L'Isomorfismo di Curry-Howard}
