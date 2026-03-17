@@ -18,6 +18,9 @@
     \geometry{a4paper, margin=3cm}                  % A4 paper and 3cm margins
 \usepackage{lmodern}                                % Scalable modern fonts
 \usepackage[absolute]{textpos}                      % For absolute positioning on title page
+\setcounter{secnumdepth}{3}                         % Number up to the subsubsections
+\setcounter{tocdepth}{3}                            % Show up to subsubsections in the index
+\usepackage{enumitem}
 
 % Theorem Environments with UniTo Style
 \usepackage{amsmath, amssymb, amsthm}   % Mathematical packages
@@ -31,6 +34,7 @@
     \newtheorem{rmk}[thm]{Remark}       % Remarks or notes, numbered consistently
 
 % Code aspect
+\usepackage{verbatim}               % Necessary for the environment comment
 \usepackage{xcolor}                 % For colors in code and text
 \usepackage{listings}               % Main package for code snippets
 \usepackage{caption}                % Required for customizing captions of floating environments

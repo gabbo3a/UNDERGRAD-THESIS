@@ -1,6 +1,6 @@
 % !TEX root = ../main.tex
 \chapter{Fondamenti Teorici}
-\label{chap:logical_foundations}
+\label{chap:theoretical_foundations}
 
 \section{Il \texorpdfstring{$\lambda$}{Lambda}-calcolo}
 Il $\lambda$-calcolo è un formalismo computazionale, ovvero un insieme di regole logico-matematiche 
@@ -23,10 +23,10 @@ che la definizione di queste proprietà appartiene almeno per ora al metalinguag
 Le relaioni tra termini del $\lambda$-calcolo sono cio che traforma una insieme di puramente sintattico in un effettivo formalismo computazionale. 
 Alcune di esse sono necessarie 
 
-\subsubsection{Definizioni preliminari}
+% \subsubsection{Definizioni preliminari}
 % TODO: Variabili libere e legate, Sostituzione, Sottotermini
 
-\subsubsection{$\alpha$-equivalenza}
+\subsubsection{\texorpdfstring{$\alpha$}{alpha}-equivalenza}
 la $\alpha$-equivalenza stabilisce che il nome delle variaibli legate è irrilevante ai fini del significato del ternine. Due termini sono considerati 
 identici se l'uno puo essere ottenuto dal'altro tramite la ridenominazione coerente delle proprie variabili legate. Questa relazione è fondametare per 
 evitare il fenomeno del varible capture durante le operazione di sostituzione, garantendo che i nomi scelti arbitrariamente non interferiscano con 
@@ -36,7 +36,7 @@ le varibili libere.
     \label{eq:alpha_conversion}
 \end{equation}
 
-\subsubsection{$\beta$-riduzione}
+\subsubsection{\texorpdfstring{$\beta$}{beta}-riduzione}
 \label{sec:beta_reduction}
 La $\beta$-riduzione stabilisce il motore del $\lambda$-calcolo e formalizza il cncetto di applicazione funzionale. Consiste nel sostituire l'argomento N a ogni
 occorenza libera della variabile x allinterno del corpo della funzione M.
@@ -47,7 +47,7 @@ occorenza libera della variabile x allinterno del corpo della funzione M.
 Un ternine che presenta questa struttura si dice \emph{redex} (reducible expression). Il calcolo consiste dell'applicazione ripetura di questa regola, 
 quando un termine non contiene piu redex si dice che è in \emph{forma normale}. La forma normale è il risultato concreto della computazione.
 
-\subsubsection{$\eta$-conversione}
+\subsubsection{\texorpdfstring{$\eta$}{eta}-conversione}
 La $\eta$-conversione ($\to_\eta$) introduce il principio di estensionalità, secondo il quale due funzioni sono uguali se, 
 applicate allo stesso argomento, producono il medesimo risultato.
 \begin{equation}
@@ -61,7 +61,6 @@ l'argomento a un altro termine.
 Nel $\lambda$-calcolo, come esposto nella sezione \ref{sec:beta_reduction}, la computazione deriva dalla riduzione dei termini. Quando questa non è possibile allora
 il termine è in forma normale, ovvero il risultato della computazione. Tuttavia è importante osservare che non tutti i termini ammetono una forma normale, in alcuni 
 casi la riduzione può proseguire indefinitivamente. 
-
 
 \subsubsection{Definizione di divergenza}
 L'assenza di una forma normale è ciò che definisce formalmente la \emph{divergenza}. 
@@ -93,12 +92,13 @@ il costrutto dell'astrazione \eqref{eq:simple_typed_lambda_grammar}.
 \end{equation}
 \begin{equation}
     e ::= x \mid \lambda x : \tau . e \mid e \, e
+    \tag{STLC}
     \label{eq:simple_typed_lambda_grammar}
 \end{equation}
 Si osservi come la sintassi dell'astrazione includa il tipo, cio garantiche che ogni variabile vincolata sia univovamete tipata 
 all'interno del proprio scope. Inoltre è opportuno ribadire che la grammatica non fornisce semantica.
 
-\subsubsection{Il giudizio di tipizzazione o type checking}
+\subsubsection{Type checking}
 Il giudizio di tipizzazione o \emph{type checking} ($\Gamma \vdash e : \tau$) è il processo d'\emph{inferenza} mediante il quale si determina se un termine appertiene a un determinato tipo sotto un insieme di assunzioni.
 Tale processo opera in modo induttivo sulla grammatica dei termini, visitando l'intera struttura verificandone le componenti. Le applicazioni ricorsive delle regole per verificare il tipo finale,
 garantendo la correttezza formale dell'intera computazione.
@@ -123,7 +123,7 @@ che se $x$ era già presente in $\Gamma$, la nuova assegnazione sovrascrive la p
 può essere modellizato come una funzione parziale. Il simbolo $\perp$ (leggasi bottom) invece rapresenta il fallimento dell'algoritmo
 di verifica, questo in seguito rapresentera una specifica condizione sul termine, limitiamoci a dire che è mal tipato (\emph{ill-typed}).
 
-\subsubsection{L'inferenza di tipo o type inference}
+\subsubsection{Type inference}
 L'inferenza di tipo o \emph{type inference}  è il prcesso mediante il quale si ricostruisce automanticamente il tipo piu generale di un termine,
 utilizando al struttura sintattica e le relazioni tra componenti.
 
@@ -172,7 +172,60 @@ il divieto di formulare definizioni ricorsive, per cui un tipo non può essere d
     \label{tab:unification_failures}
 \end{table}
 
-\subsubsection{Normalizzazione forte (Teorema)}
+\subsubsection{Il teorema di normalizzazione forte}
+Il sistema $\lambda^{\to}$ gode della proprita di \emph{normalizzazione forte}, ovvero ogni termine ben tipato riduce in un numero finito di passi
+in forma normale indipendetemente dalla strategia di riduzione utilizzata. Per una trattazione esaustiva della dimostrazione si rimanda a \cite{Girard1989} o
+\cite{Hindley1997}.
 
+\subsection{Il Cubo di Barendregt}
+Una volta definiti i fondamenti del $\lambda^{\to}$-calcolo, risulta necessario introdurre un modello per orientarisi e classificare
+i sistemi di tipo estensionali del $\lambda^{\to}$-calcolo. Tale struttura trova sua espressione del \emph{Cubo di Barendregt} \cite{barendregt1992}.
+I sistemi analizzati nel cubo non sono mutualmente esclusivi, ma cumulativi. Si parte del vertice del $\lambda^{\to}$-calcolo e ogni
+asse aggiunge potere espressivo l sistema dei tipi, riportate di seguito le direzioni.
 
-% \section{L'Isomorfismo di Curry-Howard}
+\begin{itemize}[nosep, leftmargin=1.5em]
+    \item \textbf{Asse $x$ (Tipi Dipendenti, \texorpdfstring{$\lambda P$}{LP}):}  
+        Tipi che dipendono da termini. Il tipo di un oggetto può variare in base al valore di un altro (es. un vettore di lunghezza $n$).
+    \item \textbf{Asse $y$ (Polimorfismo, \texorpdfstring{$\lambda 2$}{L2}):} 
+        Termini che dipendono da tipi. Permette di scrivere funzioni universali che accettano un tipo come argomento (es. la funzione identità generica).
+    \item \textbf{Asse $z$ (Operatori di Tipo, \texorpdfstring{$\lambda \underline{\omega}$}{L-omega}):}  Tipi che dipendono da tipi.
+        Permette di definire funzioni a livello dei tipi, ovvero costruttori che generano nuovi tipi a partire da tipi esistenti. 
+\end{itemize}
+Il sistema di tipi opposto al vertice del $\lambda^{\to}$-calcolo, e dunque il piu espressivo, prende il nome di \emph{Calcolo delle Costruzioni (CoC)}. 
+In tale sistema, il confine tra l'esecuzione del codice (valutazione dei termini) e il type checking si perdono. Nei sistemi con tipi dipendeti, l'ugualianza 
+tra due tipi puo dipendere dalla riduzione di un termine in forma normale. 
+
+\subsubsection{Sistema \texorpdfstring{$\lambda 2$}{L2}}
+
+\paragraph{Grammatica.}
+La grammatica del sistema $\lambda 2$ o sistema F estende la grammatica del \ref{eq:simple_typed_lambda_grammar} tramite tre costrutti:
+\emph{astrazione di tipo}, \emph{applicazione di tipo} \emph{quantificatore universale di tipo}. In tale sistema si permette a un termine di poter dipendere
+da un tipo, tramite l'astrazione di tipo indicata con $\Lambda \alpha. M$. Il corrispondete costrutti dei tipi per l'astrazione di tipo è proprio il 
+quantificatore universale, inoltre per poter $\beta$-ridurre tali costrutti è necessario l'applicazione di tipo che permettete di ridurre la corrispondente astrazione.
+
+\begin{equation}
+    \begin{split}
+        \text{Types: } & \sigma, \tau ::= \alpha \mid \sigma \to \tau \mid \forall \alpha. \sigma \\
+        \text{Terms: } & M, N ::= x \mid \lambda x:\sigma. M \mid M N \mid \Lambda \alpha. M \mid M \sigma
+    \end{split}
+    \tag{System F}
+    \label{eq:grammar-system-f}
+\end{equation}
+
+\paragraph{Relazioni tra termini}
+Le relazioni tra ternimi $\alpha$-equivalenza e $\eta$-conversione del sistema $\lambda 2$ rimangono invariate. Al 
+contrario $\beta$-riduzione viene estesa con la medesima logica sui costrutti d'astrazione e d'applicazione di tipo. 
+
+\begin{equation}
+    (\Lambda \alpha. M) \tau \to_\beta M[\tau / \alpha]
+    \label{eq:system_f_beta_reduction}
+\end{equation}
+
+\paragraph{Teorema di normalizzaione.}
+Il sistema $\lambda 2$ gode della proprietà di normalizzazione forte, il che garantiche che l'esistenza di una forma normale
+per ogni termine del sistema. Tale risultato fondamentale è stato dimostrato da Girard \cite{Girard1989}
+
+\paragraph{Type checking e Type inference.} 
+Per quanto riguarda il type checking nel sistema $\lambda 2$, e importante osservare che rimane decidibile. Al contrario
+la type inference almeno nel caso generele è indecidibile , come dimostrato da Wells \cite{wells1994}.Per questo si utilizzano strategie basate su metavaribili e unificazione
+che pero nel caso peggiore richiederanno le annotazioni esplicite.
