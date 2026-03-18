@@ -84,14 +84,13 @@ In questo sistema di riscrittura i tipi sono della annotazioni sulla varibile vi
 
 \subsubsection{Grammatica del \texorpdfstring{$\lambda$}{Lambda}-calcolo semplicemente tipato}
 La grammatica BNF del $\lambda$-calcolo semplicemente tipato ($\lambda^{\to}$), estende il calcolo puro tramite
-la categoria sintattica dedicata ai tipi \eqref{eq:simple_type_grammar}, legando le categorie sintattice tramite 
-il costrutto dell'astrazione \eqref{eq:simple_typed_lambda_grammar}.
+la categoria sintattica dedicata ai tipi, legando le categorie sintattice tramite il costrutto dell'astrazione 
+\eqref{eq:simple_typed_lambda_grammar}.
 \begin{equation}
-    \tau ::= \iota \mid \tau_1 \to \tau_2
-    \label{eq:simple_type_grammar}
-\end{equation}
-\begin{equation}
-    e ::= x \mid \lambda x : \tau . e \mid e \, e
+    \begin{split}
+        \text{Types: } & \tau ::= \iota \mid \tau_1 \to \tau_2 \\
+        \text{Terms: } & e ::= x \mid \lambda x : \tau . e \mid e \, e
+    \end{split}
     \tag{STLC}
     \label{eq:simple_typed_lambda_grammar}
 \end{equation}
@@ -199,7 +198,7 @@ tra due tipi puo dipendere dalla riduzione di un termine in forma normale.
 
 \paragraph{Grammatica.}
 La grammatica del sistema $\lambda 2$ o sistema F estende la grammatica del \ref{eq:simple_typed_lambda_grammar} tramite tre costrutti:
-\emph{astrazione di tipo}, \emph{applicazione di tipo} \emph{quantificatore universale di tipo}. In tale sistema si permette a un termine di poter dipendere
+\emph{astrazione di termine su tipo}, \emph{applicazione di termine su tipo} \emph{quantificatore universale di tipo}. In tale sistema si permette a un termine di poter dipendere
 da un tipo, tramite l'astrazione di tipo indicata con $\Lambda \alpha. M$. Il corrispondete costrutti dei tipi per l'astrazione di tipo è proprio il 
 quantificatore universale, inoltre per poter $\beta$-ridurre tali costrutti è necessario l'applicazione di tipo che permettete di ridurre la corrispondente astrazione.
 
@@ -212,8 +211,8 @@ quantificatore universale, inoltre per poter $\beta$-ridurre tali costrutti è n
     \label{eq:grammar-system-f}
 \end{equation}
 
-\paragraph{Relazioni tra termini}
-Le relazioni tra ternimi $\alpha$-equivalenza e $\eta$-conversione del sistema $\lambda 2$ rimangono invariate. Al 
+\paragraph{Relazioni tra termini e tipi.}
+Le relazioni $\alpha$-equivalenza e $\eta$-conversione del sistema $\lambda 2$ rimangono invariate. Al 
 contrario $\beta$-riduzione viene estesa con la medesima logica sui costrutti d'astrazione e d'applicazione di tipo. 
 
 \begin{equation}
@@ -221,7 +220,7 @@ contrario $\beta$-riduzione viene estesa con la medesima logica sui costrutti d'
     \label{eq:system_f_beta_reduction}
 \end{equation}
 
-\paragraph{Teorema di normalizzaione.}
+\paragraph{Teorema di normalizzaione forte.}
 Il sistema $\lambda 2$ gode della proprietà di normalizzazione forte, il che garantiche che l'esistenza di una forma normale
 per ogni termine del sistema. Tale risultato fondamentale è stato dimostrato da Girard \cite{Girard1989}
 
@@ -229,3 +228,120 @@ per ogni termine del sistema. Tale risultato fondamentale è stato dimostrato da
 Per quanto riguarda il type checking nel sistema $\lambda 2$, e importante osservare che rimane decidibile. Al contrario
 la type inference almeno nel caso generele è indecidibile , come dimostrato da Wells \cite{wells1994}.Per questo si utilizzano strategie basate su metavaribili e unificazione
 che pero nel caso peggiore richiederanno le annotazioni esplicite.
+
+\subsubsection{Sistema \texorpdfstring{$\lambda\underline{\omega}$}{Lambda-omega-under}}
+
+\paragraph{Grammatica.}
+La grammatica del sistema $\lambda\underline{\omega}$ estende la grammatica del \ref{eq:simple_typed_lambda_grammar} tramite: una categoria sintattica chiamata kinds,  
+il costrutto di \emph{astrazione di tipo su tipo} e \emph{applicazione di tipo su tipo}. In tale sistema si permette a un tipo di poter dipendere da un tipo, rendendo
+i tipi delle funzioni, chiamate \emph{operatori di tipo}. Per garantire che gli operatori di tipo siano ben formate si utilizza la categoria sintattica kinds, ovvero 
+il tipo dei tipi. Indroduzione dei costrutti di astrazione e applicazione di tipo su tipo traforma la categoria sintattica dei Type in Type Constructors un calcolo separato
+sui tipi.
+
+\begin{equation}
+    \begin{split}
+        \text{Kinds: } & K ::= \ast \mid K \to K \\
+        \text{Type Constructors: } & A, B ::= \alpha \mid A \to B \mid \lambda \alpha:K. A \mid A B \\
+        \text{Terms: } & M, N ::= x \mid \lambda x:A. M \mid M N
+    \end{split}
+    \tag{$\lambda\underline{\omega}$}
+    \label{eq:grammar_system_omega_under}
+\end{equation}
+
+\paragraph{Relazioni tra termini e tipi.}
+Nel sistema $\lambda\underline{\omega}$, le relazioni di equivalenza si estendono per coprire la nuova sintassi degli operatori di tipo. 
+La $\beta$-riduzione ($\to_\beta$) opera ora su due livelli, termini e tipi. Inoltre è importante notare che della dinamina la $\beta$-riduzione 
+rimane invariata.
+
+\begin{align}
+    (\lambda x : \sigma. M) N & \to_\beta M[N/x] 
+    \tag{Term-level $\beta$} 
+    \label{eq:term_beta_reduction} \\
+    (\lambda \alpha : K. \sigma) \tau & \to_\beta \sigma[\tau/\alpha] 
+    \tag{Type-level $\beta$}
+    \label{eq:type_system_omega_under_beta_reduction} 
+\end{align}
+
+\paragraph{Teorema di normalizzaione forte.}
+Il sistema $\lambda\underline{\omega}$ essendo, come detto in precedenza, un doppio \ref{eq:simple_typed_lambda_grammar} gode della proprita di normalizzaione forte.
+Il che garantiche che un termine abbia sempre una forma normale. Questo risultato è ottenibile mostrando che tra le categorie sintattiche addizionali di type constractor
+e kinds ed il \ref{eq:simple_typed_lambda_grammar} esisteza un isomorfismo, ovvero possiedono comportameti indistinguibili sulla relazioni e riduzioni. Alla luce del 
+risultato precedente si utilizza la stessa strategia con la categoria sintattica dei termini, considerando che i costruttori di tipo ammetono sempre forma normale.
+
+\paragraph{Type checking e Type inference.}
+Il type checking del sistema, a differenza del calcolo semplicemente tipato (\ref{eq:simple_typed_lambda_grammar}) dove consiste in un mero confronto sintattico, acquisisce vere e proprie 
+capacità di calcolo percio di dice \emph{type checking modulo $\beta$-conversione}. Due termini appartengono alla stesso tipo sse la forma normale dei loro tipi è $\alpha$-equivalente. 
+Cosiderando il terorema di normalizzazione orte a livello di costruttori di tipi ne seguen la decidibilita.
+
+\subsubsection{Sistema \texorpdfstring{$\lambda$}{Lambda}\texorpdfstring{$\Pi$}{Pi}}
+
+\paragraph{Grammatica.}
+La grammatica di $\lambda \Pi$ generalizza il costruttore di tipo $\to$ tramite il costruttore di \emph{prodotto dipendete} ($\Pi x : A.B$). Il prodotto dipendete permette di far dipendere un tipo
+da un termine. Questa dipendeza è espressa dei costrutti di astarzione e applicazione di tipo su termine. Nello specifico la sintassi ($\Pi x : A.B$) indica una famiglia di tipi B indicizzata da
+termini di tipo A. Si puo notare che ($A \to B$) non sia altro che un caso particolare in cui in $x \notin FV(B)$. Inoltre è importatene notare che si matengono i kinds con il medesimo costrutto
+ma di livello superiore, tratta sempre la categoria sintattica dei termini.
+\begin{equation}
+    \begin{split}
+        \text{Kinds: } & K ::= \ast \mid \Pi x : A . K \\
+        \text{Types: } & A, B ::= c \mid \Pi x : A . B \mid A M \\
+        \text{Terms: } & M, N ::= x \mid \lambda x : A . M \mid M N
+    \end{split}
+    \tag{$\lambda \Pi$}
+    \label{eq:grammar_system_p}
+\end{equation}
+
+\paragraph{Relazioni tra termini e tipi.}
+Nel sistema $\lambda \Pi$ la distizione netta tra termini e tipi viene meno, poiche i tipi possono contenere termini, la struttura dei tipi stessa è soggeta al calcolo. 
+Alla luce di ciò, si dirà che due tipi siano uguali se e solo se la riduzione del loro contenuto computazionale conduce a una forma normale comune. 
+Questa relazione di equivalenza, denominata $\beta$-conversione ($A \equiv_\beta B$), implica che il type checking non sia più un semplice confronto sintattico, 
+ma richieda l'esecuzione dei termini contenuti nei tipi stessi.
+\begin{equation}
+    (\Pi x : A. B) \, N \to_\beta B[N/x]
+    \label{eq:lp_type_application}
+\end{equation}
+\begin{equation}
+    (\Pi x : A. K) N \to_\beta K[N/x]
+    \label{eq:lp_kind_application}
+\end{equation}
+
+\paragraph{Teorema di normalizzaione forte.}
+Il sistema $\lambda \Pi$ gode della proprietà di normalizzaione forte, questo garantisce sempre l'esistenza di una forma normale.
+Per una trattazione esaustiva del formalismo e della prova di normalizzazione per l'intero Cubo \cite{barendregt1992}.
+
+\paragraph{Type checking e Type inference.}
+Nel sistema $\lambda \Pi$, il processo di type checking è decidibile ma richiede l'integrazione di fasi di calcolo esplicito. A differenza del calcolo semplicemente tipato, l'uguaglianza 
+tra tipi non è un mero confronto sintattico, ma viene verificata modulo $\beta$-conversione e  \eqref{eq:lp_type_application}. L'algoritmo di verifica deve quindi 
+essere in grado di ridurre i termini contenuti nei tipi alle rispettive forme normali per accertarne l'equivalenza. Per quanto concerne la \textit{type inference}, essa rimane decidibile dato un 
+contesto e un'applicazione $(M N)$, il sistema determina il tipo del risultato sostituendo l'argomento $N$ nel prodotto dipendente $\Pi x:A. B$, come formalizzato in \eqref{eq:lp_type_application}.
+
+% Parlare delle combinazioni
+
+% \subsubsection{Calcolo delle costruzioni (CoC)}
+
+\subsubsection{Combinazioni}
+Una volta introdotti tutti i tre assi è possibile osservare, come detto precedentemente, che esisteno otto combinazione di sistema di tipo distinti.
+Ciascuno di essi aggiunge una specifica capacità di astrazione al calcolo semplicemente tipato ($\lambda^\to$), portando alla gerarchia sintetizzata 
+nella Tabella \ref{tab:barendregt_combinations}. La medesima gerarchia sara fondamentale per definire il ponte con tutti i sistemi logici. I nomi dei 
+sistemi di tipo per la maggior parte delle combinazioni sono l'unione dei nomi dei sistemi uniti.
+
+\begin{table}[H]
+    \centering
+    \small
+    \begin{tabular}{lcccc}
+        \hline
+        \textbf{Sistema} & \textbf{Term-Term} & \textbf{Term-Tipo} & \textbf{Tipo-Tipo} & \textbf{Tipo-Term} \\ 
+        & ($\lambda^\to$) & ($\lambda 2$) & ($\lambda \underline{\omega}$) & ($\lambda \Pi$) \\ \hline
+        $\lambda^\to$                    & \checkmark & --         & --         & --         \\
+        $\lambda 2$                      & \checkmark & \checkmark & --         & --         \\
+        $\lambda \underline{\omega}$     & \checkmark & --         & \checkmark & --         \\
+        $\lambda \omega$                 & \checkmark & \checkmark & \checkmark & --         \\
+        $\lambda \Pi$                    & \checkmark & --         & --         & \checkmark \\
+        $\lambda \Pi 2$                  & \checkmark & \checkmark & --         & \checkmark \\
+        $\lambda \Pi \underline{\omega}$ & \checkmark & --         & \checkmark & \checkmark \\
+        \textbf{CoC}                     & \checkmark & \checkmark & \checkmark & \checkmark \\ \hline
+    \end{tabular}
+    \caption{Le otto combinazioni del Cubo di Barendregt.}
+    \label{tab:barendregt_combinations}
+\end{table}
+
+\subsection{Il Calocolo del costruzioni (CoC)}
