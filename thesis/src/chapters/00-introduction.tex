@@ -1,9 +1,115 @@
 % !TEX root = ../main.tex
 \chapter{Introduzione}
-\label{chap:introduzione}
+\label{chap:introduction}
 
 \section{Motivazioni}
-...
+
+\subsection{Il problema della correttezza nel software}
+L'ubiquità dei sistemi digitali nella società moderna ha traformato la correttezza del software da una sfida ingegneristica
+a un anecessita critica per la sicurezza pubblica. La correttezza del software rispetto alle specifiche è storicamente l'obbiettivo
+dell'informartica e di conseguenza del'ingegneria del software. Per raggingere questo obbiettivo si sono emerse due correnti 
+filosofiche distite, che riflettono approcci opposti:
+
+\begin{itemize}
+    \item \textbf{L'approccio empirico (Testing):} 
+        Questa corrente considera il software come un'entità dinamica da osservare. Attraverso l'esecuzione di un numero finito di casi, detti test,
+        si tenta d'inferire la correttezza generale. Questa metodologia per essendo molto apprezzata e efficace nella partica industriale non potra
+        mai certificare l'assenza totale di errori del software, detti bug. Il limite citato è cosi noto che esistono terminologie per indicare tali
+        comportamenti indesiderati del sistema con \emph{edge cases} e \emph{corner cases}. Nel caso del corner cases la complessita dei sistemi è cosi
+        elevata che individuarli precedentemente alla rottura del sistema è praticamete impossibile. Un aspetto dei test esiste ovvero sono facilmente
+        atomatizzabili.
+    \item \textbf{L'approccio deduttivo (Metodi Formali):}
+        Questa corrente tratta il software come un oggetto logico-matematico. In questo paradigma, la corettezza è una proprita del software da dimostrare
+        tramite specifiche metodologie logiche. Si utilizzano modelli formali, si construiscono prove matematiche con cui si coprono l'interi spazi degli stati
+        o domini. Tipicamente costruire una dimostrazione, per un software, è piu impegnativo e oneroso rispetto alla scrittura di test ma da piu garanzie. 
+        I modelli per le prove cambiano da paradigma a paradigma di programmazione e da programma a programma, inoltre spesso non è atomatizzabile come procedura. 
+\end{itemize}
+Nonostante potrebbe sembrare che la verifica del software annichilisca il testing per le maggiori certezze, non è cosi. Il testing trova spazio nel software non 
+critico dove la velocita di sviluppo è un porta maggior valore della correttezza totale. Come detto il testing da automatizzare è molto semplice, utilizzando 
+\emph{generative test}, questo porta un enorme vantaggio ad software house che si accontentano dell 99\% dei casi della specifica coperti. Ma il vero motivo per cui
+sono si puo fare a meno del testing è legato alla \emph{trusted computing base (TCB)}, trattata in seguito.
+
+\subsubsection{La Trusted Computing Base (TCB)}
+La \emph{trusted computing base (TCB)} è l'insieme di tutti i componenti hardware e software che devono essere necessariamete corretti affinche il sistema matenga
+le sue premesse di sicurezza e correttezza. La verifica formale per sua natura non puo essere utilizzata sul TCB, percio per garantirne la corettezza spesso si utilizzano
+proprio delle metodologie di testing. Nei sistemi critici (es. aerospaziale, medicale, automotive, ferroviario, nucleare e protocolli crittografici), l'obbiettivo è ridurre 
+la TCB il piu possibile, nel software a poche migliaia di righe di codice.
+
+\subsubsection{Differnza tra bug del software ed errori logico-matematici}
+La distinzione tra errore informatico (bug) o errore logico-matematico risiede nella loro natura e nel momento della loro manifestazione.
+Un bug è tipicamente un difetto d'Implememtazione che emerge durante l'esecuzione (\emph{run-time}), spesso causando la gestione errata dello
+stato della memoria. Al contrario, un errore logico-matematico è una violazione di una o piu regoel d'inferenza che invalida una dimostrazione
+in fase di compilazione (\emph{compile-time}). L'abizione della verifica formale è trattare il codice sorgente con lo stesso rigore riservato
+alle dimostrazioni logico-matematiche. In questo contesto i linguaggi di programmaizione funzionale, per merito delle loro caratteristiche sono
+particolarmete apprezzati ed utilizzati. Di seguito sono riportati i principali vantaggi dei linguaggi funzioni.
+
+\begin{itemize}
+    \item \textbf{Trasparenza Referenziale:} 
+        A differenza dei linguaggi imperativi, dove le variabili possono cambiare stato in modo imprevedibile (causando bug difficili da tracciare), 
+        nei linguaggi funzionali le funzioni sono pure. Questo riduce drasticamente gli effetti collaterali, rendendo il comportamento del codice 
+        deterministicoe migliore per la verifica formale.
+    \item \textbf{Immutabilità:} 
+        L'assenza di stati mutabili elimina intere classi di bug comuni, come le \emph{race conditions} o la corruzione involontaria dei dati, 
+        trasformando il programma in una successione di trasformazioni matematiche.
+\end{itemize}
+Inoltre la sintassi e semantica dei linguaggi funzionali puri sono vicinissime alle corrispondenti del linguaggio logico-matematico permettando 
+la maggior parte delle volte un traferimento di conoscenze tra ambiti.
+
+% \subsection{Ragioni storiche e tecnologiche}
+% TODO: Evoluzione e ragioni storiche degli strumenti di verifica.
+
+%\subsubsection{Stato dell'arte degli ITP: Coq, Agda e Lean}
+% TODO: Confronto sintetico. Coq e l'eredità accademica; Agda e i tipi dipendenti; Lean come sintesi moderna 
+
+\section{Obiettivi della tesi}
+L'obbiettivo pricipale della tesi è approfondire il funzionamento e struttura dei sistemi di \emph{interactive theorem provers (ITP)} come Lean 4, 
+con particolare attenzione alla loro fondazione logico-matemantica e implementazione algoritmica coerente.
+
+\subsection{Studio delle fondazioni logiche e teoriche}
+Uno degli obiettivi centrali della tesi è l'approfondimento dei pilastri teorici che rendono possibile la verifica formale. 
+La ricerca si focalizza sulla comprensione di come la logica pura si interfacci con la computazione attraverso:
+\begin{itemize}
+    \item \textbf{Sistemi di tipi:} 
+        Analizzare come diverse l'estensione dei sistemi di tipi classici permetta di esprimere 
+        proprietà matematiche diverse e complesse direttamente all'interno del linguaggio, 
+        superando le limitazioni algoritmiche della teoria degli insiemi.
+    \item \textbf{Deduzione Naturale:} 
+        Studiare le regole di inferenza logica che governano il ragionamento formale, 
+        fornendo la base per la costruzione di prove strutturate e verificabili meccanicamente.
+    \item \textbf{Isomorfismo di Curry-Howard:} 
+        Investigare il legame tra logica e informatica, secondo cui una proposizione corrisponde a un tipo 
+        e una dimostrazione corrisponde a un programma. L'obiettivo è comprendere come questo isomorfismo 
+        permetta a Lean di verificare se una dimostrazione di un teorema sia valida.
+\end{itemize}
+L'analisi di questi concetti è propedeutica alla comprensione del \textit{Calculus of Inductive Constructions} (CiC), 
+il formalismo logico del kernel di Lean.
+
+\subsection{Analisi dell'Affidabilità del Sistema (TCB)}
+Un obiettivo cruciale è comprendere perché il risultato di Lean sia considerato una verità matematica. La ricerca si concentra su:
+\begin{itemize}
+    \item \textbf{Studio del kernel di lean:} 
+        Analizzare l'algoritmo di \textit{type-checking} che costituisce il cuore 
+        della fiducia nel sistema.
+    \item \textbf{Efficienza e affidabilità:} 
+        Valutare come l'architettura di Lean 4 (compilazione in C) riesca a 
+        mantenere alte prestazioni senza compromettere la sicurezza logica.
+\end{itemize}
+
+% TODO: Aggiungere l'obbietivo sulle implememtazioni e esempi concreti di codice per perndere dimestichezza con gli strumenti.
 
 \section{Struttura del lavoro}
-...
+% TODO: La roadmap dettagliata per guidare il lettore (Teoria -> Implememtazione di Lean -> Implementazioni ed esempi di codice)
+
+\begin{itemize}
+    \item \textbf{Capitolo 1 --- Fondamenti Teorici:} 
+        Tratta il lambda calcolo, i sistemi di tipi, la deduzione naturale e l'isomorfismo 
+        di Curry-Howard come ponte tra logica e programmazione.
+   % TODO: Aggiungere man mano
+\end{itemize}
+
+\subsection{Metodologia di ricerca e implementazione}
+% TODO: Aggingere metodologie di studio e apporfondimento
+
+\vfill
+% TODO: Opzionale aggiungere citazione di qualche matematico, Gemini dice che di solito si fa :).
+
