@@ -29,13 +29,13 @@ critico dove la velocita di sviluppo è un porta maggior valore della correttezz
 \emph{generative test}, questo porta un enorme vantaggio ad software house che si accontentano dell 99\% dei casi della specifica coperti. Ma il vero motivo per cui
 sono si puo fare a meno del testing è legato alla \emph{trusted computing base (TCB)}, trattata in seguito.
 
-\subsubsection{La Trusted Computing Base (TCB)}
+\subsubsection{La trusted computing base (TCB)}
 La \emph{trusted computing base (TCB)} è l'insieme di tutti i componenti hardware e software che devono essere necessariamete corretti affinche il sistema matenga
 le sue premesse di sicurezza e correttezza. La verifica formale per sua natura non puo essere utilizzata sul TCB, percio per garantirne la corettezza spesso si utilizzano
 proprio delle metodologie di testing. Nei sistemi critici (es. aerospaziale, medicale, automotive, ferroviario, nucleare e protocolli crittografici), l'obbiettivo è ridurre 
 la TCB il piu possibile, nel software a poche migliaia di righe di codice.
 
-\subsubsection{Differnza tra bug del software ed errori logico-matematici}
+\subsubsection{Differnza tra bug software ed errori logico-matematici}
 La distinzione tra errore informatico (bug) o errore logico-matematico risiede nella loro natura e nel momento della loro manifestazione.
 Un bug è tipicamente un difetto d'Implememtazione che emerge durante l'esecuzione (\emph{run-time}), spesso causando la gestione errata dello
 stato della memoria. Al contrario, un errore logico-matematico è una violazione di una o piu regoel d'inferenza che invalida una dimostrazione
@@ -84,7 +84,7 @@ La ricerca si focalizza sulla comprensione di come la logica pura si interfacci 
 L'analisi di questi concetti è propedeutica alla comprensione del \textit{Calculus of Inductive Constructions} (CiC), 
 il formalismo logico del kernel di Lean.
 
-\subsection{Analisi dell'Affidabilità del Sistema (TCB)}
+\subsection{Analisi dell'affidabilità del sistema (TCB)}
 Un obiettivo cruciale è comprendere perché il risultato di Lean sia considerato una verità matematica. La ricerca si concentra su:
 \begin{itemize}
     \item \textbf{Studio del kernel di lean:} 

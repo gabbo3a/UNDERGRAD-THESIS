@@ -76,7 +76,7 @@ L'esempio piu semplice di termine divergente è il combinatore $\Omega$. Esso vi
 Dalla regola di $\beta$-riduzione appare evidente che l'auto-applicazione del termine $\omega$ sia divergente, la contrazione del redex non conduce a una forma normale ma 
 riporta al termine iniziale.
 
-\section{Sistemi di Tipi e Normalizzazione}
+\section{Sistemi di Tipi}
 
 \subsection{Il \texorpdfstring{$\lambda$}{Lambda}-calcolo semplicemente tipato (\texorpdfstring{$\lambda^{\to}$}{Lambda-to})}
 Il $\lambda$-calcolo semplicemente tipato ($\lambda^{\to}$), come suggerisce il nome, si distingue dal sistema puro per l'introduzione dei tipi.
@@ -211,7 +211,7 @@ quantificatore universale, inoltre per poter $\beta$-ridurre tali costrutti è n
     \label{eq:grammar-system-f}
 \end{equation}
 
-\paragraph{Relazioni tra termini e tipi.}
+\paragraph{Relazioni di calcolo e sostituzione.}
 Le relazioni $\alpha$-equivalenza e $\eta$-conversione del sistema $\lambda 2$ rimangono invariate. Al 
 contrario $\beta$-riduzione viene estesa con la medesima logica sui costrutti d'astrazione e d'applicazione di tipo. 
 
@@ -248,7 +248,7 @@ sui tipi.
     \label{eq:grammar_system_omega_under}
 \end{equation}
 
-\paragraph{Relazioni tra termini e tipi.}
+\paragraph{Relazioni di calcolo e sostituzione.}
 Nel sistema $\lambda\underline{\omega}$, le relazioni di equivalenza si estendono per coprire la nuova sintassi degli operatori di tipo. 
 La $\beta$-riduzione ($\to_\beta$) opera ora su due livelli, termini e tipi. Inoltre è importante notare che della dinamina la $\beta$-riduzione 
 rimane invariata.
@@ -290,7 +290,7 @@ ma di livello superiore, tratta sempre la categoria sintattica dei termini.
     \label{eq:grammar_system_p}
 \end{equation}
 
-\paragraph{Relazioni tra termini e tipi.}
+\paragraph{Relazioni di calcolo e sostituzione.}
 Nel sistema $\lambda \Pi$ la distizione netta tra termini e tipi viene meno, poiche i tipi possono contenere termini, la struttura dei tipi stessa è soggeta al calcolo. 
 Alla luce di ciò, si dirà che due tipi siano uguali se e solo se la riduzione del loro contenuto computazionale conduce a una forma normale comune. 
 Questa relazione di equivalenza, denominata $\beta$-conversione ($A \equiv_\beta B$), implica che il type checking non sia più un semplice confronto sintattico, 
@@ -313,10 +313,6 @@ Nel sistema $\lambda \Pi$, il processo di type checking è decidibile ma richied
 tra tipi non è un mero confronto sintattico, ma viene verificata modulo $\beta$-conversione e  \eqref{eq:lp_type_application}. L'algoritmo di verifica deve quindi 
 essere in grado di ridurre i termini contenuti nei tipi alle rispettive forme normali per accertarne l'equivalenza. Per quanto concerne la \textit{type inference}, essa rimane decidibile dato un 
 contesto e un'applicazione $(M N)$, il sistema determina il tipo del risultato sostituendo l'argomento $N$ nel prodotto dipendente $\Pi x:A. B$, come formalizzato in \eqref{eq:lp_type_application}.
-
-% Parlare delle combinazioni
-
-% \subsubsection{Calcolo delle costruzioni (CoC)}
 
 \subsubsection{Combinazioni}
 Una volta introdotti tutti i tre assi è possibile osservare, come detto precedentemente, che esisteno otto combinazione di sistema di tipo distinti.
@@ -345,3 +341,65 @@ sistemi di tipo per la maggior parte delle combinazioni sono l'unione dei nomi d
 \end{table}
 
 \subsection{Il Calocolo del costruzioni (CoC)}
+Il calcolo delle costruzioni è l'apice dell'espressivita dei sistemi di tipo. Per ottenere questa potenza espressiva si unificherando le grammatiche di tutte le
+direzioni del cubo precedentemente discusso, eliminando tutti i costrutti ridondanti. Nei sistemi predendeti si dividevando nettamete le categorie 
+sitattiche: termini, tipi e kind. Questa divisione portava ad avere costrutti uguali ma separati per categorie sintattiche, l'esempio migliore l'astrazione e l'applicazione.
+Inoltre è importante notare che i costrutti vengono unificati, non persi, percio lo studio dei sistemi precendeti rimande fondamentale per la compresione e l'attibuzione ai
+costrutti del potere espressivo. Quindi spesso ci utilizzaremo nomenglature dei precedeti sistemi.
+
+\subsubsection{Grammatica}
+La grammatica del calcolo delle costruzioni, come anticipato, molto piu ridotta in numero di costrutti rispetto alla fusione cieca dei sistemi. Nel calcolo delle costruzioni
+sono presenti solo due categorie sintattiche, i sort e i termini. Questa unificazione è il presupposto logico che permette al prodotto dipendente ($\Pi$) di agire come un 
+costruttore universale. Grazie alla possibilità di quantificare indistintamente su basi atomiche ($\ast$) o su universi superiori ($\square$), il tipo $\Pi$ è in grado di sussumere 
+e generalizzare tutti i costrutti caratterizzanti dei sistemi precedenti, quali l'implicazione funzionale ($A \to B$), il quantificatore universale del secondo ordine 
+($\forall \alpha : \ast . T$), gli operatori di tipo e i tipi dipendenti propriamente detti.
+
+\begin{equation}
+    \begin{array}{llll}
+        \text{Sorts:} 
+                & s           & ::= \ast \mid \square &                                 \\
+        \text{Pseudo-terms:} 
+                & A, B, M, N  & ::= x                   & \text{(Variabili)}            \\
+                &             & \mid s                  & \text{(Costanti)}             \\
+                &             & \mid \lambda x : A.M    & \text{(Astrazione)}           \\
+                &             & \mid \Pi x : A.B        & \text{(Prodotto dipendente)}  \\
+                &             & \mid M N                & \text{(Applicazione)}
+    \end{array}
+    \tag{CoC}
+    \label{eq:coc_grammar}
+\end{equation}
+
+\subsubsection{Relazioni di calcolo e sostituzione}
+Il Calcolo delle Costruzioni non introduce nuove regole di riduzione rispetto al $\lambda$-calcolo puro; di fatto, permangono valide tutte le definizioni di 
+$\alpha$-conversione, $\beta$-riduzione ed $\eta$-conversione analizzate nei capitoli precedenti. Tuttavia, la vera innovazione risiede nell'estensione del 
+loro dominio di applicazione.Mentre nei sistemi più semplici (come il sistema $\lambda{\to}$) le riduzioni operano esclusivamente sul piano dei termini (i programmi),
+nel CoC esse agiscono in modo uniforme sull'intera categoria dei pseudo-termini. Ciò significa che la computazione non è più confinata alla fase di esecuzione, 
+ma diventa parte integrante della definizione stessa dei tipi.
+
+\subsubsection{Unificazione dei costruttori nel CoC}
+L'unione delle categorie sintattiche permette al prodotto dipendente ($\Pi x : A. B$) di agire come \emph{costruttore universale}. L'unificazione dal CoC permette 
+al tipo $\Pi$ di assumere significati logici e computazionali differenti a seconda della natura (ovvero del \textit{sort}) dei termini coinvolti:
+\begin{itemize}
+    \item \textbf{Implicazione funzionale ($A \to B$):}
+        Se $A : \ast$, $B : \ast$ e la variabile $x$ non compare libera in $B$ ($x \notin FV(B)$), 
+        il prodotto dipendente degenera nella classica freccia del lambda calcolo semplicemente tipato ($\lambda{\to}$).
+    \item \textbf{Polimorfismo ($\forall \alpha : \ast . T$):} 
+        Se $A : \square$ (un genere) e $B : \ast$ (un tipo), il $\Pi$ permette di quantificare sopra un intero universo di tipi. 
+        Questo unifica il CoC con il sistema $\lambda2$, permettendo la definizione di funzioni generiche che accettano tipi come argomenti.
+    \item \textbf{Operatori di tipo:}
+        Se sia $A$ che $B$ appartengono a $\square$, il prodotto definisce funzioni tra generi, 
+        permettendo la creazione di costruttori di tipi complessi (come \texttt{List} o \texttt{Tree}) 
+        tipici del sistema $\lambda\underline{\omega}$.
+    \item \textbf{Tipi dipendenti ($Vect(n)$):}
+        Se $A : \ast$ (un tipo di dato) e $B : \square$ (un genere), il tipo risultante dipende dal valore di un termine. 
+        È questo il cuore della logica dei predicati, dove una proprietà $B$ è parametrizzata da un elemento $x$ di $A$.
+\end{itemize}
+
+\subsubsection{Teorema di normalizzaione forte}
+% TODO
+\subsubsection{Type checking e Type inference}
+% TODO
+
+\section{Sistemi logici}
+
+\section{L'Isomorfismo di Curry-Howard}
