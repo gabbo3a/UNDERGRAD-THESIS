@@ -19,7 +19,7 @@ In ordine, i costrutti prendono il nome di variabile, astrazione e applicazione;
 L'arieta all'interno della grammatica deternima il numero di elementi richiesti per la loro formazione dei termini. È inoltre opportuno osservare 
 che la definizione di queste proprietà appartiene almeno per ora al metalinguaggio, ovvero il linguaggio logico-matematico e non al $\lambda$-calcolo.
     
-\subsection{Relazioni tra termini}
+\subsection{Relazioni di calcolo e sostituzione}
 Le relaioni tra termini del $\lambda$-calcolo sono cio che traforma una insieme di puramente sintattico in un effettivo formalismo computazionale. 
 Alcune di esse sono necessarie 
 
@@ -401,5 +401,61 @@ al tipo $\Pi$ di assumere significati logici e computazionali differenti a secon
 % TODO
 
 \section{Sistemi logici}
+A questo punto della trattazione, occorre procedere all'introduzione formale delle logiche. Tale passaggio risulta propedeutico alla piena comprensione dei risultati, 
+nonché dei limiti intrinseci ai sistemi di tipo precedentemente introdotti.
 
-\section{L'Isomorfismo di Curry-Howard}
+\subsection{Definizione di sistema logico} 
+Un sistema logico è formalmente definito dalla terna $\mathcal{L} = \langle \mathcal{S}, \mathcal{V}, \models \rangle$, dove:
+\begin{itemize}
+    \item $\mathcal{S}$ rappresenta la sintassi, ovvero l'insieme delle formule ben formate.
+    \item $\mathcal{V}$ indica la semantica (o l'insieme dei valori di verità/modelli).
+    \item $\models$ definisce la relazione di conseguenza logica (o soddisfacibilità) tra gli elementi del sistema.
+\end{itemize}
+
+% TODO: aggiungere valida, sodisfacibile, contraddizione
+
+\subsection{Classificazione dei sistemi logici}
+I sistemi logici per loro natura sono moltissimi. In un certo senso, descrivono e catalogano ogni possibile verita mediante una struttura. Tale struttura consegue da qualche assioma,
+che per definizione sono verita atomiche. La scelta di tali assiomi è un gesto fondamentale perche determina quali entita siano ammesse nel discorso logico. La classificazione di tali 
+sistemi non è dunque un mero esercizio tassonomico, ma risulta fondamentale per comprendere l'ambito di applicazione, le potenzialità espressive e i limiti intrinseci di ogni linguaggio 
+formale.
+
+\paragraph{Metodologia classificativa.} 
+Storicamente la metodologia utilizzata per classificare i sistemi logici muove dalle modifiche effettuate all'apparato della logica classica, quest'ultima rappresenta il nucleo fondativo 
+che ha permesso di definire e dimostrare la stragrande maggioranza dei teoremi della matematica moderna. Riportato di seguito le direzioni principali su cui si articola la classificazione.
+\begin{itemize}
+    \item \textbf{L'estensione del linguaggio:} 
+        consiste nell'arricchimento della sintassi classica mediante l'introduzione di nuovi operatori logici (come quelli modali o temporali), 
+        ampliando il potere espressivo del sistema senza rinnegarne i principi base.
+    \item \textbf{La divergenza dai principi cardine:} 
+        si attua attraverso la revisione o il rifiuto di assiomi universali della logica classica (come il terzo escluso), 
+        dando vita a sistemi "rivali" come la logica intuizionista o quella fuzzy.
+    \item \textbf{L'analisi sottostrutturale:} 
+        si focalizza sulla modifica delle regole di gestione delle premesse, trattate non più come verità astratte e inesauribili, 
+        ma come risorse finite e soggette a consumo, come avviene nella logica lineare.
+\end{itemize}
+
+% TODO: Classificazione dei sistemi logici, secondo la distanza dal classico
+
+\subsection{Sistemi di deduzione}
+Un sistema di sistema di deduzione (o sistema di prova) si definisce come un algoritmo d'inferenza preposto alla generazione di dimostrazioni. Mentre il sistema logico stabilisce, 
+sul piano semantico, quali enunciati siano conseguenza logica di altri ($\Gamma \models A$), un sistema di prova definisce un insieme finiti di regole sintattiche atte 
+a derivare tali conclusioni attraverso passaggi meccanici. In tal senso, il sistema di priva rappresenta il corispettivo sintattivo della relazione di conseguenza logica
+$\models$. Tale relazione di derivabilità sintattica viene formalmente indicata con il simbolo di turnstile $\vdash$.
+
+\paragraph{Correttezza (Soundness).} 
+La correttezza o soundness è la proprita di un sistema di deduzione di derivare solo verita rispetto al sistema logico di riferimento. Nello specifico,
+se si prova $A$ nel sistema ($\Gamma \vdash A$), allora $A$ è una verità logica ($\Gamma \models A$). Il mio sistema non produce errori.
+
+\paragraph{Completezza (Completeness).}
+La completezza o completeness è la proprita di un sistema di deduzione di poter derivare tutte verita possibili rispetto a un sistema logico. Nello specifico,
+Se $A$ è una verità logica ($\Gamma \models A$), allora esiste certamente una prova nel mio sistema ($\Gamma \vdash A$). Il sistema di deduzione è abbastanza 
+potente da trovare tutte le verità.    
+
+% TODO: Classificazione di sistemi di deduzione 
+    % Sistemi assiomatici (sistemi alla Hilbert)
+    % Deduzione naturale (Gentzen)
+    % Calcolo dei sequenti (Gentzen)
+    % Metodo dei tableaux (o alberi di refutazione)
+
+\section{L'isomorfismo di Curry-Howard}
