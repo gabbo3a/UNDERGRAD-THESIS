@@ -182,7 +182,7 @@ i sistemi di tipo estensionali del $\lambda^{\to}$-calcolo. Tale struttura trova
 I sistemi analizzati nel cubo non sono mutualmente esclusivi, ma cumulativi. Si parte del vertice del $\lambda^{\to}$-calcolo e ogni
 asse aggiunge potere espressivo l sistema dei tipi, riportate di seguito le direzioni.
 
-\begin{itemize}[nosep, leftmargin=1.5em]
+\begin{itemize}
     \item \textbf{Asse $x$ (Tipi Dipendenti, \texorpdfstring{$\lambda P$}{LP}):}  
         Tipi che dipendono da termini. Il tipo di un oggetto può variare in base al valore di un altro (es. un vettore di lunghezza $n$).
     \item \textbf{Asse $y$ (Polimorfismo, \texorpdfstring{$\lambda 2$}{L2}):} 
@@ -325,18 +325,18 @@ sistemi di tipo per la maggior parte delle combinazioni sono l'unione dei nomi d
     \small
     \begin{tabular}{lcccc}
         \hline
-        \textbf{Sistema} & \textbf{Term-Term} & \textbf{Term-Tipo} & \textbf{Tipo-Tipo} & \textbf{Tipo-Term} \\ 
-        & ($\lambda^\to$) & ($\lambda 2$) & ($\lambda \underline{\omega}$) & ($\lambda \Pi$) \\ \hline
-        $\lambda^\to$                    & \checkmark & --         & --         & --         \\
-        $\lambda 2$                      & \checkmark & \checkmark & --         & --         \\
-        $\lambda \underline{\omega}$     & \checkmark & --         & \checkmark & --         \\
-        $\lambda \omega$                 & \checkmark & \checkmark & \checkmark & --         \\
-        $\lambda \Pi$                    & \checkmark & --         & --         & \checkmark \\
-        $\lambda \Pi 2$                  & \checkmark & \checkmark & --         & \checkmark \\
-        $\lambda \Pi \underline{\omega}$ & \checkmark & --         & \checkmark & \checkmark \\
-        \textbf{CoC}                     & \checkmark & \checkmark & \checkmark & \checkmark \\ \hline
+        \textbf{Sistema}                 & \textbf{Term-Term} & \textbf{Term-Tipo} & \textbf{Tipo-Tipo}             & \textbf{Tipo-Term} \\ 
+                                         & ($\lambda^\to$)    & ($\lambda 2$)      & ($\lambda \underline{\omega}$) & ($\lambda \Pi$)    \\ \hline
+        $\lambda^\to$                    & \checkmark         & --                 & --                             & --                 \\
+        $\lambda 2$                      & \checkmark         & \checkmark         & --                             & --                 \\
+        $\lambda \underline{\omega}$     & \checkmark         & --                 & \checkmark                     & --                 \\
+        $\lambda \omega$                 & \checkmark         & \checkmark         & \checkmark                     & --                 \\
+        $\lambda \Pi$                    & \checkmark         & --                 & --                             & \checkmark         \\
+        $\lambda \Pi 2$                  & \checkmark         & \checkmark         & --                             & \checkmark         \\
+        $\lambda \Pi \underline{\omega}$ & \checkmark         & --                 & \checkmark                     & \checkmark         \\
+        CoC                              & \checkmark         & \checkmark         & \checkmark                     & \checkmark         \\ \hline
     \end{tabular}
-    \caption{Le otto combinazioni del Cubo di Barendregt.}
+    \caption{Le otto combinazioni del cubo di Barendregt.}
     \label{tab:barendregt_combinations}
 \end{table}
 
@@ -355,15 +355,13 @@ e generalizzare tutti i costrutti caratterizzanti dei sistemi precedenti, quali 
 ($\forall \alpha : \ast . T$), gli operatori di tipo e i tipi dipendenti propriamente detti.
 
 \begin{equation}
-    \begin{array}{llll}
-        \text{Sorts:} 
-                & s           & ::= \ast \mid \square &                                 \\
-        \text{Pseudo-terms:} 
-                & A, B, M, N  & ::= x                   & \text{(Variabili)}            \\
-                &             & \mid s                  & \text{(Costanti)}             \\
-                &             & \mid \lambda x : A.M    & \text{(Astrazione)}           \\
-                &             & \mid \Pi x : A.B        & \text{(Prodotto dipendente)}  \\
-                &             & \mid M N                & \text{(Applicazione)}
+    \begin{array}{lrll}
+        \text{Sorts:}           & s           & ::= \ast \mid \square   &                               \\
+        \text{Pseudo-terms:}    & A, B, M, N  & ::= x                   & \text{(Variabili)}            \\
+                                &             & \mid s                  & \text{(Costanti)}             \\
+                                &             & \mid \lambda x : A.M    & \text{(Astrazione)}           \\
+                                &             & \mid \Pi x : A.B        & \text{(Prodotto dipendente)}  \\
+                                &             & \mid M N                & \text{(Applicazione)}
     \end{array}
     \tag{CoC}
     \label{eq:coc_grammar}
@@ -404,43 +402,20 @@ al tipo $\Pi$ di assumere significati logici e computazionali differenti a secon
 A questo punto della trattazione, occorre procedere all'introduzione formale delle logiche. Tale passaggio risulta propedeutico alla piena comprensione dei risultati, 
 nonché dei limiti intrinseci ai sistemi di tipo precedentemente introdotti.
 
-\subsection{Definizione di sistema logico} 
-Un sistema logico è formalmente definito dalla terna $\mathcal{L} = \langle \mathcal{S}, \mathcal{V}, \models \rangle$, dove:
-\begin{itemize}
+\subsection{Definizione strutturale di sistema logico} 
+Un sistema logico è formalmente definito dalla terna $\mathcal{L} = \langle \mathcal{S}, \mathcal{V}, \models \rangle$, che storicamente possiede tale significato:
+\begin{itemize}[nosep, leftmargin=1.5em]
     \item $\mathcal{S}$ rappresenta la sintassi, ovvero l'insieme delle formule ben formate.
     \item $\mathcal{V}$ indica la semantica (o l'insieme dei valori di verità/modelli).
     \item $\models$ definisce la relazione di conseguenza logica (o soddisfacibilità) tra gli elementi del sistema.
 \end{itemize}
 
-% TODO: aggiungere valida, sodisfacibile, contraddizione
-
-\subsection{Classificazione dei sistemi logici}
-I sistemi logici per loro natura sono moltissimi. In un certo senso, descrivono e catalogano ogni possibile verita mediante una struttura. Tale struttura consegue da qualche assioma,
-che per definizione sono verita atomiche. La scelta di tali assiomi è un gesto fondamentale perche determina quali entita siano ammesse nel discorso logico. La classificazione di tali 
-sistemi non è dunque un mero esercizio tassonomico, ma risulta fondamentale per comprendere l'ambito di applicazione, le potenzialità espressive e i limiti intrinseci di ogni linguaggio 
-formale.
-
-\paragraph{Metodologia classificativa.} 
-Storicamente la metodologia utilizzata per classificare i sistemi logici muove dalle modifiche effettuate all'apparato della logica classica, quest'ultima rappresenta il nucleo fondativo 
-che ha permesso di definire e dimostrare la stragrande maggioranza dei teoremi della matematica moderna. Riportato di seguito le direzioni principali su cui si articola la classificazione.
-\begin{itemize}
-    \item \textbf{L'estensione del linguaggio:} 
-        consiste nell'arricchimento della sintassi classica mediante l'introduzione di nuovi operatori logici (come quelli modali o temporali), 
-        ampliando il potere espressivo del sistema senza rinnegarne i principi base.
-    \item \textbf{La divergenza dai principi cardine:} 
-        si attua attraverso la revisione o il rifiuto di assiomi universali della logica classica (come il terzo escluso), 
-        dando vita a sistemi "rivali" come la logica intuizionista o quella fuzzy.
-    \item \textbf{L'analisi sottostrutturale:} 
-        si focalizza sulla modifica delle regole di gestione delle premesse, trattate non più come verità astratte e inesauribili, 
-        ma come risorse finite e soggette a consumo, come avviene nella logica lineare.
-\end{itemize}
-
-% TODO: Classificazione dei sistemi logici, secondo la distanza dal classico
+% TODO: aggiungere valida, soddisfacibile, contraddizione
 
 \subsection{Sistemi di deduzione}
 Un sistema di sistema di deduzione (o sistema di prova) si definisce come un algoritmo d'inferenza preposto alla generazione di dimostrazioni. Mentre il sistema logico stabilisce, 
 sul piano semantico, quali enunciati siano conseguenza logica di altri ($\Gamma \models A$), un sistema di prova definisce un insieme finiti di regole sintattiche atte 
-a derivare tali conclusioni attraverso passaggi meccanici. In tal senso, il sistema di priva rappresenta il corispettivo sintattivo della relazione di conseguenza logica
+a derivare tali conclusioni attraverso passaggi meccanici. In tal senso, il sistema di prova rappresenta il corrispettivo sintattico della relazione di conseguenza logica
 $\models$. Tale relazione di derivabilità sintattica viene formalmente indicata con il simbolo di turnstile $\vdash$.
 
 \paragraph{Correttezza (Soundness).} 
@@ -457,5 +432,49 @@ potente da trovare tutte le verità.
     % Deduzione naturale (Gentzen)
     % Calcolo dei sequenti (Gentzen)
     % Metodo dei tableaux (o alberi di refutazione)
+
+\subsection{Classificazione dei sistemi logici}
+La classificazione dei sistemi logici presenta intrinseche complessita metodologiche. Tali complessita derivano dalla loro natura fondazionale del pensiero matemantico. In un certo senso,
+i sistemi logici sono modelli formali del ragionamento, di conseguenza sono modelli di modelli. Percio si puo affermare che sistemi logici definiscono il calcolo del linguaggio. La definizione
+di tale calcolo avviene anche essa tramite il linguaggio, questa ricorsivita spesso porta a criticita. Per tale motivazione, il processo di classificazione dei sistemi logici è diviso in piu 
+momenti. Le prime formulazioni separavano sintassi e semantica con la conseguenza implicita di scindere la relazione di conseguenza logica dal processo d'inferenza. Le prospettive più moderne, 
+tra cui quella categoriale, ricercano una sovrapposizione e un'unificazione di tali concetti.
+
+\subsubsection{Paradgmi semantici}
+Per orientarsi nell'ampio panorama dei sistemi logici, è utile l'individuazione di criteri di confronto rigorosi che fungano da coordinate all'interno dello spazio dei paradigmi semantici.
+I criteri utilizzati sono: \emph{la denotazione}, \emph{la natura della relazione di conseguenza} e \emph{l'identità delle dimostrazioni}. Tali criteri permettono di mappare l'evoluzione del 
+concetto di verità dal modello classico a quello categoriale. Un'analisi esaustiva di tali criteri richiederebbe tuttavia un apparato formale di cui non disponiamo ancora. 
+
+\subsection{Il sistema logico classico}
+Il sistema logico classico è emerso storicamente per rispondere alle esigenze di formalizzazione della matematica fondazionale. Tuttavia, la sua natura non è stata lineare, portando a una 
+struttura che predilige la verità dei risultati rispetto alla dinamica delle dimostrazioni. Una caratteristica cruciale della logica classica è infatti l'assenza di un'interpretazione computazionale 
+diretta: in questo contesto, la prova è un mezzo trasparente per stabilire un valore di verità, non un oggetto di calcolo. Per tale ragione, appare metodologicamente più fecondo adottare come base 
+la logica intuizionista. Caratterizzata dall'assenza del principio del terzo escluso ($A \vee \neg A$), essa permette una formalizzazione più profonda del concetto di prova, culminando in sistemi 
+come la teoria dei tipi semplici. Questi ultimi non solo garantiscono la coerenza del sistema eliminando paradossi logici (come quello di Russell), ma preservano la natura algoritmica della deduzione. 
+In questa prospettiva, il sistema logico classico non viene escluso, ma recuperato come estensione: esso si ottiene aggiungendo ai sistemi intuizionisti l'assioma del terzo escluso o la legge della 
+doppia negazione ($\neg \neg A \to A$), con la consapevolezza che tale aggiunta rompe l'isomorfismo tra logica e computazione.
+
+\subsection{Il sistema logico intuizionista}
+% TODO
+
+\paragraph{Il cubo logico intuizionista.}
+La classificazione interna alla logica intuizionista puo essere rappresentata attraverso una struttura a cubo definita da tre assi di espansione. Questa classificazione si basa sulla natura delle
+entita quantificabili e sulla gerarchia linguaggio. Il sistema logico di partenza, ovvero il vertice meno espressivo, è chiamato \emph{Logica Proposizionale}.
+\begin{itemize}
+    \item \textbf{Asse $x$ (Individui):}  
+        Rappresenta l'espansione verso la \emph{logica del primo ordine intuizionista} (IFOL). Questo asse introduce la capacità di analizzare la struttura interna 
+        delle proposizioni attraverso l'uso di variabili individuali e costanti. In questa dimensione, i predicati sono trattati esclusivamente come 
+        parametri fissi (costanti sintattiche) e la quantificazione è limitata agli oggetti del dominio.
+    \item \textbf{Asse $y$ (Ordini):} 
+        Definisce la capacità di quantificare su entità di rango superiore, come proposizioni o proprietà. Questo asse conduce alla \emph{logica di secondo ordine intuizionista}. 
+        A differenza dell'asse $x$, qui le proprietà stesse diventano variabili del linguaggio, permettendo di esprimere principi universali sulle classi di oggetti 
+        e sulle verità logiche.
+    \item \textbf{Asse $z$ (Tipi):}
+        Introduce la \emph{gerarchia dei tipi} e l'astrazione funzionale. Questo asse permette di superare la distinzione rigida tra individuo e predicato, 
+        organizzando il linguaggio in una struttura ricorsiva di tipi semplici. In questa dimensione, ogni termine possiede un rango definito che ne determina 
+        il ruolo di funzione o di argomento.
+\end{itemize}
+L'intersezione di questi tre assi genera otto sistemi logici distinti, il cui vertice di massima potenza espressiva è rappresentato dalla \emph{logica di ordine superiore intuizionista} (IHOL), 
+in cui la distinzione tra formule e termini viene unificata all'interno di una gerarchia tipata completa.
 
 \section{L'isomorfismo di Curry-Howard}
