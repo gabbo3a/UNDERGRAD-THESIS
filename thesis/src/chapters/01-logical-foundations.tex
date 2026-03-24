@@ -12,7 +12,11 @@ La grammatica BNF del $\lambda$-calcolo, definita in \eqref{eq:lambda_grammar}, 
 le varibili, l'astarzione e l'applicazione. La grammatica definisce solo il sistema di scrittura dei termini, 
 essa non assegna alcuna semantica e nessuna relazione tra gli stessi ad esclusione di quelle sintattiche.
 \begin{equation}
-    M, N ::= x \mid (\lambda x. M) \mid (M N)
+    \begin{array}{lrll}
+        \text{Terms:}   & M, N & ::= x               & \text{(Variabili)}   \\
+                        &      & \mid (\lambda x. M) & \text{(Astrazione)}  \\
+                        &      & \mid (M N)          & \text{(Applicazione)}
+    \end{array}
     \label{eq:lambda_grammar}
 \end{equation}
 In ordine, i costrutti prendono il nome di variabile, astrazione e applicazione; la loro arieta è rispettivamete atomina, unaria e binaria.
@@ -201,12 +205,17 @@ La grammatica del sistema $\lambda 2$ o sistema F estende la grammatica del \ref
 \emph{astrazione di termine su tipo}, \emph{applicazione di termine su tipo} \emph{quantificatore universale di tipo}. In tale sistema si permette a un termine di poter dipendere
 da un tipo, tramite l'astrazione di tipo indicata con $\Lambda \alpha. M$. Il corrispondete costrutti dei tipi per l'astrazione di tipo è proprio il 
 quantificatore universale, inoltre per poter $\beta$-ridurre tali costrutti è necessario l'applicazione di tipo che permettete di ridurre la corrispondente astrazione.
-
 \begin{equation}
-    \begin{split}
-        \text{Types: } & \sigma, \tau ::= \alpha \mid \sigma \to \tau \mid \forall \alpha. \sigma \\
-        \text{Terms: } & M, N ::= x \mid \lambda x:\sigma. M \mid M N \mid \Lambda \alpha. M \mid M \sigma
-    \end{split}
+    \begin{array}{lrll}
+    \text{Types:}   & \sigma, \tau & ::= \alpha                     & \text{(Variabili di tipo)}    \\
+                    &              & \mid \sigma \to \tau           & \text{(Tipo funzione)}        \\
+                    &              & \mid \forall \alpha. \sigma    & \text{(Tipo universale)}      \\
+    \text{Terms:}   & M, N         & ::= x                          & \text{(Variabili)}            \\
+                    &              & \mid \lambda x : \sigma.M      & \text{(Astrazione)}           \\
+                    &              & \mid M N                       & \text{(Applicazione)}         \\
+                    &              & \mid \Lambda \alpha. M         & \text{(Astrazione di tipo)}   \\
+                    &              & \mid M \sigma                  & \text{(Applicazione di tipo)}
+    \end{array}
     \tag{System F}
     \label{eq:grammar-system-f}
 \end{equation}
@@ -237,13 +246,18 @@ il costrutto di \emph{astrazione di tipo su tipo} e \emph{applicazione di tipo s
 i tipi delle funzioni, chiamate \emph{operatori di tipo}. Per garantire che gli operatori di tipo siano ben formate si utilizza la categoria sintattica kinds, ovvero 
 il tipo dei tipi. Indroduzione dei costrutti di astrazione e applicazione di tipo su tipo traforma la categoria sintattica dei Type in Type Constructors un calcolo separato
 sui tipi.
-
 \begin{equation}
-    \begin{split}
-        \text{Kinds: } & K ::= \ast \mid K \to K \\
-        \text{Type Constructors: } & A, B ::= \alpha \mid A \to B \mid \lambda \alpha:K. A \mid A B \\
-        \text{Terms: } & M, N ::= x \mid \lambda x:A. M \mid M N
-    \end{split}
+    \begin{array}{lrll}
+        \text{Kinds:}               & K           & ::= \ast                & \text{(Kind terminale)}       \\
+                                    &             & \mid K \to K            & \text{(Kind funzione)}        \\
+        \text{Type Constructors:}   & A, B        & ::= \alpha              & \text{(Variabili di tipo)}    \\
+                                    &             & \mid A \to B            & \text{(Tipo funzione)}        \\
+                                    &             & \mid \lambda \alpha:K.A & \text{(Astrazione di tipo)}   \\
+                                    &             & \mid A B                & \text{(Applicazione di tipo)} \\
+        \text{Terms:}               & M, N        & ::= x                   & \text{(Variabili)}            \\
+                                    &             & \mid \lambda x:A. M     & \text{(Astrazione)}           \\
+                                    &             & \mid M N                & \text{(Applicazione)}
+        \end{array}
     \tag{$\lambda\underline{\omega}$}
     \label{eq:grammar_system_omega_under}
 \end{equation}
@@ -281,11 +295,16 @@ da un termine. Questa dipendeza è espressa dei costrutti di astarzione e applic
 termini di tipo A. Si puo notare che ($A \to B$) non sia altro che un caso particolare in cui in $x \notin FV(B)$. Inoltre è importatene notare che si matengono i kinds con il medesimo costrutto
 ma di livello superiore, tratta sempre la categoria sintattica dei termini.
 \begin{equation}
-    \begin{split}
-        \text{Kinds: } & K ::= \ast \mid \Pi x : A . K \\
-        \text{Types: } & A, B ::= c \mid \Pi x : A . B \mid A M \\
-        \text{Terms: } & M, N ::= x \mid \lambda x : A . M \mid M N
-    \end{split}
+    \begin{array}{lrll}
+        \text{Kinds:}   & K           & ::= \ast                & \text{(Tipo dei tipi)}        \\
+                        &             & \mid \Pi x : A. K       & \text{(Kind dipendente)}      \\
+        \text{Types:}   & A, B        & ::= c                   & \text{(Costanti di tipo)}     \\
+                        &             & \mid \Pi x : A. B       & \text{(Prodotto dipendente)}  \\
+                        &             & \mid A M                & \text{(Applicazione di tipo)} \\
+        \text{Terms:}   & M, N        & ::= x                   & \text{(Variabili)}            \\
+                        &             & \mid \lambda x : A. M   & \text{(Astrazione)}           \\
+                        &             & \mid M N                & \text{(Applicazione)}
+    \end{array}
     \tag{$\lambda \Pi$}
     \label{eq:grammar_system_p}
 \end{equation}
@@ -400,7 +419,7 @@ al tipo $\Pi$ di assumere significati logici e computazionali differenti a secon
 
 \section{Sistemi logici}
 A questo punto della trattazione, occorre procedere all'introduzione formale delle logiche. Tale passaggio risulta propedeutico alla piena comprensione dei risultati, 
-nonché dei limiti intrinseci ai sistemi di tipo precedentemente introdotti.
+nonché dei limiti intrinseci dei sistemi di tipo precedentemente introdotti.
 
 \subsection{Definizione strutturale di sistema logico} 
 Un sistema logico è formalmente definito dalla terna $\mathcal{L} = \langle \mathcal{S}, \mathcal{V}, \models \rangle$, che storicamente possiede tale significato:
