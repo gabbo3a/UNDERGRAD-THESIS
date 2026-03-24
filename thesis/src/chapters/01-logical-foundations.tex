@@ -414,7 +414,7 @@ Un sistema logico è formalmente definito dalla terna $\mathcal{L} = \langle \ma
 
 \subsection{Sistemi di deduzione}
 Un sistema di sistema di deduzione (o sistema di prova) si definisce come un algoritmo d'inferenza preposto alla generazione di dimostrazioni. Mentre il sistema logico stabilisce, 
-sul piano semantico, quali enunciati siano conseguenza logica di altri ($\Gamma \models A$), un sistema di prova definisce un insieme finiti di regole sintattiche atte 
+sul piano semantico, quali enunciati siano conseguenza logica di altri ($\Gamma \models A$), un sistema di prova definisce un insieme finito di regole sintattiche atte 
 a derivare tali conclusioni attraverso passaggi meccanici. In tal senso, il sistema di prova rappresenta il corrispettivo sintattico della relazione di conseguenza logica
 $\models$. Tale relazione di derivabilità sintattica viene formalmente indicata con il simbolo di turnstile $\vdash$.
 
@@ -427,11 +427,62 @@ La completezza o completeness è la proprita di un sistema di deduzione di poter
 Se $A$ è una verità logica ($\Gamma \models A$), allora esiste certamente una prova nel mio sistema ($\Gamma \vdash A$). Il sistema di deduzione è abbastanza 
 potente da trovare tutte le verità.    
 
-% TODO: Classificazione di sistemi di deduzione 
-    % Sistemi assiomatici (sistemi alla Hilbert)
-    % Deduzione naturale (Gentzen)
-    % Calcolo dei sequenti (Gentzen)
-    % Metodo dei tableaux (o alberi di refutazione)
+\subsubsection{Classificazione di sistemi di deduzione}
+La classificazione dei sistemi di deduzione è secondo molti punti di vista connfusionaria, tale confuzione è dovuta alla natura algoritmica degli stessi applicata alle filosofie specifiche
+di ogni logica. Nonostante i sistemi di deduzione siano indipendenti dalla logiche ne devono rispettare intrinseca definizione di verita derivato dalla semantica. Inoltre sono sistemi d'inferenza
+percio algoritmi sintattici, questo loro aspetto viene potenziato e valorizzato in molti sistemi logici mentre in altri viene solamente utilizzato come strumento posteriore. Di seguito sono riportati
+i sistemi di deduzione piu utilizzati. 
+
+\paragraph{Sistemi assiomatici.}
+I sistemi assiomatici (Sistemi alla Hilbert) sono caratterizzati da un vasto insieme di assiomi logici, verita a priori, e un numero ridotto di regole d'inferenza, solitamente solo \emph{modus ponens}.
+In questi sistemi, una dimostrazione è una sequenza lineare fi formule dove ogni passaggio è un assioma o deriva dei precedenti. Sebbene siano fondamentali per lo studio della matematica e delle completezza,
+risultano poco intuitivi per la pratica umana poiché richiedono costruzioni logiche molto complesse anche per enunciati semplici.
+\begin{center}
+    $\begin{array}{rll}
+        1. & A \to B & \text{(Assioma o Ipotesi)}       \\
+        2. & A        & \text{(Assioma o Ipotesi)}      \\
+        3. & B        & \text{(Modus Ponens da 1, 2)}
+    \end{array}$
+\end{center}
+
+\paragraph{Deduzione naturale.}
+Sviluppata da Gerhard Gentzen, la deduzione naturale mira a riprodurre fedelmente il modo in cui il ragionamento matematico avviene "in natura". Il sistema si basa su una struttura simmetrica: per ogni connettivo 
+logico esiste una regola di \emph{introduzione} (che definisce come costruire una formula con quel connettivo) e una regola di \emph{eliminazione} (che definisce come utilizzarla). Questo sistema è il pilastro della 
+logica intuizionista poiché.
+\begin{center}
+    \begin{prooftree}
+        \hypo{ A \to B }
+        \hypo{ A }
+        \infer2[($\to E$)]{ B }
+    \end{prooftree}
+\end{center}
+
+\paragraph{Calcolo dei sequenti.}
+Sempre introdotto da Gentzen, il calcolo dei sequenti non opera su singole formule ma su \emph{sequenti} del tipo $\Gamma \vdash \Delta$, che rappresentano una relazione tra un insieme di assunzioni e un insieme di conclusioni. 
+A differenza della deduzione naturale, questo sistema eccelle nell'analisi strutturale della prova e nella ricerca automatica delle dimostrazioni. In ambito intuizionista, la distinzione cruciale risiede nella restrizione del lato 
+destro del sequente ($\Delta$) a una singola formula, impedendo formalmente la derivazione di teoremi non costruttivi come il terzo escluso
+\begin{center}
+    \begin{prooftree}
+        \hypo{\Gamma \vdash A}
+        \hypo{\Gamma, B \vdash C}
+        \infer2[($L\to$)]{\Gamma, A \to B \vdash C}
+    \end{prooftree}
+\end{center}
+
+\paragraph{Metodo dei tableaux.}
+Il metodo dei tableaux (o alberi di refutazione) è un sistema di prova basato sulla ricerca della contraddizione. Per dimostrare che $\Gamma \models A$, il sistema tenta di confutare la negazione della conclusione, 
+ovvero cerca di mostrare che $\Gamma \cup \{\neg A\}$ è inconsistente. Il sistema procede scomponendo le formule in rami (scelte logiche); se tutti i rami si chiudono in una contraddizione, la formula originale è provata. 
+\begin{center}
+    $\begin{array}{c}
+        A \to B                     \\
+        A                           \\
+        \neg B                      \\
+        \hline
+        \swarrow \quad \searrow     \\
+        \neg A \quad\quad B         \\
+        \otimes \quad\quad \otimes
+    \end{array}$
+\end{center}
 
 \subsection{Classificazione dei sistemi logici}
 La classificazione dei sistemi logici presenta intrinseche complessita metodologiche. Tali complessita derivano dalla loro natura fondazionale del pensiero matemantico. In un certo senso,
