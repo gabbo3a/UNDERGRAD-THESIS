@@ -1,0 +1,165 @@
+% !TEX root = ../main.tex
+\chapter{Sistemi logici}
+\label{chap:logical_systems}
+
+In questo capitolo viene introdotto il formalismo logico necessario per completare il parallelo tra informatica teorica e logica matematica. Dopo una definizione strutturale 
+di sistema logico e dei principali paradigmi di deduzione, l'analisi si concentrerà sulla logica intuizionista. Quest'ultima, attraverso l'interpretazione BHK e il concetto 
+di inferenzialismo, si distacca dal modello classico per porre la "prova" come elemento centrale della verità. Esploreremo la gerarchia del cubo logico intuizionista, dalla 
+logica proposizionale a quella di ordine superiore, definendo le basi sintattiche e semantiche che permetteranno, nel capitolo successivo, di formalizzare l'identità tra 
+programmi e dimostrazioni.
+
+\section{Definizione di sistema logico} 
+Un sistema logico è formalmente definito dalla terna $\mathcal{L} = \langle \mathcal{S}, \mathcal{V}, \models \rangle$, che storicamente possiede tale significato:
+\begin{itemize}[nosep, leftmargin=1.5em]
+    \item $\mathcal{S}$ rappresenta la sintassi, ovvero l'insieme delle formule ben formate.
+    \item $\mathcal{V}$ indica la semantica (o l'insieme dei valori di verità/modelli).
+    \item $\models$ definisce la relazione di conseguenza logica (o soddisfacibilità) tra gli elementi del sistema.
+\end{itemize}
+
+% TODO: aggiungere valida, soddisfacibile, contraddizione
+
+\section{Sistemi di deduzione}
+Un sistema di sistema di deduzione (o sistema di prova) si definisce come un algoritmo d'inferenza preposto alla generazione di dimostrazioni. Mentre il sistema logico stabilisce, 
+sul piano semantico, quali enunciati siano conseguenza logica di altri ($\Gamma \models A$), un sistema di prova definisce un insieme finito di regole sintattiche atte 
+a derivare tali conclusioni attraverso passaggi meccanici. In tal senso, il sistema di prova rappresenta il corrispettivo sintattico della relazione di conseguenza logica
+$\models$. Tale relazione di derivabilità sintattica viene formalmente indicata con il simbolo di turnstile $\vdash$.
+
+\subsection{Correttezza (Soundness)} 
+La correttezza o soundness è la proprita di un sistema di deduzione di derivare solo verita rispetto al sistema logico di riferimento. Nello specifico,
+se si prova $A$ nel sistema ($\Gamma \vdash A$), allora $A$ è una verità logica ($\Gamma \models A$). Il mio sistema non produce errori.
+
+\subsection{Completezza (Completeness)}
+La completezza o completeness è la proprita di un sistema di deduzione di poter derivare tutte verita possibili rispetto a un sistema logico. Nello specifico,
+Se $A$ è una verità logica ($\Gamma \models A$), allora esiste certamente una prova nel mio sistema ($\Gamma \vdash A$). Il sistema di deduzione è abbastanza 
+potente da trovare tutte le verità.    
+
+\subsection{Classificazione di sistemi di deduzione}
+La classificazione dei sistemi di deduzione è secondo molti punti di vista connfusionaria, tale confuzione è dovuta alla natura algoritmica degli stessi applicata alle filosofie specifiche
+di ogni logica. Nonostante i sistemi di deduzione siano indipendenti dalla logiche ne devono rispettare intrinseca definizione di verita derivato dalla semantica. Inoltre sono sistemi d'inferenza
+percio algoritmi sintattici, questo loro aspetto viene potenziato e valorizzato in molti sistemi logici mentre in altri viene solamente utilizzato come strumento posteriore. Di seguito sono riportati
+i sistemi di deduzione piu utilizzati. 
+
+\subsubsection{Sistemi assiomatici}
+I sistemi assiomatici (Sistemi alla Hilbert) sono caratterizzati da un vasto insieme di assiomi logici, verita a priori, e un numero ridotto di regole d'inferenza, solitamente solo \emph{modus ponens}.
+In questi sistemi, una dimostrazione è una sequenza lineare fi formule dove ogni passaggio è un assioma o deriva dei precedenti. Sebbene siano fondamentali per lo studio della matematica e delle completezza,
+risultano poco intuitivi per la pratica umana poiché richiedono costruzioni logiche molto complesse anche per enunciati semplici.
+\begin{center}
+    $\begin{array}{rll}
+        1. & A \to B & \text{(Assioma o Ipotesi)}       \\
+        2. & A        & \text{(Assioma o Ipotesi)}      \\
+        3. & B        & \text{(Modus Ponens da 1, 2)}
+    \end{array}$
+\end{center}
+
+\subsubsection{Deduzione naturale}
+Sviluppata da Gerhard Gentzen, la deduzione naturale mira a riprodurre fedelmente il modo in cui il ragionamento matematico avviene "in natura". Il sistema si basa su una struttura simmetrica: per ogni connettivo 
+logico esiste una regola di \emph{introduzione} (che definisce come costruire una formula con quel connettivo) e una regola di \emph{eliminazione} (che definisce come utilizzarla). Questo sistema è il pilastro della 
+logica intuizionista poiché.
+\begin{center}
+    \begin{prooftree}
+        \hypo{ A \to B }
+        \hypo{ A }
+        \infer2[($\to E$)]{ B }
+    \end{prooftree}
+\end{center}
+
+\subsubsection{Calcolo dei sequenti}
+Sempre introdotto da Gentzen, il calcolo dei sequenti non opera su singole formule ma su \emph{sequenti} del tipo $\Gamma \vdash \Delta$, che rappresentano una relazione tra un insieme di assunzioni e un insieme di conclusioni. 
+A differenza della deduzione naturale, questo sistema eccelle nell'analisi strutturale della prova e nella ricerca automatica delle dimostrazioni. In ambito intuizionista, la distinzione cruciale risiede nella restrizione del lato 
+destro del sequente ($\Delta$) a una singola formula, impedendo formalmente la derivazione di teoremi non costruttivi come il terzo escluso
+\begin{center}
+    \begin{prooftree}
+        \hypo{\Gamma \vdash A}
+        \hypo{\Gamma, B \vdash C}
+        \infer2[($L\to$)]{\Gamma, A \to B \vdash C}
+    \end{prooftree}
+\end{center}
+
+\subsubsection{Metodo dei tableaux}
+Il metodo dei tableaux (o alberi di refutazione) è un sistema di prova basato sulla ricerca della contraddizione. Per dimostrare che $\Gamma \models A$, il sistema tenta di confutare la negazione della conclusione, 
+ovvero cerca di mostrare che $\Gamma \cup \{\neg A\}$ è inconsistente. Il sistema procede scomponendo le formule in rami (scelte logiche); se tutti i rami si chiudono in una contraddizione, la formula originale è provata. 
+\begin{center}
+    $\begin{array}{c}
+        A \to B                     \\
+        A                           \\
+        \neg B                      \\
+        \hline
+        \swarrow \quad \searrow     \\
+        \neg A \quad\quad B         \\
+        \otimes \quad\quad \otimes
+    \end{array}$
+\end{center}
+
+\section{Classificazione dei sistemi logici}
+La classificazione dei sistemi logici presenta intrinseche complessita metodologiche. Tali complessita derivano dalla loro natura fondazionale del pensiero matemantico. In un certo senso,
+i sistemi logici sono modelli formali del ragionamento, di conseguenza sono modelli di modelli. Percio si puo affermare che sistemi logici definiscono il calcolo del linguaggio. La definizione
+di tale calcolo avviene anche essa tramite il linguaggio, questa ricorsivita spesso porta a criticita. Per tale motivazione, il processo di classificazione dei sistemi logici è diviso in piu 
+momenti. Le prime formulazioni separavano sintassi e semantica con la conseguenza implicita di scindere la relazione di conseguenza logica dal processo d'inferenza. Le prospettive più moderne, 
+tra cui quella categoriale, ricercano una sovrapposizione e un'unificazione di tali concetti.
+
+\subsection{Paradgmi semantici}
+Per orientarsi nell'ampio panorama dei sistemi logici, è utile l'individuazione di criteri di confronto rigorosi che fungano da coordinate all'interno dello spazio dei paradigmi semantici.
+I criteri utilizzati sono: \emph{la denotazione}, \emph{la natura della relazione di conseguenza} e \emph{l'identità delle dimostrazioni}. Tali criteri permettono di mappare l'evoluzione del 
+concetto di verità dal modello classico a quello categoriale. Un'analisi esaustiva di tali criteri richiederebbe tuttavia un apparato formale di cui non disponiamo ancora. 
+
+\subsection{Logica classica}
+Il sistema logico classico è emerso storicamente per rispondere alle esigenze di formalizzazione della matematica. Tuttavia, per sua natura la formalizzazione non è stata lineare, portando a una 
+struttura che predilige la verità dei risultati rispetto alla dinamica delle dimostrazioni. Una caratteristica cruciale della logica classica è infatti l'assenza di un'interpretazione computazionale 
+diretta: in questo contesto, la prova è un mezzo trasparente per stabilire un valore di verità, non un oggetto di calcolo. Per tale ragione, appare metodologicamente più fecondo adottare come base 
+la logica intuizionista. Caratterizzata dall'assenza del principio del terzo escluso ($A \vee \neg A$), essa permette una formalizzazione più profonda del concetto di prova, culminando in sistemi 
+come la teoria dei tipi semplici. Questi ultimi non solo garantiscono la coerenza del sistema eliminando paradossi logici (come quello di Russell), ma preservano la natura algoritmica della deduzione. 
+In questa prospettiva, il sistema logico classico non viene escluso, ma recuperato come estensione: esso si ottiene aggiungendo ai sistemi intuizionisti l'assioma del terzo escluso o la legge della 
+doppia negazione ($\neg \neg A \to A$), con la consapevolezza che tale aggiunta rompe la natura strutturale della prova.
+
+% TODO: aggiungere delle richiami alle altre logiche per poi trattare approfonditamente solo la logica intuizionista
+
+\section{Logica intuizionista}
+
+\subsection{Inferenzialismo}
+La logica intuizionista rappresenta l'espressione piu coerente dell'inferenzialismo semantico, attraverso l'interpretazione BHK (Brouwer-Heyting-Kolmogorov). Nel inferenzialismo
+il significato dei costrutti delle formule non è determinato da condizioni di verita trascendenti, ma è interamente racchiuso nelle loro condizioni di asseribilità, ovvero
+nelle regole di introduzione e eliminazione della deduzione naturale. La prospettiva inferenzialista trasforma la logica, in una teoria della giustificazione (\emph{proof-theoretic}) 
+dove la verita è la prova stessa anziche una descrizione di stati di verita esterni al sistema logico. La conseguenze di maggior impatto è la fusione  dei concetti di conseguenza logica
+e sistema di deduzione, \emph{antirealismo}. 
+
+\subsection{Metaregole intuizioniste}
+Una volta definite le basi filosofiche del rapporto con la verità su cui si baseranno le semantiche intuizioniste, 
+risulta necessario introdurre le metaregole che permettono di non costruire sistemi inconsistenti:
+\begin{itemize}
+    \item 
+        \textbf{L'armonia}: è il principio fondamentale tra regole di introduzione e eliminazione. 
+        Tale principio nega di costruire sistemi in cui l'informazione derivata dalla regola 
+        di eliminazione è maggiore dell'informazione inserita dalla regola di introduzione, bilanciamento.
+    \item 
+        \textbf{La conservatività}: si pone come seconda metaregola cruciale e assicura che l'introduzione di nuovi 
+        connettivi non alteri le relazioni logiche già stabilite tra i simboli preesistenti. Un sistema che 
+        violi questo principio rischierebbe la trivializzazione, annullando la distinzione tra vero e falso.
+\end{itemize}
+Per l'intuizionista, queste metaregole non sono meri vincoli sintattici, ma condizioni di possibilità della semantica stessa: esse garantiscono che ogni estensione del linguaggio 
+sia "sicura" e che la verità rimanga sempre ancorata a una prova effettiva. Tuttavia, è importante notare che non tutti i sistemi logici aderiscono alla conservatività come requisito 
+necessario. Alcuni autori sostengono che l'estensione del linguaggio posso legittimamente espandere il potere deduttivo del sistema, se non viola l'armonia. Per esempio, l'aggiunta
+della doppia degazione alla logica intuizionista per ottenere la logica classica rompe la conservatività.
+
+\subsection{Cubo delle logiche intuizioniste}
+La classificazione interna alla logica intuizionista puo essere rappresentata attraverso una struttura a cubo definita da tre assi di espansione. Questa classificazione si basa sulla natura delle
+entita quantificabili e sulla gerarchia linguaggio. Il sistema logico di partenza, ovvero il vertice meno espressivo, è chiamato \emph{Logica Proposizionale}.
+\begin{itemize}
+    \item \textbf{Asse $x$ (Individui):}  
+        Rappresenta l'espansione verso la \emph{logica del primo ordine intuizionista} (IFOL). Questo asse introduce la capacità di analizzare la struttura interna 
+        delle proposizioni attraverso l'uso di variabili individuali e costanti. In questa dimensione, i predicati sono trattati esclusivamente come 
+        parametri fissi (costanti sintattiche) e la quantificazione è limitata agli oggetti del dominio.
+    \item \textbf{Asse $y$ (Ordini):} 
+        Definisce la capacità di quantificare su entità di rango superiore, come proposizioni o proprietà. Questo asse conduce alla \emph{logica di secondo ordine intuizionista}. 
+        A differenza dell'asse $x$, qui le proprietà stesse diventano variabili del linguaggio, permettendo di esprimere principi universali sulle classi di oggetti 
+        e sulle verità logiche.
+    \item \textbf{Asse $z$ (Tipi):}
+        Introduce la \emph{gerarchia dei tipi} e l'astrazione funzionale. Questo asse permette di superare la distinzione rigida tra individuo e predicato, 
+        organizzando il linguaggio in una struttura ricorsiva di tipi semplici. In questa dimensione, ogni termine possiede un rango definito che ne determina 
+        il ruolo di funzione o di argomento.
+\end{itemize}
+L'intersezione di questi tre assi genera otto sistemi logici distinti, il cui vertice di massima potenza espressiva è rappresentato dalla \emph{logica di ordine superiore intuizionista} (IHOL), 
+in cui la distinzione tra formule e termini viene unificata all'interno di una gerarchia tipata completa.
+
+\paragraph{Metodologia semantica.}
+Inoltre è importante notare, che almeno per ora, limiteremo la trattazione della semantica delle logiche intuistioniste utilizzando la semantica BHK. Tale semantica sebbene informale (pre-matematica) 
+è sia abbastanza precisa che intuitiva da permetterci di cogliere il contenuto informativo della logica, fungendo da giustificazione concettuale per le regole di inferenza.

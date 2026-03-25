@@ -1,92 +1,19 @@
 % !TEX root = ../main.tex
-\chapter{Fondamenti Teorici}
-\label{chap:theoretical_foundations}
+\chapter{Sistemi di tipi}
+\label{chap:type_systems}
 
-\section{Il \texorpdfstring{$\lambda$}{Lambda}-calcolo}
-Il $\lambda$-calcolo è un formalismo computazionale, ovvero un insieme di regole logico-matematiche 
-precise utilizzate per definire le funzioni calcolabili. Il concetto stesso di funzione calcolabile è 
-definita su questi formalismi secondo la tesi di Church-Turing. 
+L'introduzione dei tipi nel $\lambda$-calcolo risponde alla necessità di limitare l'espressività del formalismo puro in cambio di garanzie logiche e computazionali, 
+prima fra tutte la terminazione del calcolo. In questo capitolo analizzeremo come le annotazioni sui termini permettano di prevenire errori semantici e di instaurare 
+un controllo rigoroso sulla formazione delle espressioni. Il percorso inizierà con l'esame del $\lambda$-calcolo semplicemente tipato ($\lambda^{\to}$), di cui verranno 
+definiti i processi di verifica (type checking) e di ricostruzione automatica (type inference). Successivamente, utilizzeremo il Cubo di Barendregt come cornice teorica 
+per classificare le estensioni del calcolo lungo tre assi di astrazione: polimorfismo, operatori di tipo e tipi dipendenti. Il capitolo culminerà nell'analisi del Calcolo 
+delle Costruzioni (CoC), dove l'unificazione delle categorie sintattiche permette di trattare termini, tipi e prove logiche all'interno di un unico, potente linguaggio formale.
 
-\subsection{Grammatica del \texorpdfstring{$\lambda$}{Lambda}-calcolo}
-La grammatica BNF del $\lambda$-calcolo, definita in \eqref{eq:lambda_grammar}, si basa su tre costrutti fondamentali:
-le varibili, l'astarzione e l'applicazione. La grammatica definisce solo il sistema di scrittura dei termini, 
-essa non assegna alcuna semantica e nessuna relazione tra gli stessi ad esclusione di quelle sintattiche.
-\begin{equation}
-    \begin{array}{lrll}
-        \text{Terms:}   & M, N & ::= x               & \text{(Variabili)}   \\
-                        &      & \mid (\lambda x. M) & \text{(Astrazione)}  \\
-                        &      & \mid (M N)          & \text{(Applicazione)}
-    \end{array}
-    \label{eq:lambda_grammar}
-\end{equation}
-In ordine, i costrutti prendono il nome di variabile, astrazione e applicazione; la loro arieta è rispettivamete atomina, unaria e binaria.
-L'arieta all'interno della grammatica deternima il numero di elementi richiesti per la loro formazione dei termini. È inoltre opportuno osservare 
-che la definizione di queste proprietà appartiene almeno per ora al metalinguaggio, ovvero il linguaggio logico-matematico e non al $\lambda$-calcolo.
-    
-\subsection{Relazioni di calcolo e sostituzione}
-Le relaioni tra termini del $\lambda$-calcolo sono cio che traforma una insieme di puramente sintattico in un effettivo formalismo computazionale. 
-Alcune di esse sono necessarie 
-
-% \subsubsection{Definizioni preliminari}
-% TODO: Variabili libere e legate, Sostituzione, Sottotermini
-
-\subsubsection{\texorpdfstring{$\alpha$}{alpha}-equivalenza}
-la $\alpha$-equivalenza stabilisce che il nome delle variaibli legate è irrilevante ai fini del significato del ternine. Due termini sono considerati 
-identici se l'uno puo essere ottenuto dal'altro tramite la ridenominazione coerente delle proprie variabili legate. Questa relazione è fondametare per 
-evitare il fenomeno del varible capture durante le operazione di sostituzione, garantendo che i nomi scelti arbitrariamente non interferiscano con 
-le varibili libere.
-\begin{equation}
-    \lambda x. M \equiv_\alpha \lambda y. M[y/x] \quad \text{se } y \notin FV(M)
-    \label{eq:alpha_conversion}
-\end{equation}
-
-\subsubsection{\texorpdfstring{$\beta$}{beta}-riduzione}
-\label{sec:beta_reduction}
-La $\beta$-riduzione stabilisce il motore del $\lambda$-calcolo e formalizza il cncetto di applicazione funzionale. Consiste nel sostituire l'argomento N a ogni
-occorenza libera della variabile x allinterno del corpo della funzione M.
-\begin{equation}
-    (\lambda x. M) N \to_\beta M[x := N]
-    \label{eq:beta_reduction}
-\end{equation}
-Un ternine che presenta questa struttura si dice \emph{redex} (reducible expression). Il calcolo consiste dell'applicazione ripetura di questa regola, 
-quando un termine non contiene piu redex si dice che è in \emph{forma normale}. La forma normale è il risultato concreto della computazione.
-
-\subsubsection{\texorpdfstring{$\eta$}{eta}-conversione}
-La $\eta$-conversione ($\to_\eta$) introduce il principio di estensionalità, secondo il quale due funzioni sono uguali se, 
-applicate allo stesso argomento, producono il medesimo risultato.
-\begin{equation}
-    \lambda x. (M x) \to_\eta M \quad \text{se } x \notin FV(M)
-    \label{eq:eta_conversion}
-\end{equation}
-Questa operazione permette di semplificare espressioni ridondanti, eliminando astrazioni che si limitano a "passare" 
-l'argomento a un altro termine.
-
-\subsection{Problemi di divergenza}
-Nel $\lambda$-calcolo, come esposto nella sezione \ref{sec:beta_reduction}, la computazione deriva dalla riduzione dei termini. Quando questa non è possibile allora
-il termine è in forma normale, ovvero il risultato della computazione. Tuttavia è importante osservare che non tutti i termini ammetono una forma normale, in alcuni 
-casi la riduzione può proseguire indefinitivamente. 
-
-\subsubsection{Definizione di divergenza}
-L'assenza di una forma normale è ciò che definisce formalmente la \emph{divergenza}. 
-In un sistema Turing-completo come il $\lambda$-calcolo non tipato, la divergenza è 
-l'equivalente funzionale di un ciclo infinito (loop) in un linguaggio di programmazione imperativo.
-
-\subsubsection{Il termine $\Omega$}
-L'esempio piu semplice di termine divergente è il combinatore $\Omega$. Esso viene costruito a partire dal termine di auto-applicazione $\omega$ 
-(talvolta indicato come $\delta$).
-\begin{equation}
-    \omega = \lambda x. (x x)
-\end{equation}
-Dalla regola di $\beta$-riduzione appare evidente che l'auto-applicazione del termine $\omega$ sia divergente, la contrazione del redex non conduce a una forma normale ma 
-riporta al termine iniziale.
-
-\section{Sistemi di Tipi}
-
-\subsection{Il \texorpdfstring{$\lambda$}{Lambda}-calcolo semplicemente tipato (\texorpdfstring{$\lambda^{\to}$}{Lambda-to})}
+\section{\texorpdfstring{$\lambda$}{Lambda}-calcolo semplicemente tipato (\texorpdfstring{$\lambda^{\to}$}{Lambda-to})}
 Il $\lambda$-calcolo semplicemente tipato ($\lambda^{\to}$), come suggerisce il nome, si distingue dal sistema puro per l'introduzione dei tipi.
 In questo sistema di riscrittura i tipi sono della annotazioni sulla varibile vincolata della astrazione
 
-\subsubsection{Grammatica del \texorpdfstring{$\lambda$}{Lambda}-calcolo semplicemente tipato}
+\subsection{Grammatica del \texorpdfstring{$\lambda$}{Lambda}-calcolo semplicemente tipato}
 La grammatica BNF del $\lambda$-calcolo semplicemente tipato ($\lambda^{\to}$), estende il calcolo puro tramite
 la categoria sintattica dedicata ai tipi, legando le categorie sintattice tramite il costrutto dell'astrazione 
 \eqref{eq:simple_typed_lambda_grammar}.
@@ -104,7 +31,7 @@ la categoria sintattica dedicata ai tipi, legando le categorie sintattice tramit
 Si osservi come la sintassi dell'astrazione includa il tipo, cio garantiche che ogni variabile vincolata sia univovamete tipata 
 all'interno del proprio scope. Inoltre è opportuno ribadire che la grammatica non fornisce semantica.
 
-\subsubsection{Type checking}
+\subsection{Type checking}
 Il giudizio di tipizzazione o \emph{type checking} ($\Gamma \vdash e : \tau$) è il processo d'\emph{inferenza} mediante il quale si determina se un termine appertiene a un determinato tipo sotto un insieme di assunzioni.
 Tale processo opera in modo induttivo sulla grammatica dei termini, visitando l'intera struttura verificandone le componenti. Le applicazioni ricorsive delle regole per verificare il tipo finale,
 garantendo la correttezza formale dell'intera computazione.
@@ -126,11 +53,11 @@ garantendo la correttezza formale dell'intera computazione.
 Il contesto di tipizzazione, denotato con $\Gamma$, è un insieme finito di assunzioni di tipo nella forma $x : \sigma$.
 L'estensione del contesto, indicata con $\Gamma, x : \sigma$, rappresenta l'aggiunta di una nuova assunzione, con la clausola 
 che se $x$ era già presente in $\Gamma$, la nuova assegnazione sovrascrive la precedente (\emph{meccanismo di shadowing}). Il contesto
-può essere modellizato come una funzione parziale. Il simbolo $\perp$ (leggasi bottom) invece rapresenta il fallimento dell'algoritmo
+può essere modellizzato come una funzione parziale. Il simbolo $\perp$ (leggasi bottom) invece rapresenta il fallimento dell'algoritmo
 di verifica, questo in seguito rapresentera una specifica condizione sul termine, limitiamoci a dire che è mal tipato (\emph{ill-typed}).
 
-\subsubsection{Type inference}
-L'inferenza di tipo o \emph{type inference}  è il prcesso mediante il quale si ricostruisce automanticamente il tipo piu generale di un termine,
+\subsection{Type inference}
+L'inferenza di tipo o \emph{type inference}  è il prcesso mediante il quale si ricostruisce automaticamente il tipo più generale di un termine,
 utilizando al struttura sintattica e le relazioni tra componenti.
 
 \begin{equation}
@@ -148,8 +75,8 @@ utilizando al struttura sintattica e le relazioni tra componenti.
     \label{eq:constraint_generation}
 \end{equation}
 Il risultato del processo d'inferenza di tipo è un insieme di equazioni $\mathcal{C}$ che rapresentano i vincoli tra tipi delle componenti del termine.
-Se il sistema di equazioni dei vicoli di tipi ha soluzione allora è possibile dimostrare che il risoltato è il tipo piu generale che rispetta tali vincoli 
-(\emph{MGU}). L'insieme di equasioni $\mathcal{C}$ viene anche chiamato \emph{probela di unificazione del primo ordine}.
+Se il sistema di equazioni dei vicoli di tipi ha soluzione allora è possibile dimostrare che il risoltato è il tipo più generale che rispetta tali vincoli 
+(\emph{MGU}). L'insieme di equasioni $\mathcal{C}$ viene anche chiamato \emph{problema di unificazione del primo ordine}.
 \begin{equation}
     \mathcal{U}(\mathcal{C}) = 
     \begin{cases} 
@@ -178,13 +105,13 @@ il divieto di formulare definizioni ricorsive, per cui un tipo non può essere d
     \label{tab:unification_failures}
 \end{table}
 
-\subsubsection{Il teorema di normalizzazione forte}
+\subsection{Normalizzazione forte}
 Il sistema $\lambda^{\to}$ gode della proprita di \emph{normalizzazione forte}, ovvero ogni termine ben tipato riduce in un numero finito di passi
 in forma normale indipendetemente dalla strategia di riduzione utilizzata. Per una trattazione esaustiva della dimostrazione si rimanda a \cite{Girard1989} o
 \cite{Hindley1997}.
 
-\subsection{Il Cubo di Barendregt}
-Una volta definiti i fondamenti del $\lambda^{\to}$-calcolo, risulta necessario introdurre un modello per orientarisi e classificare
+\section{Cubo di Barendregt}
+Una volta definiti i fondamenti del $\lambda^{\to}$-calcolo, risulta necessario introdurre un modello per orientarsi e classificare
 i sistemi di tipo estensionali del $\lambda^{\to}$-calcolo. Tale struttura trova sua espressione del \emph{Cubo di Barendregt} \cite{barendregt1992}.
 I sistemi analizzati nel cubo non sono mutualmente esclusivi, ma cumulativi. Si parte del vertice del $\lambda^{\to}$-calcolo e ogni
 asse aggiunge potere espressivo l sistema dei tipi, riportate di seguito le direzioni.
@@ -197,11 +124,11 @@ asse aggiunge potere espressivo l sistema dei tipi, riportate di seguito le dire
     \item \textbf{Asse $z$ (Operatori di Tipo, \texorpdfstring{$\lambda \underline{\omega}$}{L-omega}):}  Tipi che dipendono da tipi.
         Permette di definire funzioni a livello dei tipi, ovvero costruttori che generano nuovi tipi a partire da tipi esistenti. 
 \end{itemize}
-Il sistema di tipi opposto al vertice del $\lambda^{\to}$-calcolo, e dunque il piu espressivo, prende il nome di \emph{Calcolo delle Costruzioni (CoC)}. 
+Il sistema di tipi opposto al vertice del $\lambda^{\to}$-calcolo, e dunque il più espressivo, prende il nome di \emph{Calcolo delle Costruzioni (CoC)}. 
 In tale sistema, il confine tra l'esecuzione del codice (valutazione dei termini) e il type checking si perdono. Nei sistemi con tipi dipendeti, l'ugualianza 
 tra due tipi puo dipendere dalla riduzione di un termine in forma normale. 
 
-\subsubsection{Sistema \texorpdfstring{$\lambda 2$}{L2}}
+\subsection{Sistema \texorpdfstring{$\lambda 2$}{L2}}
 
 \paragraph{Grammatica.}
 La grammatica del sistema $\lambda 2$ o sistema F estende la grammatica del \ref{eq:simple_typed_lambda_grammar} tramite tre costrutti:
@@ -241,7 +168,7 @@ Per quanto riguarda il type checking nel sistema $\lambda 2$, e importante osser
 la type inference almeno nel caso generele è indecidibile , come dimostrato da Wells \cite{wells1994}.Per questo si utilizzano strategie basate su metavaribili e unificazione
 che pero nel caso peggiore richiederanno le annotazioni esplicite.
 
-\subsubsection{Sistema \texorpdfstring{$\lambda\underline{\omega}$}{Lambda-omega-under}}
+\subsection{Sistema \texorpdfstring{$\lambda\underline{\omega}$}{Lambda-omega-under}}
 
 \paragraph{Grammatica.}
 La grammatica del sistema $\lambda\underline{\omega}$ estende la grammatica del \ref{eq:simple_typed_lambda_grammar} tramite: una categoria sintattica chiamata kinds,  
@@ -290,7 +217,7 @@ Il type checking del sistema, a differenza del calcolo semplicemente tipato (\re
 capacità di calcolo percio di dice \emph{type checking modulo $\beta$-conversione}. Due termini appartengono alla stesso tipo sse la forma normale dei loro tipi è $\alpha$-equivalente. 
 Cosiderando il terorema di normalizzazione orte a livello di costruttori di tipi ne seguen la decidibilita.
 
-\subsubsection{Sistema \texorpdfstring{$\lambda$}{Lambda}\texorpdfstring{$\Pi$}{Pi}}
+\subsection{Sistema \texorpdfstring{$\lambda$}{Lambda}\texorpdfstring{$\Pi$}{Pi}}
 
 \paragraph{Grammatica.}
 La grammatica di $\lambda \Pi$ generalizza il costruttore di tipo $\to$ tramite il costruttore di \emph{prodotto dipendete} ($\Pi x : A.B$). Il prodotto dipendete permette di far dipendere un tipo
@@ -336,7 +263,7 @@ tra tipi non è un mero confronto sintattico, ma viene verificata modulo $\beta$
 essere in grado di ridurre i termini contenuti nei tipi alle rispettive forme normali per accertarne l'equivalenza. Per quanto concerne la \textit{type inference}, essa rimane decidibile dato un 
 contesto e un'applicazione $(M N)$, il sistema determina il tipo del risultato sostituendo l'argomento $N$ nel prodotto dipendente $\Pi x:A. B$, come formalizzato in \eqref{eq:lp_type_application}.
 
-\subsubsection{Combinazioni}
+\subsection{Combinazioni}
 Una volta introdotti tutti i tre assi è possibile osservare, come detto precedentemente, che esisteno otto combinazione di sistema di tipo distinti.
 Ciascuno di essi aggiunge una specifica capacità di astrazione al calcolo semplicemente tipato ($\lambda^\to$), portando alla gerarchia sintetizzata 
 nella Tabella \ref{tab:barendregt_combinations}. La medesima gerarchia sara fondamentale per definire il ponte con tutti i sistemi logici. I nomi dei 
@@ -362,15 +289,15 @@ sistemi di tipo per la maggior parte delle combinazioni sono l'unione dei nomi d
     \label{tab:barendregt_combinations}
 \end{table}
 
-\subsection{Il Calocolo del costruzioni (CoC)}
-Il calcolo delle costruzioni è l'apice dell'espressivita dei sistemi di tipo. Per ottenere questa potenza espressiva si unificherando le grammatiche di tutte le
+\section{Calocolo del costruzioni (CoC)}
+Il calcolo delle costruzioni è l'apice dell'espressivita dei sistemi di tipo. Per ottenere questa potenza espressiva si unificando le grammatiche di tutte le
 direzioni del cubo precedentemente discusso, eliminando tutti i costrutti ridondanti. Nei sistemi predendeti si dividevando nettamete le categorie 
 sitattiche: termini, tipi e kind. Questa divisione portava ad avere costrutti uguali ma separati per categorie sintattiche, l'esempio migliore l'astrazione e l'applicazione.
 Inoltre è importante notare che i costrutti vengono unificati, non persi, percio lo studio dei sistemi precendeti rimande fondamentale per la compresione e l'attibuzione ai
 costrutti del potere espressivo. Quindi spesso ci utilizzaremo nomenglature dei precedeti sistemi.
 
-\subsubsection{Grammatica}
-La grammatica del calcolo delle costruzioni, come anticipato, molto piu ridotta in numero di costrutti rispetto alla fusione cieca dei sistemi. Nel calcolo delle costruzioni
+\subsection{Grammatica}
+La grammatica del calcolo delle costruzioni, come anticipato, molto più ridotta in numero di costrutti rispetto alla fusione cieca dei sistemi. Nel calcolo delle costruzioni
 sono presenti solo due categorie sintattiche, i sort e i termini. Questa unificazione è il presupposto logico che permette al prodotto dipendente ($\Pi$) di agire come un 
 costruttore universale. Grazie alla possibilità di quantificare indistintamente su basi atomiche ($\ast$) o su universi superiori ($\square$), il tipo $\Pi$ è in grado di sussumere 
 e generalizzare tutti i costrutti caratterizzanti dei sistemi precedenti, quali l'implicazione funzionale ($A \to B$), il quantificatore universale del secondo ordine 
@@ -389,17 +316,17 @@ e generalizzare tutti i costrutti caratterizzanti dei sistemi precedenti, quali 
     \label{eq:coc_grammar}
 \end{equation}
 
-\subsubsection{Relazioni di calcolo e sostituzione}
+\subsection{Relazioni di calcolo e sostituzione}
 Il Calcolo delle Costruzioni non introduce nuove regole di riduzione rispetto al $\lambda$-calcolo puro; di fatto, permangono valide tutte le definizioni di 
 $\alpha$-conversione, $\beta$-riduzione ed $\eta$-conversione analizzate nei capitoli precedenti. Tuttavia, la vera innovazione risiede nell'estensione del 
 loro dominio di applicazione.Mentre nei sistemi più semplici (come il sistema $\lambda{\to}$) le riduzioni operano esclusivamente sul piano dei termini (i programmi),
 nel CoC esse agiscono in modo uniforme sull'intera categoria dei pseudo-termini. Ciò significa che la computazione non è più confinata alla fase di esecuzione, 
 ma diventa parte integrante della definizione stessa dei tipi.
 
-\subsubsection{Unificazione dei costruttori nel CoC}
+\subsection{Unificazione dei costruttori nel CoC}
 L'unione delle categorie sintattiche permette al prodotto dipendente ($\Pi x : A. B$) di agire come \emph{costruttore universale}. L'unificazione dal CoC permette 
 al tipo $\Pi$ di assumere significati logici e computazionali differenti a seconda della natura (ovvero del \textit{sort}) dei termini coinvolti:
-\begin{itemize}
+\begin{description}
     \item \textbf{Implicazione funzionale ($A \to B$):}
         Se $A : \ast$, $B : \ast$ e la variabile $x$ non compare libera in $B$ ($x \notin FV(B)$), 
         il prodotto dipendente degenera nella classica freccia del lambda calcolo semplicemente tipato ($\lambda{\to}$).
@@ -413,165 +340,9 @@ al tipo $\Pi$ di assumere significati logici e computazionali differenti a secon
     \item \textbf{Tipi dipendenti ($Vect(n)$):}
         Se $A : \ast$ (un tipo di dato) e $B : \square$ (un genere), il tipo risultante dipende dal valore di un termine. 
         È questo il cuore della logica dei predicati, dove una proprietà $B$ è parametrizzata da un elemento $x$ di $A$.
-\end{itemize}
+\end{description}
 
-\subsubsection{Teorema di normalizzaione forte}
+\subsection{Teorema di normalizzaione forte}
 % TODO
-\subsubsection{Type checking e Type inference}
+\subsection{Type checking e Type inference}
 % TODO
-
-\section{Sistemi logici}
-A questo punto della trattazione, occorre procedere all'introduzione formale delle logiche. Tale passaggio risulta propedeutico alla piena comprensione dei risultati, 
-nonché dei limiti intrinseci dei sistemi di tipo precedentemente introdotti.
-
-\subsection{Definizione strutturale di sistema logico} 
-Un sistema logico è formalmente definito dalla terna $\mathcal{L} = \langle \mathcal{S}, \mathcal{V}, \models \rangle$, che storicamente possiede tale significato:
-\begin{itemize}[nosep, leftmargin=1.5em]
-    \item $\mathcal{S}$ rappresenta la sintassi, ovvero l'insieme delle formule ben formate.
-    \item $\mathcal{V}$ indica la semantica (o l'insieme dei valori di verità/modelli).
-    \item $\models$ definisce la relazione di conseguenza logica (o soddisfacibilità) tra gli elementi del sistema.
-\end{itemize}
-
-% TODO: aggiungere valida, soddisfacibile, contraddizione
-
-\subsection{Sistemi di deduzione}
-Un sistema di sistema di deduzione (o sistema di prova) si definisce come un algoritmo d'inferenza preposto alla generazione di dimostrazioni. Mentre il sistema logico stabilisce, 
-sul piano semantico, quali enunciati siano conseguenza logica di altri ($\Gamma \models A$), un sistema di prova definisce un insieme finito di regole sintattiche atte 
-a derivare tali conclusioni attraverso passaggi meccanici. In tal senso, il sistema di prova rappresenta il corrispettivo sintattico della relazione di conseguenza logica
-$\models$. Tale relazione di derivabilità sintattica viene formalmente indicata con il simbolo di turnstile $\vdash$.
-
-\paragraph{Correttezza (Soundness).} 
-La correttezza o soundness è la proprita di un sistema di deduzione di derivare solo verita rispetto al sistema logico di riferimento. Nello specifico,
-se si prova $A$ nel sistema ($\Gamma \vdash A$), allora $A$ è una verità logica ($\Gamma \models A$). Il mio sistema non produce errori.
-
-\paragraph{Completezza (Completeness).}
-La completezza o completeness è la proprita di un sistema di deduzione di poter derivare tutte verita possibili rispetto a un sistema logico. Nello specifico,
-Se $A$ è una verità logica ($\Gamma \models A$), allora esiste certamente una prova nel mio sistema ($\Gamma \vdash A$). Il sistema di deduzione è abbastanza 
-potente da trovare tutte le verità.    
-
-\subsubsection{Classificazione di sistemi di deduzione}
-La classificazione dei sistemi di deduzione è secondo molti punti di vista connfusionaria, tale confuzione è dovuta alla natura algoritmica degli stessi applicata alle filosofie specifiche
-di ogni logica. Nonostante i sistemi di deduzione siano indipendenti dalla logiche ne devono rispettare intrinseca definizione di verita derivato dalla semantica. Inoltre sono sistemi d'inferenza
-percio algoritmi sintattici, questo loro aspetto viene potenziato e valorizzato in molti sistemi logici mentre in altri viene solamente utilizzato come strumento posteriore. Di seguito sono riportati
-i sistemi di deduzione piu utilizzati. 
-
-\paragraph{Sistemi assiomatici.}
-I sistemi assiomatici (Sistemi alla Hilbert) sono caratterizzati da un vasto insieme di assiomi logici, verita a priori, e un numero ridotto di regole d'inferenza, solitamente solo \emph{modus ponens}.
-In questi sistemi, una dimostrazione è una sequenza lineare fi formule dove ogni passaggio è un assioma o deriva dei precedenti. Sebbene siano fondamentali per lo studio della matematica e delle completezza,
-risultano poco intuitivi per la pratica umana poiché richiedono costruzioni logiche molto complesse anche per enunciati semplici.
-\begin{center}
-    $\begin{array}{rll}
-        1. & A \to B & \text{(Assioma o Ipotesi)}       \\
-        2. & A        & \text{(Assioma o Ipotesi)}      \\
-        3. & B        & \text{(Modus Ponens da 1, 2)}
-    \end{array}$
-\end{center}
-
-\paragraph{Deduzione naturale.}
-Sviluppata da Gerhard Gentzen, la deduzione naturale mira a riprodurre fedelmente il modo in cui il ragionamento matematico avviene "in natura". Il sistema si basa su una struttura simmetrica: per ogni connettivo 
-logico esiste una regola di \emph{introduzione} (che definisce come costruire una formula con quel connettivo) e una regola di \emph{eliminazione} (che definisce come utilizzarla). Questo sistema è il pilastro della 
-logica intuizionista poiché.
-\begin{center}
-    \begin{prooftree}
-        \hypo{ A \to B }
-        \hypo{ A }
-        \infer2[($\to E$)]{ B }
-    \end{prooftree}
-\end{center}
-
-\paragraph{Calcolo dei sequenti.}
-Sempre introdotto da Gentzen, il calcolo dei sequenti non opera su singole formule ma su \emph{sequenti} del tipo $\Gamma \vdash \Delta$, che rappresentano una relazione tra un insieme di assunzioni e un insieme di conclusioni. 
-A differenza della deduzione naturale, questo sistema eccelle nell'analisi strutturale della prova e nella ricerca automatica delle dimostrazioni. In ambito intuizionista, la distinzione cruciale risiede nella restrizione del lato 
-destro del sequente ($\Delta$) a una singola formula, impedendo formalmente la derivazione di teoremi non costruttivi come il terzo escluso
-\begin{center}
-    \begin{prooftree}
-        \hypo{\Gamma \vdash A}
-        \hypo{\Gamma, B \vdash C}
-        \infer2[($L\to$)]{\Gamma, A \to B \vdash C}
-    \end{prooftree}
-\end{center}
-
-\paragraph{Metodo dei tableaux.}
-Il metodo dei tableaux (o alberi di refutazione) è un sistema di prova basato sulla ricerca della contraddizione. Per dimostrare che $\Gamma \models A$, il sistema tenta di confutare la negazione della conclusione, 
-ovvero cerca di mostrare che $\Gamma \cup \{\neg A\}$ è inconsistente. Il sistema procede scomponendo le formule in rami (scelte logiche); se tutti i rami si chiudono in una contraddizione, la formula originale è provata. 
-\begin{center}
-    $\begin{array}{c}
-        A \to B                     \\
-        A                           \\
-        \neg B                      \\
-        \hline
-        \swarrow \quad \searrow     \\
-        \neg A \quad\quad B         \\
-        \otimes \quad\quad \otimes
-    \end{array}$
-\end{center}
-
-\subsection{Classificazione dei sistemi logici}
-La classificazione dei sistemi logici presenta intrinseche complessita metodologiche. Tali complessita derivano dalla loro natura fondazionale del pensiero matemantico. In un certo senso,
-i sistemi logici sono modelli formali del ragionamento, di conseguenza sono modelli di modelli. Percio si puo affermare che sistemi logici definiscono il calcolo del linguaggio. La definizione
-di tale calcolo avviene anche essa tramite il linguaggio, questa ricorsivita spesso porta a criticita. Per tale motivazione, il processo di classificazione dei sistemi logici è diviso in piu 
-momenti. Le prime formulazioni separavano sintassi e semantica con la conseguenza implicita di scindere la relazione di conseguenza logica dal processo d'inferenza. Le prospettive più moderne, 
-tra cui quella categoriale, ricercano una sovrapposizione e un'unificazione di tali concetti.
-
-\subsubsection{Paradgmi semantici}
-Per orientarsi nell'ampio panorama dei sistemi logici, è utile l'individuazione di criteri di confronto rigorosi che fungano da coordinate all'interno dello spazio dei paradigmi semantici.
-I criteri utilizzati sono: \emph{la denotazione}, \emph{la natura della relazione di conseguenza} e \emph{l'identità delle dimostrazioni}. Tali criteri permettono di mappare l'evoluzione del 
-concetto di verità dal modello classico a quello categoriale. Un'analisi esaustiva di tali criteri richiederebbe tuttavia un apparato formale di cui non disponiamo ancora. 
-
-\subsection{Il sistema logico classico}
-Il sistema logico classico è emerso storicamente per rispondere alle esigenze di formalizzazione della matematica. Tuttavia, per sua natura la formalizzazione non è stata lineare, portando a una 
-struttura che predilige la verità dei risultati rispetto alla dinamica delle dimostrazioni. Una caratteristica cruciale della logica classica è infatti l'assenza di un'interpretazione computazionale 
-diretta: in questo contesto, la prova è un mezzo trasparente per stabilire un valore di verità, non un oggetto di calcolo. Per tale ragione, appare metodologicamente più fecondo adottare come base 
-la logica intuizionista. Caratterizzata dall'assenza del principio del terzo escluso ($A \vee \neg A$), essa permette una formalizzazione più profonda del concetto di prova, culminando in sistemi 
-come la teoria dei tipi semplici. Questi ultimi non solo garantiscono la coerenza del sistema eliminando paradossi logici (come quello di Russell), ma preservano la natura algoritmica della deduzione. 
-In questa prospettiva, il sistema logico classico non viene escluso, ma recuperato come estensione: esso si ottiene aggiungendo ai sistemi intuizionisti l'assioma del terzo escluso o la legge della 
-doppia negazione ($\neg \neg A \to A$), con la consapevolezza che tale aggiunta rompe la natura strutturale della prova.
-
-\subsection{Il sistema logico intuizionista}
-
-\paragraph{L'inferenzialismo intuizionista.}
-La logica intuizionista rappresenta l'espressione piu coerente dell'inferenzialismo semantico, attraverso l'interpretazione BHK (Brouwer-Heyting-Kolmogorov). Nel inferenzialismo
-il significato dei costrutti delle formule non è determinato da condizioni di verita trascendenti, ma è interamente racchiuso nelle loro condizioni di asseribilità, ovvero
-nelle regole di introduzione e eliminazione della deduzione naturale. La prospettiva inferenzialista trasforma la logica, in una teoria della giustificazione (\emph{proof-theoretic}) 
-dove la verita è la prova stessa anziche una descrizione di stati di verita esterni al sistema logico. La conseguenze di maggior impatto è la fusione  dei concetti di conseguenza logica
-e sistema di deduzione, \emph{antirealismo}. 
-
-\paragraph{Metaregole intuizioniste.}
-Una volta definite le basi filosofiche del rapporto con la verità su cui si baseranno le semantiche intuizioniste, 
-risulta necessario introdurre le metaregole che permettono di non costruire sistemi inconsistenti:
-\begin{itemize}
-    \item 
-        \textbf{L'armonia}: è il principio fondamentale tra regole di introduzione e eliminazione. 
-        Tale principio nega di costruire sistemi in cui l'informazione derivata dalla regola 
-        di eliminazione è maggiore dell'informazione inserita dalla regola di introduzione, bilanciamento.
-    \item 
-        \textbf{La conservatività}: si pone come seconda metaregola cruciale e assicura che l'introduzione di nuovi 
-        connettivi non alteri le relazioni logiche già stabilite tra i simboli preesistenti. Un sistema che 
-        violi questo principio rischierebbe la trivializzazione, annullando la distinzione tra vero e falso.
-\end{itemize}
-Per l'intuizionista, queste metaregole non sono meri vincoli sintattici, ma condizioni di possibilità della semantica stessa: esse garantiscono che ogni estensione del linguaggio 
-sia "sicura" e che la verità rimanga sempre ancorata a una prova effettiva. Tuttavia, è importante notare che non tutti i sistemi logici aderiscono alla conservatività come requisito 
-necessario. Alcuni autori sostengono che l'estensione del linguaggio posso legittimamente espandere il potere deduttivo del sistema, se non viola l'armonia. Per esempio, l'aggiunta
-della doppia degazione alla logica intuizionista per ottenere la logica classica rompe la conservatività.
-
-\paragraph{Il cubo logico intuizionista.}
-La classificazione interna alla logica intuizionista puo essere rappresentata attraverso una struttura a cubo definita da tre assi di espansione. Questa classificazione si basa sulla natura delle
-entita quantificabili e sulla gerarchia linguaggio. Il sistema logico di partenza, ovvero il vertice meno espressivo, è chiamato \emph{Logica Proposizionale}.
-\begin{itemize}
-    \item \textbf{Asse $x$ (Individui):}  
-        Rappresenta l'espansione verso la \emph{logica del primo ordine intuizionista} (IFOL). Questo asse introduce la capacità di analizzare la struttura interna 
-        delle proposizioni attraverso l'uso di variabili individuali e costanti. In questa dimensione, i predicati sono trattati esclusivamente come 
-        parametri fissi (costanti sintattiche) e la quantificazione è limitata agli oggetti del dominio.
-    \item \textbf{Asse $y$ (Ordini):} 
-        Definisce la capacità di quantificare su entità di rango superiore, come proposizioni o proprietà. Questo asse conduce alla \emph{logica di secondo ordine intuizionista}. 
-        A differenza dell'asse $x$, qui le proprietà stesse diventano variabili del linguaggio, permettendo di esprimere principi universali sulle classi di oggetti 
-        e sulle verità logiche.
-    \item \textbf{Asse $z$ (Tipi):}
-        Introduce la \emph{gerarchia dei tipi} e l'astrazione funzionale. Questo asse permette di superare la distinzione rigida tra individuo e predicato, 
-        organizzando il linguaggio in una struttura ricorsiva di tipi semplici. In questa dimensione, ogni termine possiede un rango definito che ne determina 
-        il ruolo di funzione o di argomento.
-\end{itemize}
-L'intersezione di questi tre assi genera otto sistemi logici distinti, il cui vertice di massima potenza espressiva è rappresentato dalla \emph{logica di ordine superiore intuizionista} (IHOL), 
-in cui la distinzione tra formule e termini viene unificata all'interno di una gerarchia tipata completa.
-
-\section{L'isomorfismo di Curry-Howard}

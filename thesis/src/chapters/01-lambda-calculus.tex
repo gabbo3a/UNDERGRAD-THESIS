@@ -1,0 +1,89 @@
+% !TEX root = ../main.tex
+\chapter{Il \texorpdfstring{$\lambda$}{Lambda}-calcolo}
+\label{chap:lambda_calculus}
+
+Il $\lambda$-calcolo rappresenta uno dei pilastri fondamentali della teoria della computabilità. Sviluppato da 
+Alonzo Church negli anni '30, esso si configura come un formalismo basato esclusivamente sulla manipolazione 
+sintattica di termini per definire le funzioni calcolabili. In questo capitolo verranno introdotti i costrutti 
+elementari della sua grammatica, le relazioni di riduzione che ne governano la dinamica e, infine, il problema 
+della terminazione attraverso l'analisi dei termini divergenti.
+
+\section{Tesi di Church-Turing}
+Il $\lambda$-calcolo è un formalismo computazionale, ovvero un insieme di regole logico-matematiche precise utilizzate per definire 
+le funzioni calcolabili. Questo sistema non è un semplice linguaggio, ma rappresenta un modello di calcolo universale: secondo la 
+tesi di Church-Turing, infatti, ogni funzione intuitivamente calcolabile può essere espressa attraverso questo formalismo (o altri 
+equivalenti, come le Macchine di Turing). In questo contesto, il calcolo non avviene tramite la modifica di uno stato di memoria, 
+ma attraverso la riscrittura e la semplificazione di espressioni, rendendo la definizione di funzione l'elemento atomico del sistema.
+
+\section{Grammatica del \texorpdfstring{$\lambda$}{Lambda}-calcolo}
+La grammatica BNF del $\lambda$-calcolo, definita in \eqref{eq:lambda_grammar}, si basa su tre costrutti fondamentali:
+le varibili, l'astarzione e l'applicazione. La grammatica definisce solo il sistema di scrittura dei termini, 
+essa non assegna alcuna semantica e nessuna relazione tra gli stessi ad esclusione di quelle sintattiche.
+\begin{equation}
+    \begin{array}{lrll}
+        \text{Terms:}   & M, N & ::= x               & \text{(Variabili)}   \\
+                        &      & \mid (\lambda x. M) & \text{(Astrazione)}  \\
+                        &      & \mid (M N)          & \text{(Applicazione)}
+    \end{array}
+    \label{eq:lambda_grammar}
+\end{equation}
+In ordine, i costrutti prendono il nome di variabile, astrazione e applicazione; la loro arietà è rispettivamete atomica, unaria e binaria.
+L'arietà all'interno della grammatica deternima il numero di elementi richiesti per la loro formazione dei termini. È inoltre opportuno osservare 
+che la definizione di queste proprietà appartiene almeno per ora al metalinguaggio, ovvero il linguaggio logico-matematico e non al $\lambda$-calcolo.
+    
+\section{Relazioni di calcolo e sostituzione}
+Le relaioni tra termini del $\lambda$-calcolo sono cio che traforma una insieme di puramente sintattico in un effettivo formalismo computazionale. 
+Alcune di esse sono necessarie 
+
+% \subsection{Definizioni preliminari}
+% TODO: Variabili libere e legate, Sostituzione, Sottotermini
+
+\subsection{\texorpdfstring{$\alpha$}{alpha}-equivalenza}
+la $\alpha$-equivalenza stabilisce che il nome delle variabili legate è irrilevante ai fini del significato del ternine. Due termini sono considerati 
+identici se l'uno puo essere ottenuto dal'altro tramite la ridenominazione coerente delle proprie variabili legate. Questa relazione è fondametare per 
+evitare il fenomeno del varible capture durante le operazione di sostituzione, garantendo che i nomi scelti arbitrariamente non interferiscano con 
+le varibili libere.
+\begin{equation}
+    \lambda x. M \equiv_\alpha \lambda y. M[y/x] \quad \text{se } y \notin FV(M)
+    \label{eq:alpha_conversion}
+\end{equation}
+
+\subsection{\texorpdfstring{$\beta$}{beta}-riduzione}
+\label{sec:beta_reduction}
+La $\beta$-riduzione stabilisce il motore del $\lambda$-calcolo e formalizza il cncetto di applicazione funzionale. Consiste nel sostituire l'argomento N a ogni
+occorrenza libera della variabile x all'interno del corpo della funzione M.
+\begin{equation}
+    (\lambda x. M) N \to_\beta M[x := N]
+    \label{eq:beta_reduction}
+\end{equation}
+Un ternine che presenta questa struttura si dice \emph{redex} (reducible expression). Il calcolo consiste dell'applicazione ripetura di questa regola, 
+quando un termine non contiene piu redex si dice che è in \emph{forma normale}. La forma normale è il risultato concreto della computazione.
+
+\subsection{\texorpdfstring{$\eta$}{eta}-conversione}
+La $\eta$-conversione ($\to_\eta$) introduce il principio di estensionalità, secondo il quale due funzioni sono uguali se, 
+applicate allo stesso argomento, producono il medesimo risultato.
+\begin{equation}
+    \lambda x. (M x) \to_\eta M \quad \text{se } x \notin FV(M)
+    \label{eq:eta_conversion}
+\end{equation}
+Questa operazione permette di semplificare espressioni ridondanti, eliminando astrazioni che si limitano a "passare" 
+l'argomento a un altro termine.
+
+\section{Problemi di divergenza}
+Nel $\lambda$-calcolo, come esposto nella sezione \ref{sec:beta_reduction}, la computazione deriva dalla riduzione dei termini. Quando questa non è possibile allora
+il termine è in forma normale, ovvero il risultato della computazione. Tuttavia è importante osservare che non tutti i termini ammetono una forma normale, in alcuni 
+casi la riduzione può proseguire indefinitivamente. 
+
+\subsection{Definizione di divergenza}
+L'assenza di una forma normale è ciò che definisce formalmente la \emph{divergenza}. 
+In un sistema Turing-completo come il $\lambda$-calcolo non tipato, la divergenza è 
+l'equivalente funzionale di un ciclo infinito (loop) in un linguaggio di programmazione imperativo.
+
+\subsection{Il termine \texorpdfstring{$\Omega$}{Omega}}
+L'esempio piu semplice di termine divergente è il combinatore $\Omega$. Esso viene costruito a partire dal termine di auto-applicazione $\omega$ 
+(talvolta indicato come $\delta$).
+\begin{equation}
+    \omega = \lambda x. (x x)
+\end{equation}
+Dalla regola di $\beta$-riduzione appare evidente che l'auto-applicazione del termine $\omega$ sia divergente, la contrazione del redex non conduce a una forma 
+normale ma riporta al termine iniziale.
