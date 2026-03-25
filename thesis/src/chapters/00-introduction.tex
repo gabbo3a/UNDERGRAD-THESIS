@@ -98,13 +98,23 @@ Un obiettivo cruciale è comprendere perché il risultato di Lean sia considerat
 % TODO: Aggiungere l'obbietivo sulle implememtazioni e esempi concreti di codice per perndere dimestichezza con gli strumenti.
 
 \section{Struttura del lavoro}
-% TODO: La roadmap dettagliata per guidare il lettore (Teoria -> Implememtazione di Lean -> Implementazioni ed esempi di codice)
+Il presente lavoro è organizzato secondo un percorso logico che conduce dal formalismo computazionale puro verso l'unificazione tra logica e 
+programmazione, fornendo le basi necessarie alla comprensione del funzionamento dei moderni \textit{Interactive Theorem Provers}.
 
 \begin{itemize}
-    \item \textbf{Capitolo 1 --- Fondamenti Teorici:} 
-        Tratta il lambda calcolo, i sistemi di tipi, la deduzione naturale e l'isomorfismo 
-        di Curry-Howard come ponte tra logica e programmazione.
-   % TODO: Aggiungere man mano
+    \item \textbf{Capitolo \ref{chap:lambda_calculus} --- \texorpdfstring{$\lambda$}{Lambda}-calcolo:} Viene introdotto il modello di 
+    calcolo di Church, analizzandone la sintassi, le regole di riduzione e le proprietà di terminazione (o divergenza) del sistema puro.
+    
+    \item \textbf{Capitolo \ref{chap:type_systems} --- Sistemi di tipi e Cubo di Barendregt:} Si esamina l'evoluzione dai tipi semplici 
+    verso strutture più espressive. Attraverso la classificazione del Cubo di Barendregt, viene delineato il percorso che conduce al Calcolo 
+    delle Costruzioni (CoC).
+        
+    \item \textbf{Capitolo \ref{chap:logical_systems} --- Sistemi logici e deduzione:} L'attenzione si sposta sul versante logico, approfondendo 
+    i paradigmi della deduzione naturale e le gerarchie della logica intuizionista, dall'ordine proposizionale a quello superiore.
+    
+    \item \textbf{Capitolo \ref{chap:curry_howard_isomorphism} --- Corrispondenza di Curry-Howard:} In questo capitolo conclusivo vengono unificati 
+    i concetti precedenti, formalizzando l'identità tra programmi e prove che permette la verifica meccanica dei teoremi matematici.
+    % TODO: Aggiungere man mano
 \end{itemize}
 
 \subsection{Metodologia di ricerca e implementazione}
