@@ -1,1 +1,2 @@
-$out_dir = '../build';
+$out_dir = '../build';                                     # Set the output directory for all generated files
+system("mkdir -p $out_dir/chapters $out_dir/frontmatter"); # Create required subdirectories in the build folder before compilation

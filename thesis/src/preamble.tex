@@ -8,6 +8,8 @@
 
 % Graphics and bibliography
 \usepackage{graphicx}                               % For images
+    \graphicspath{{assets/}{../assets/}}
+\usepackage[absolute,overlay]{textpos}              % For precise element positioning on the title page
 \usepackage{hyperref}                               % For clickable links
 \usepackage[style=numeric, backend=biber]{biblatex} % Bibliography management
     \addbibresource{references.bib}                 % Set bibliography file
@@ -47,7 +49,6 @@
         font=small,                 % Set caption text size slightly smaller than main text
         labelfont=bf                % Set the label (e.g., "Listing 1.1") in bold face
     }
-
 
 % Lean Language Configuration (Safe for UTF-8)
 \lstdefinelanguage{lean}{
