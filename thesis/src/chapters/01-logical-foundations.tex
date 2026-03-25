@@ -91,10 +91,13 @@ La grammatica BNF del $\lambda$-calcolo semplicemente tipato ($\lambda^{\to}$), 
 la categoria sintattica dedicata ai tipi, legando le categorie sintattice tramite il costrutto dell'astrazione 
 \eqref{eq:simple_typed_lambda_grammar}.
 \begin{equation}
-    \begin{split}
-        \text{Types: } & \tau ::= \iota \mid \tau_1 \to \tau_2 \\
-        \text{Terms: } & e ::= x \mid \lambda x : \tau . e \mid e \, e
-    \end{split}
+    \begin{array}{lrll}
+        \text{Types:}   & \tau, \sigma & ::= \iota \quad                & \text{(Tipo base / atomico)}      \\
+                        &              & \mid \tau_1 \to \tau_2 \quad   & \text{(Tipo funzione)}            \\
+        \text{Terms:}   & e, M         & ::= x \quad                    & \text{(Variabile)}                \\
+                        &              & \mid \lambda x : \tau . e \quad& \text{(Astrazione)}               \\
+                        &              & \mid e_1 \, e_2 \quad          & \text{(Applicazione)}
+    \end{array}
     \tag{STLC}
     \label{eq:simple_typed_lambda_grammar}
 \end{equation}
@@ -516,16 +519,40 @@ I criteri utilizzati sono: \emph{la denotazione}, \emph{la natura della relazion
 concetto di verità dal modello classico a quello categoriale. Un'analisi esaustiva di tali criteri richiederebbe tuttavia un apparato formale di cui non disponiamo ancora. 
 
 \subsection{Il sistema logico classico}
-Il sistema logico classico è emerso storicamente per rispondere alle esigenze di formalizzazione della matematica fondazionale. Tuttavia, la sua natura non è stata lineare, portando a una 
+Il sistema logico classico è emerso storicamente per rispondere alle esigenze di formalizzazione della matematica. Tuttavia, per sua natura la formalizzazione non è stata lineare, portando a una 
 struttura che predilige la verità dei risultati rispetto alla dinamica delle dimostrazioni. Una caratteristica cruciale della logica classica è infatti l'assenza di un'interpretazione computazionale 
 diretta: in questo contesto, la prova è un mezzo trasparente per stabilire un valore di verità, non un oggetto di calcolo. Per tale ragione, appare metodologicamente più fecondo adottare come base 
 la logica intuizionista. Caratterizzata dall'assenza del principio del terzo escluso ($A \vee \neg A$), essa permette una formalizzazione più profonda del concetto di prova, culminando in sistemi 
 come la teoria dei tipi semplici. Questi ultimi non solo garantiscono la coerenza del sistema eliminando paradossi logici (come quello di Russell), ma preservano la natura algoritmica della deduzione. 
 In questa prospettiva, il sistema logico classico non viene escluso, ma recuperato come estensione: esso si ottiene aggiungendo ai sistemi intuizionisti l'assioma del terzo escluso o la legge della 
-doppia negazione ($\neg \neg A \to A$), con la consapevolezza che tale aggiunta rompe l'isomorfismo tra logica e computazione.
+doppia negazione ($\neg \neg A \to A$), con la consapevolezza che tale aggiunta rompe la natura strutturale della prova.
 
 \subsection{Il sistema logico intuizionista}
-% TODO
+
+\paragraph{L'inferenzialismo intuizionista.}
+La logica intuizionista rappresenta l'espressione piu coerente dell'inferenzialismo semantico, attraverso l'interpretazione BHK (Brouwer-Heyting-Kolmogorov). Nel inferenzialismo
+il significato dei costrutti delle formule non è determinato da condizioni di verita trascendenti, ma è interamente racchiuso nelle loro condizioni di asseribilità, ovvero
+nelle regole di introduzione e eliminazione della deduzione naturale. La prospettiva inferenzialista trasforma la logica, in una teoria della giustificazione (\emph{proof-theoretic}) 
+dove la verita è la prova stessa anziche una descrizione di stati di verita esterni al sistema logico. La conseguenze di maggior impatto è la fusione  dei concetti di conseguenza logica
+e sistema di deduzione, \emph{antirealismo}. 
+
+\paragraph{Metaregole intuizioniste.}
+Una volta definite le basi filosofiche del rapporto con la verità su cui si baseranno le semantiche intuizioniste, 
+risulta necessario introdurre le metaregole che permettono di non costruire sistemi inconsistenti:
+\begin{itemize}
+    \item 
+        \textbf{L'armonia}: è il principio fondamentale tra regole di introduzione e eliminazione. 
+        Tale principio nega di costruire sistemi in cui l'informazione derivata dalla regola 
+        di eliminazione è maggiore dell'informazione inserita dalla regola di introduzione, bilanciamento.
+    \item 
+        \textbf{La conservatività}: si pone come seconda metaregola cruciale e assicura che l'introduzione di nuovi 
+        connettivi non alteri le relazioni logiche già stabilite tra i simboli preesistenti. Un sistema che 
+        violi questo principio rischierebbe la trivializzazione, annullando la distinzione tra vero e falso.
+\end{itemize}
+Per l'intuizionista, queste metaregole non sono meri vincoli sintattici, ma condizioni di possibilità della semantica stessa: esse garantiscono che ogni estensione del linguaggio 
+sia "sicura" e che la verità rimanga sempre ancorata a una prova effettiva. Tuttavia, è importante notare che non tutti i sistemi logici aderiscono alla conservatività come requisito 
+necessario. Alcuni autori sostengono che l'estensione del linguaggio posso legittimamente espandere il potere deduttivo del sistema, se non viola l'armonia. Per esempio, l'aggiunta
+della doppia degazione alla logica intuizionista per ottenere la logica classica rompe la conservatività.
 
 \paragraph{Il cubo logico intuizionista.}
 La classificazione interna alla logica intuizionista puo essere rappresentata attraverso una struttura a cubo definita da tre assi di espansione. Questa classificazione si basa sulla natura delle
