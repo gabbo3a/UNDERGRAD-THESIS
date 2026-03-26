@@ -140,7 +140,7 @@ sia "sicura" e che la verità rimanga sempre ancorata a una prova effettiva. Tut
 necessario. Alcuni autori sostengono che l'estensione del linguaggio posso legittimamente espandere il potere deduttivo del sistema, se non viola l'armonia. Per esempio, l'aggiunta
 della doppia degazione alla logica intuizionista per ottenere la logica classica rompe la conservatività.
 
-\subsection{Cubo delle logiche intuizioniste}
+\subsection{Cubo intuizionista}
 La classificazione interna alla logica intuizionista puo essere rappresentata attraverso una struttura a cubo definita da tre assi di espansione. Questa classificazione si basa sulla natura delle
 entita quantificabili e sulla gerarchia linguaggio. Il sistema logico di partenza, ovvero il vertice meno espressivo, è chiamato \emph{Logica Proposizionale}.
 \begin{itemize}
@@ -161,5 +161,130 @@ L'intersezione di questi tre assi genera otto sistemi logici distinti, il cui ve
 in cui la distinzione tra formule e termini viene unificata all'interno di una gerarchia tipata completa.
 
 \paragraph{Metodologia semantica.}
-Inoltre è importante notare, che almeno per ora, limiteremo la trattazione della semantica delle logiche intuistioniste utilizzando la semantica BHK. Tale semantica sebbene informale (pre-matematica) 
-è sia abbastanza precisa che intuitiva da permetterci di cogliere il contenuto informativo della logica, fungendo da giustificazione concettuale per le regole di inferenza.
+È importante notare, che almeno per ora, limiteremo la trattazione della semantica delle logiche intuistioniste utilizzando la semantica BHK. Tale semantica sebbene informale (pre-matematica) 
+è sia abbastanza precisa che intuitiva da permetterci di cogliere il contenuto informativo della logica, fungendo da giustificazione concettuale per le regole di inferenza. La sematica BHK 
+definisce la verità di una formula in termini di ciò che costituisce una sua dimostrazione, utiizza la ricorsione permessa dalla composizionalita della sintassi.
+
+\subsubsection{Logica proposizionale intuizionista (IPC)}
+La logica proposizionale rappresenta il nucleo atomico dei sistemi logici. Essa permette di manipolare enunciati atomici e di comporli attraverso connettivi logici, 
+senza tuttavia poter analizzare la struttura interna delle proposizioni o quantificare su domini di oggetti. È il sistema di base su cui si innestano tutte le successive 
+estensioni del cubo.
+\paragraph{Grammatica.}
+\begin{equation}
+    \begin{array}{lrll}
+        \text{Formule:} & \phi, \psi & ::= p \quad                  & \text{(Variabili proposizionali)} \\
+                        &            & \mid \bot \quad              & \text{(Falso / Assurdo)}          \\
+                        &            & \mid \phi \land \psi \quad   & \text{(Congiunzione)}             \\
+                        &            & \mid \phi \lor \psi \quad    & \text{(Disgiunzione)}             \\
+                        &            & \mid \phi \to \psi \quad     & \text{(Implicazione)}
+    \end{array}
+    \quad \text{con } \neg \phi \equiv \phi \to \bot
+    \tag{IPC}
+    \label{eq:ipc_grammar}
+\end{equation}
+
+\paragraph{Semantica.}
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item[$\phi \land \psi$] Una prova è costituita da una coppia ordinata $\langle e_1, e_2 \rangle$ che contiene simultaneamente un'evidenza $e_1$ per $\phi$ e un'evidenza $e_2$ per $\psi$.
+    \item[$\phi \lor \psi$] Una prova è una coppia $\langle i, e \rangle$ dove l'indice $i \in \{0, 1\}$ agisce da selettore: se $i=0$ l'evidenza $e$ prova il disgiunto $\phi$, mentre se $i=1$ essa prova il disgiunto $\psi$.
+    \item[$\phi \to \psi$] Una prova è una costruzione funzionale $f$ in grado di trasformare ogni possibile prova di $\phi$ in una prova di $\psi$, definendo così un metodo effettivo di derivazione.
+    \item[$\bot$] Rappresenta l'assurdo logico e non possiede alcuna prova; coerentemente, non è possibile fornire alcuna costruzione valida per questo enunciato.
+    \item[$\neg \phi$] Equivalente a $\phi \to \bot$, la sua prova è una costruzione che trasforma ogni ipotetica evidenza di $\phi$ in una prova della contraddizione ($\bot$), mostrandone l'asseribilità impossibile.
+\end{description}
+
+\subsubsection{Logica predicativa del primo ordine (IQC / IFOL)}
+L'introduzione della logica del primo ordine permette di analizzare la struttura interna delle proposizioni isolando oggetti e proprietà. Questo sistema consente di esprimere leggi universali o 
+l'esistenza di elementi all'interno di un dominio specifico di individui (termini), rendendo il linguaggio capace di modellare domini matematici come l'aritmetica.
+
+\paragraph{Grammatica.}
+\begin{equation}
+    \begin{array}{lrll}
+        \text{Termini:}  & t, u      & ::= x \mid c \mid f(t_1, \dots, t_n) & \text{(Variabili, Costanti, Funzioni)} \\
+        \text{Formule:} & \Phi, \Psi & ::= P(t_1, \dots, t_n) \quad         & \text{(Predicati atomici)}             \\
+                        &            & \mid \bot \mid \dots \quad           & \text{(Connettivi IPC)}                \\
+                        &            & \mid \forall x \Phi \quad            & \text{(Quantificatore Universale)}     \\
+                        &            & \mid \exists x \Phi \quad            & \text{(Quantificatore Esistenziale)}
+    \end{array}
+    \tag{IQC}
+    \label{eq:iqc_grammar}
+\end{equation}
+
+\paragraph{Semantica.}
+\begin{description}[leftmargin=3.5em, style=nextline]
+    \item[$\forall x \Phi(x)$] Una funzione che, dato un elemento $d$ del dominio, restituisce una prova della proprietà $\Phi(d)$.
+    \item[$\exists x \Phi(x)$] Una coppia $\langle d, e \rangle$ dove $d$ è l'individuo scelto (testimone) ed $e$ è l'evidenza che soddisfa $\Phi(d)$.
+\end{description}
+
+\subsubsection{Logica proposizionale del secondo ordine (\texorpdfstring{$\text{IPC}^2$}{IPC2})}
+La logica di secondo ordine proposizionale abilita il polimorfismo logico. In questo sistema è possibile quantificare non più solo sugli individui, ma sulle proposizioni stesse. 
+Questa capacità permette di definire operatori e connettivi "astratti" che funzionano indipendentemente dalle formule specifiche a cui sono applicati, introducendo un primo livello 
+di astrazione su tipi.
+\paragraph{Grammatica.}
+\begin{equation}
+    \begin{array}{lrll}
+        \text{Formule:} & \phi, \psi & ::= X \quad                & \text{(Variabili proposizionali/predicative)} \\
+                        &            & \mid \bot \mid \dots \quad & \text{(Connettivi IPC)}                       \\
+                        &            & \mid \forall X \phi \quad  & \text{(Quantificatore su proposizioni)}       \\
+                        &            & \mid \exists X \phi \quad  & \text{(Esistenziale su proposizioni)}
+    \end{array}
+    \tag{$\text{IPC}^2$}
+    \label{eq:ipc2_grammar}
+\end{equation}
+
+\paragraph{Semantica.}
+\begin{description}[leftmargin=3.5em, style=nextline]
+    \item[$\forall X \phi(X)$] Una costruzione generica che, per ogni possibile proposizione $A$, genera una prova di $\phi(A)$.
+    \item[$\exists X \phi(X)$] Una coppia $\langle A, e \rangle$ composta da una specifica proposizione $A$ e dalla sua relativa prova $e$.
+\end{description}
+
+\subsubsection{Logica tipata di ordine superiore (\texorpdfstring{$\text{IPC}_\omega$}{IPCw})}
+L'introduzione dell'asse $z$ abilita la \textbf{gerarchia dei tipi semplici} e l'astrazione funzionale. In questo sistema, la distinzione rigida tra oggetti e funzioni svanisce: 
+ogni entità logica possiede un tipo definito (come $\sigma \to \tau$) e la logica può quantificare su funzioni di qualunque complessità. Questa struttura trasforma il linguaggio 
+in un sistema ricorsivo dove le formule stesse sono trattate come termini di un tipo speciale ($o$), unificando formalmente il calcolo con la logica e ponendo le basi per 
+l'integrazione completa tra sintassi e semantica.
+\paragraph{Grammatica.}
+\begin{equation}
+    \begin{array}{lrll}
+        \text{Tipi:}    & \sigma, \tau & ::= \iota \mid o \mid \sigma \to \tau                  & \text{(Individui, Formule, Funzioni)}  \\
+        \text{Termini:} & M, N         & ::= x^\sigma \mid c^\sigma \quad                       & \text{(Variabili e costanti tipate)}   \\
+                        &              & \mid (M N) \mid (\lambda x^\sigma. M)                  & \text{(Applicazione e Astrazione)}     \\
+        \text{Formule:} & \Phi, \Psi   & ::= M^o \mid \bot \mid \dots \quad                     & \text{(Termini di tipo } o \text{)}    \\
+                        &              & \mid \forall x^\sigma \Phi \mid \exists x^\sigma \Phi  & \text{(Quantificazione su ogni tipo)}
+    \end{array}
+    \tag{$\text{IPC}_\omega$}
+    \label{eq:ipcw_grammar}
+\end{equation}
+
+\paragraph{Semantica.}
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item[Termini $M^o$] Il significato di una formula è determinato dal contenuto informativo (valore) della costruzione definita dal termine di tipo $o$; la verità risiede nell'effettiva esecuzione del processo logico descritto.
+    \item[$\forall x^\sigma \Phi$] Una prova è una costruzione funzionale il cui dominio è l'intero insieme di tutti i termini (costruzioni) appartenenti al tipo $\sigma$ all'interno della gerarchia definita.
+    \item[Identità] La relazione di identità tra prove è determinata dalla convertibilità (riduzione) tra termini: due prove sono considerate identiche se i processi di calcolo che esse sottendono convergono allo stesso risultato.
+\end{description}
+
+\subsubsection{Combinazioni del cubo logico}
+In modo del tutto analogo a quanto osservato per il calcolo dei lambda-termini, l'interazione tra gli assi degli individui ($x$), degli ordini ($y$) e dei tipi ($z$) genera otto sistemi logici distinti. 
+Come mostrato nella Tabella \ref{tab:logic_cube_combinations}, ogni sistema poggia sulle fondamenta della logica proposizionale intuizionista (IPC), estendendone il potere espressivo attraverso diverse 
+forme di quantificazione. Questa gerarchia non è solo una classificazione tassonomica, ma rappresenta lo specchio logico del cubo di Barendregt: la perfetta corrispondenza tra queste classi di logiche e 
+i sistemi di tipo precedentemente analizzati costituisce il cuore dell'isomorfismo che verrà formalizzato nel prossimo capitolo.
+
+\begin{table}[H]
+    \centering
+    \small
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{lcccc}
+        \hline
+        \textbf{Sistema Logico} & \textbf{IPC (Base)} & \textbf{Individui ($x$)} & \textbf{Ordini ($y$)} & \textbf{Tipi ($z$)} \\ 
+                                & (Connettivi)        & (Primo Ordine)           & (Secondo Ordine)      & (Tipi Semplici)     \\ \hline
+        IPC                     & \checkmark          & --                       & --                    & --                  \\
+        IQC / IFOL              & \checkmark          & \checkmark               & --                    & --                  \\
+        $\text{IPC}^2$          & \checkmark          & --                       & \checkmark            & --                  \\
+        ISOL                    & \checkmark          & \checkmark               & \checkmark            & --                  \\
+        $\text{IPC}_\omega$     & \checkmark          & --                       & --                    & \checkmark          \\
+        $\text{IQC}_\omega$     & \checkmark          & \checkmark               & --                    & \checkmark          \\
+        $\text{IPC}^2_\omega$   & \checkmark          & --                       & \checkmark            & \checkmark          \\
+        IHOL                    & \checkmark          & \checkmark               & \checkmark            & \checkmark          \\ \hline
+    \end{tabular}
+    \caption{Le otto combinazioni del cubo logico intuizionista.}
+    \label{tab:logic_cube_combinations}
+\end{table}
