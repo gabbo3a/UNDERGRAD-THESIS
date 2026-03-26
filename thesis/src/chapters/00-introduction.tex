@@ -6,18 +6,18 @@
 
 \subsection{Il problema della correttezza nel software}
 L'ubiquità dei sistemi digitali nella società moderna ha traformato la correttezza del software da una sfida ingegneristica
-a un anecessita critica per la sicurezza pubblica. La correttezza del software rispetto alle specifiche è storicamente l'obbiettivo
-dell'informartica e di conseguenza del'ingegneria del software. Per raggingere questo obbiettivo si sono emerse due correnti 
+a un anecessita critica per la sicurezza pubblica. La correttezza del software rispetto alle specifiche è storicamente l'obiettivo
+dell'informartica e di conseguenza del'ingegneria del software. Per raggingere questo obiettivo si sono emerse due correnti 
 filosofiche distite, che riflettono approcci opposti:
 
 \begin{itemize}
     \item \textbf{L'approccio empirico (Testing):} 
         Questa corrente considera il software come un'entità dinamica da osservare. Attraverso l'esecuzione di un numero finito di casi, detti test,
-        si tenta d'inferire la correttezza generale. Questa metodologia per essendo molto apprezzata e efficace nella partica industriale non potra
+        si tenta d'inferire la correttezza generale. Questa metodologia pur essendo molto apprezzata e efficace nella partica industriale non potra
         mai certificare l'assenza totale di errori del software, detti bug. Il limite citato è cosi noto che esistono terminologie per indicare tali
         comportamenti indesiderati del sistema con \emph{edge cases} e \emph{corner cases}. Nel caso del corner cases la complessita dei sistemi è cosi
         elevata che individuarli precedentemente alla rottura del sistema è praticamete impossibile. Un aspetto dei test esiste ovvero sono facilmente
-        atomatizzabili.
+        automatizzabili.
     \item \textbf{L'approccio deduttivo (Metodi Formali):}
         Questa corrente tratta il software come un oggetto logico-matematico. In questo paradigma, la corettezza è una proprita del software da dimostrare
         tramite specifiche metodologie logiche. Si utilizzano modelli formali, si construiscono prove matematiche con cui si coprono l'interi spazi degli stati
@@ -26,13 +26,13 @@ filosofiche distite, che riflettono approcci opposti:
 \end{itemize}
 Nonostante potrebbe sembrare che la verifica del software annichilisca il testing per le maggiori certezze, non è cosi. Il testing trova spazio nel software non 
 critico dove la velocita di sviluppo è un porta maggior valore della correttezza totale. Come detto il testing da automatizzare è molto semplice, utilizzando 
-\emph{generative test}, questo porta un enorme vantaggio ad software house che si accontentano dell 99\% dei casi della specifica coperti. Ma il vero motivo per cui
-sono si puo fare a meno del testing è legato alla \emph{trusted computing base (TCB)}, trattata in seguito.
+\emph{generative test}, questo porta un enorme vantaggio ad software house che si accontentano dell 99\% dei casi della specifica coperti. Ma il vero motivo per 
+cui non si può fare a meno del testing è legato alla \emph{trusted computing base (TCB)}, trattata in seguito.
 
 \subsubsection{Trusted computing base (TCB)}
 La \emph{trusted computing base (TCB)} è l'insieme di tutti i componenti hardware e software che devono essere necessariamete corretti affinche il sistema matenga
 le sue premesse di sicurezza e correttezza. La verifica formale per sua natura non puo essere utilizzata sul TCB, percio per garantirne la corettezza spesso si utilizzano
-proprio delle metodologie di testing. Nei sistemi critici (es. aerospaziale, medicale, automotive, ferroviario, nucleare e protocolli crittografici), l'obbiettivo è ridurre 
+proprio delle metodologie di testing. Nei sistemi critici (es. aerospaziale, medicale, automotive, ferroviario, nucleare e protocolli crittografici), l'obiettivo è ridurre 
 la TCB il piu possibile, nel software a poche migliaia di righe di codice.
 
 \subsubsection{Differnza tra bug software ed errori logico-matematici}
@@ -55,15 +55,38 @@ particolarmete apprezzati ed utilizzati. Di seguito sono riportati i principali 
 Inoltre la sintassi e semantica dei linguaggi funzionali puri sono vicinissime alle corrispondenti del linguaggio logico-matematico permettando 
 la maggior parte delle volte un traferimento di conoscenze tra ambiti.
 
-% \subsection{Ragioni storiche e tecnologiche}
-% TODO: Evoluzione e ragioni storiche degli strumenti di verifica.
+\subsection{Ragioni storiche e tecnologiche}
+L'esigenza di formalizzare la correttezza del software non è un fenomeno recente, 
+ma affonda le sue radici in una serie di crisi teoriche e fallimenti ingegneristici che hanno segnato il XX secolo.
 
-%\subsubsection{Stato dell'arte degli ITP: Coq, Agda e Lean}
-% TODO: Confronto sintetico. Coq e l'eredità accademica; Agda e i tipi dipendenti; Lean come sintesi moderna 
+\subsubsection{Dalla crisi dei fondamenti alla logica computazionale}
+All'inizio del Novecento, la matematica affrontò la cosiddetta \emph{crisi dei fondamenti}. La scoperta di paradossi logici, come il celebre paradosso di Russell, 
+dimostrò che un approccio ingenuo alla teoria degli insiemi poteva condurre a contraddizioni insanabili. Questo portò dell'intuizionismo di Brouwer. Sebbene i 
+teoremi di incompletezza di Gödel abbiano dimostrato l'impossibilità di un sistema formale perfetto e onnicomprensivo, hanno stabilito i confini del dimostrabile, 
+fornendo la base teorica per la logica su cui poggiano i moderni \emph{interactive theorem provers} (ITP).
+
+\subsubsection{Software crisis}
+Tra gli anni '60 e '80, con l'esplosione della complessità dei sistemi digitali, emerse la \emph{software crisis}: il software diventò così articolato da rendere quasi 
+impossibile garantirne l'affidabilità con i soli metodi tradizionali. Alcuni eventi storici hanno reso evidente la necessità di un approccio formale:
+\begin{itemize}
+    \item \textbf{Therac-25 (1985):} Un errore di sincronizzazione (\emph{race condition}) in un apparato medico causò il decesso di diversi pazienti a causa di dosaggi eccessivi di radiazioni. 
+    \item \textbf{Ariane 5 (1996):} Un semplice errore di \emph{overflow} nel software di controllo causò l'esplosione del lanciatore europeo dopo soli 37 secondi dal lancio, con una perdita economica di centinaia di milioni di dollari.
+\end{itemize}
+Questi casi hanno dimostrato che nei sistemi critici, dove il TCB deve essere ridotto al minimo, il testing non è solo insufficiente, ma pericoloso se considerato come unica garanzia di sicurezza.
+
+\subsubsection{L'evoluzione degli strumenti: da LCF a Lean 4}
+Tecnologicamente, il percorso verso Lean 4 inizia negli anni '70 con il sistema \textbf{LCF} (\emph{Logic for Computable Functions}) di Robin Milner, che introdusse 
+il concetto di "small trusted kernel": un nucleo logico talmente piccolo da poter essere verificato con estrema precisione. Negli ultimi due decenni, tre fattori hanno 
+reso la verifica formale accessibile non solo ai logici, ma anche ai programmatori:
+\begin{enumerate}
+    \item \textbf{Aumento della potenza di calcolo:} Gli algoritmi di unificazione e \emph{type-checking} per logiche complesse richiedono risorse che solo l'hardware moderno può offrire in tempi ragionevoli.
+    \item \textbf{Linguaggi a tipi dipendenti:} L'evoluzione di linguaggi come Coq e Agda ha permesso di esprimere proprietà matematiche sempre più ricche all'interno del sistema dei tipi.
+    \item \textbf{Efficienza implementativa:} Lean 4 rappresenta lo stato dell'arte poiché, a differenza dei suoi predecessori, è un linguaggio \emph{self-hosted} che compila in C, unendo la potenza di un assistente di dimostrazione alla velocità di un linguaggio di programmazione di sistema.
+\end{enumerate}
 
 \section{Obiettivi della tesi}
-L'obbiettivo pricipale della tesi è approfondire il funzionamento e struttura dei sistemi di \emph{interactive theorem provers (ITP)} come Lean 4, 
-con particolare attenzione alla loro fondazione logico-matemantica e implementazione algoritmica coerente.
+L'obiettivo pricipale della tesi è approfondire il funzionamento e struttura dei sistemi di \emph{interactive theorem provers (ITP)} come Lean 4, 
+con particolare attenzione alla loro fondazione logico-matematica e implementazione algoritmica coerente.
 
 \subsection{Studio delle fondazioni logiche e teoriche}
 Uno degli obiettivi centrali della tesi è l'approfondimento dei pilastri teorici che rendono possibile la verifica formale. 
