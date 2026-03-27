@@ -1,0 +1,33 @@
+\ruleblock{Quantificatore Universale ($\forall$)}{
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\Phi(x)} \infer1[($\forall I$)]{\forall x \Phi(x)}
+        \end{prooftree}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\forall x \Phi(x)} \infer1[($\forall E$)]{\Phi[t/x]}
+        \end{prooftree}
+    \end{minipage}
+}{Condizione variabile: per ogni I, x non deve essere libero in nessuna ipotesi attiva. 
+Per ogni E, il termine t deve essere libero per x in $\Phi$.}
+
+\ruleblock{Quantificatore Esistenziale ($\exists$)}{
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\Phi[t/x]} \infer1[($\exists I$)]{\exists x \Phi(x)}
+        \end{prooftree}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\exists x \Phi(x)} \hypo{[\Phi(x)]^i} \infer1{\Psi} \infer2[($\exists E^i$)]{\Psi}
+        \end{prooftree}
+    \end{minipage}
+}{Condizione variabile: in $\exists E$, $x$ non deve essere libero in $\Psi$ o 
+in qualsiasi ipotesi attiva diversa da $[\Phi(x)]^i$.}

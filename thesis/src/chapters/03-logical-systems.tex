@@ -126,7 +126,7 @@ doppia negazione ($\neg \neg A \to A$), con la consapevolezza che tale aggiunta 
 \section{Logica intuizionista}
 
 \subsection{Inferenzialismo}
-La logica intuizionista rappresenta l'espressione piu coerente dell'inferenzialismo semantico, attraverso l'interpretazione BHK (Brouwer-Heyting-Kolmogorov). Nel inferenzialismo
+La logica intuizionista rappresenta l'espressione piu coerente dell'inferenzialismo semantico, attraverso \emph{l'interpretazione BHK} (Brouwer-Heyting-Kolmogorov). Nel inferenzialismo
 il significato dei costrutti delle formule non è determinato da condizioni di verita trascendenti, ma è interamente racchiuso nelle loro condizioni di asseribilità, ovvero
 nelle regole di introduzione e eliminazione della deduzione naturale. La prospettiva inferenzialista trasforma la logica, in una teoria della giustificazione (\emph{proof-theoretic}) 
 dove la verita è la prova stessa anziche una descrizione di stati di verita esterni al sistema logico. La conseguenze di maggior impatto è la fusione  dei concetti di conseguenza logica
@@ -222,14 +222,14 @@ l'esistenza di elementi all'interno di un dominio specifico di individui (termin
     \label{eq:iqc_grammar}
 \end{equation}
 
-\paragraph{Regole.}
-% TODO
-
 \paragraph{Semantica.}
 \begin{description}[leftmargin=3.5em, style=nextline]
     \item[$\forall x \Phi(x)$] Una funzione che, dato un elemento $d$ del dominio, restituisce una prova della proprietà $\Phi(d)$.
     \item[$\exists x \Phi(x)$] Una coppia $\langle d, e \rangle$ dove $d$ è l'individuo scelto (testimone) ed $e$ è l'evidenza che soddisfa $\Phi(d)$.
 \end{description}
+
+\paragraph{Regole.} \breakpara
+\input{chapters/03-rules/ifol.tex}
 
 \subsubsection{Logica proposizionale del secondo ordine (\texorpdfstring{$\text{IPC}^2$}{IPC2})}
 La logica di secondo ordine proposizionale abilita il polimorfismo logico. In questo sistema è possibile quantificare non più solo sugli individui, ma sulle proposizioni stesse. 
@@ -247,14 +247,14 @@ di astrazione su tipi.
     \label{eq:ipc2_grammar}
 \end{equation}
 
-\paragraph{Regole.}
-% TODO
-
 \paragraph{Semantica.}
 \begin{description}[leftmargin=3.5em, style=nextline]
     \item[$\forall X \phi(X)$] Una costruzione generica che, per ogni possibile proposizione $A$, genera una prova di $\phi(A)$.
     \item[$\exists X \phi(X)$] Una coppia $\langle A, e \rangle$ composta da una specifica proposizione $A$ e dalla sua relativa prova $e$.
 \end{description}
+
+\paragraph{Regole.} \breakpara
+\input{chapters/03-rules/ipc2.tex}
 
 \subsubsection{Logica tipata di ordine superiore (\texorpdfstring{$\text{IPC}_\omega$}{IPCw})}
 L'introduzione dell'asse $z$ abilita la \textbf{gerarchia dei tipi semplici} e l'astrazione funzionale. In questo sistema, la distinzione rigida tra oggetti e funzioni svanisce: 
@@ -274,15 +274,15 @@ l'integrazione completa tra sintassi e semantica.
     \label{eq:ipcw_grammar}
 \end{equation}
 
-\paragraph{Regole.}
-% TODO
-
 \paragraph{Semantica.}
 \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
     \item[Termini $M^o$] Il significato di una formula è determinato dal contenuto informativo (valore) della costruzione definita dal termine di tipo $o$; la verità risiede nell'effettiva esecuzione del processo logico descritto.
     \item[$\forall x^\sigma \Phi$] Una prova è una costruzione funzionale il cui dominio è l'intero insieme di tutti i termini (costruzioni) appartenenti al tipo $\sigma$ all'interno della gerarchia definita.
     \item[Identità] La relazione di identità tra prove è determinata dalla convertibilità (riduzione) tra termini: due prove sono considerate identiche se i processi di calcolo che esse sottendono convergono allo stesso risultato.
 \end{description}
+
+\paragraph{Regole.} \breakpara
+\input{chapters/03-rules/ipcw.tex}
 
 \subsubsection{Combinazioni}
 In modo del tutto analogo a quanto osservato per il calcolo dei lambda-termini, l'interazione tra gli assi degli individui ($x$), degli ordini ($y$) e dei tipi ($z$) genera otto sistemi logici distinti. 
