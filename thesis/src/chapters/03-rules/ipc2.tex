@@ -1,0 +1,34 @@
+\ruleblock{Quantificatore Universale di Secondo Ordine ($\forall^2$)}{
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\phi} \infer1[($\forall^2 I$)]{\forall X \phi}
+        \end{prooftree}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\forall X \phi} \infer1[($\forall^2 E$)]{\phi[A/X]}
+        \end{prooftree}
+    \end{minipage}
+}{Le regole per il quantificatore universale di secondo ordine consentono 
+la quantificazione sulle proposizioni $X$, dove $A$ è una formula che 
+sostituisce la variabile di tipo.}
+
+\ruleblock{Quantificatore Esistenziale di Secondo Ordine ($\exists^2$)}{
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\phi[A/X]} \infer1[($\exists^2 I$)]{\exists X \phi}
+        \end{prooftree}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\exists X \phi} \hypo{[\phi]^i} \infer1{\psi} \infer2[($\exists^2 E^i$)]{\psi}
+        \end{prooftree}
+    \end{minipage}
+}{Il quantificatore esistenziale di secondo ordine consente la costruzione 
+e l'eliminazione di tipi esistenziali polimorfici.}
