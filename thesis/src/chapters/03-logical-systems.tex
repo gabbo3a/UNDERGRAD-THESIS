@@ -57,11 +57,21 @@ logico esiste una regola di \emph{introduzione} (che definisce come costruire un
 logica intuizionista poiché.
 \begin{center}
     \begin{prooftree}
+        \hypo{ [A]^i }
+        \infer1[$\vdots$]{ B }
+        \infer1[($\to I^i$)]{ A \to B }
+    \end{prooftree}
+    \hfil
+    \begin{prooftree}
         \hypo{ A \to B }
         \hypo{ A }
         \infer2[($\to E$)]{ B }
     \end{prooftree}
 \end{center}
+Nello specifico ogni regola di intriduzione ha il costrutto da cui prende il nome sotto la retta ovvero nelle conclusioni, al contrario nelle regole di eliminazione il costrutto è sopra. Dalla posizione dei costrutti
+nelle regole viene mutuato i sostantivi di introduzione e eliminazione rispetto alla tesi. Un altro costrutto importante è ipotesi $[A]^i$. Una ipotesi è un debito logico, tramite il quale si puo assumere una verita, 
+tipicamente avviene nelle introduzioni. L'indice i è fondamentale per collegare la regola di introduzione alla specifica ipotesi, questa pratica si dice scaricare le ipotesi. Se non si scaricassero tutte le ipotesi
+allora non si ottiene un teorema $\vdash \psi$, ma una formula dipendente da un contesto $A \vdash \psi$.
 
 \subsubsection{Calcolo dei sequenti}
 Sempre introdotto da Gentzen, il calcolo dei sequenti non opera su singole formule ma su \emph{sequenti} del tipo $\Gamma \vdash \Delta$, che rappresentano una relazione tra un insieme di assunzioni e un insieme di conclusioni. 
@@ -163,7 +173,7 @@ in cui la distinzione tra formule e termini viene unificata all'interno di una g
 \paragraph{Metodologia semantica.}
 È importante notare, che almeno per ora, limiteremo la trattazione della semantica delle logiche intuistioniste utilizzando la semantica BHK. Tale semantica sebbene informale (pre-matematica) 
 è sia abbastanza precisa che intuitiva da permetterci di cogliere il contenuto informativo della logica, fungendo da giustificazione concettuale per le regole di inferenza. La sematica BHK 
-definisce la verità di una formula in termini di ciò che costituisce una sua dimostrazione, utiizza la ricorsione permessa dalla composizionalita della sintassi.
+definisce la verità di una formula in termini di ciò che costituisce una sua dimostrazione, utilizza la ricorsione grazie alla permessa dalla composizionalita della sintassi.
 
 \subsubsection{Logica proposizionale intuizionista (IPC)}
 La logica proposizionale rappresenta il nucleo atomico dei sistemi logici. Essa permette di manipolare enunciati atomici e di comporli attraverso connettivi logici, 
@@ -172,11 +182,11 @@ estensioni del cubo.
 \paragraph{Grammatica.}
 \begin{equation}
     \begin{array}{lrll}
-        \text{Formule:} & \phi, \psi & ::= p \quad                  & \text{(Variabili proposizionali)} \\
-                        &            & \mid \bot \quad              & \text{(Falso / Assurdo)}          \\
-                        &            & \mid \phi \land \psi \quad   & \text{(Congiunzione)}             \\
-                        &            & \mid \phi \lor \psi \quad    & \text{(Disgiunzione)}             \\
-                        &            & \mid \phi \to \psi \quad     & \text{(Implicazione)}
+        \text{Formulas:} & \phi, \psi & ::= p \quad                  & \text{(Variabili proposizionali)} \\
+                         &            & \mid \bot \quad              & \text{(Falso / Assurdo)}          \\
+                         &            & \mid \phi \land \psi \quad   & \text{(Congiunzione)}             \\
+                         &            & \mid \phi \lor \psi \quad    & \text{(Disgiunzione)}             \\
+                         &            & \mid \phi \to \psi \quad     & \text{(Implicazione)}
     \end{array}
     \quad \text{con } \neg \phi \equiv \phi \to \bot
     \tag{IPC}
@@ -192,6 +202,9 @@ estensioni del cubo.
     \item[$\neg \phi$] Equivalente a $\phi \to \bot$, la sua prova è una costruzione che trasforma ogni ipotetica evidenza di $\phi$ in una prova della contraddizione ($\bot$), mostrandone l'asseribilità impossibile.
 \end{description}
 
+\paragraph{Regole.} \breakpara
+\input{chapters/03-rules/ipc.tex}
+
 \subsubsection{Logica predicativa del primo ordine (IQC / IFOL)}
 L'introduzione della logica del primo ordine permette di analizzare la struttura interna delle proposizioni isolando oggetti e proprietà. Questo sistema consente di esprimere leggi universali o 
 l'esistenza di elementi all'interno di un dominio specifico di individui (termini), rendendo il linguaggio capace di modellare domini matematici come l'aritmetica.
@@ -199,15 +212,18 @@ l'esistenza di elementi all'interno di un dominio specifico di individui (termin
 \paragraph{Grammatica.}
 \begin{equation}
     \begin{array}{lrll}
-        \text{Termini:}  & t, u      & ::= x \mid c \mid f(t_1, \dots, t_n) & \text{(Variabili, Costanti, Funzioni)} \\
-        \text{Formule:} & \Phi, \Psi & ::= P(t_1, \dots, t_n) \quad         & \text{(Predicati atomici)}             \\
-                        &            & \mid \bot \mid \dots \quad           & \text{(Connettivi IPC)}                \\
-                        &            & \mid \forall x \Phi \quad            & \text{(Quantificatore Universale)}     \\
-                        &            & \mid \exists x \Phi \quad            & \text{(Quantificatore Esistenziale)}
+        \text{Terms:}    & t, u       & ::= x \mid c \mid f(t_1, \dots, t_n) & \text{(Variabili, Costanti, Funzioni)} \\
+        \text{Formulas:} & \Phi, \Psi & ::= P(t_1, \dots, t_n) \quad         & \text{(Predicati atomici)}             \\
+                         &            & \mid \bot \mid \dots \quad           & \text{(Connettivi IPC)}                \\
+                         &            & \mid \forall x \Phi \quad            & \text{(Quantificatore Universale)}     \\
+                         &            & \mid \exists x \Phi \quad            & \text{(Quantificatore Esistenziale)}
     \end{array}
     \tag{IQC}
     \label{eq:iqc_grammar}
 \end{equation}
+
+\paragraph{Regole.}
+% TODO
 
 \paragraph{Semantica.}
 \begin{description}[leftmargin=3.5em, style=nextline]
@@ -222,14 +238,17 @@ di astrazione su tipi.
 \paragraph{Grammatica.}
 \begin{equation}
     \begin{array}{lrll}
-        \text{Formule:} & \phi, \psi & ::= X \quad                & \text{(Variabili proposizionali/predicative)} \\
-                        &            & \mid \bot \mid \dots \quad & \text{(Connettivi IPC)}                       \\
-                        &            & \mid \forall X \phi \quad  & \text{(Quantificatore su proposizioni)}       \\
-                        &            & \mid \exists X \phi \quad  & \text{(Esistenziale su proposizioni)}
+        \text{Formulas:} & \phi, \psi & ::= X \quad                & \text{(Variabili proposizionali/predicative)} \\
+                         &            & \mid \bot \mid \dots \quad & \text{(Connettivi IPC)}                       \\
+                         &            & \mid \forall X \phi \quad  & \text{(Quantificatore su proposizioni)}       \\
+                         &            & \mid \exists X \phi \quad  & \text{(Esistenziale su proposizioni)}
     \end{array}
     \tag{$\text{IPC}^2$}
     \label{eq:ipc2_grammar}
 \end{equation}
+
+\paragraph{Regole.}
+% TODO
 
 \paragraph{Semantica.}
 \begin{description}[leftmargin=3.5em, style=nextline]
@@ -245,15 +264,18 @@ l'integrazione completa tra sintassi e semantica.
 \paragraph{Grammatica.}
 \begin{equation}
     \begin{array}{lrll}
-        \text{Tipi:}    & \sigma, \tau & ::= \iota \mid o \mid \sigma \to \tau                  & \text{(Individui, Formule, Funzioni)}  \\
-        \text{Termini:} & M, N         & ::= x^\sigma \mid c^\sigma \quad                       & \text{(Variabili e costanti tipate)}   \\
-                        &              & \mid (M N) \mid (\lambda x^\sigma. M)                  & \text{(Applicazione e Astrazione)}     \\
-        \text{Formule:} & \Phi, \Psi   & ::= M^o \mid \bot \mid \dots \quad                     & \text{(Termini di tipo } o \text{)}    \\
-                        &              & \mid \forall x^\sigma \Phi \mid \exists x^\sigma \Phi  & \text{(Quantificazione su ogni tipo)}
+        \text{Types:}       & \sigma, \tau & ::= \iota \mid o \mid \sigma \to \tau                  & \text{(Individui, Formule, Funzioni)}  \\
+        \text{Terms:}       & M, N         & ::= x^\sigma \mid c^\sigma \quad                       & \text{(Variabili e costanti tipate)}   \\
+                            &              & \mid (M N) \mid (\lambda x^\sigma. M)                  & \text{(Applicazione e Astrazione)}     \\
+        \text{Formulas:}    & \Phi, \Psi   & ::= M^o \mid \bot \mid \dots \quad                     & \text{(Termini di tipo } o \text{)}    \\
+                            &              & \mid \forall x^\sigma \Phi \mid \exists x^\sigma \Phi  & \text{(Quantificazione su ogni tipo)}
     \end{array}
     \tag{$\text{IPC}_\omega$}
     \label{eq:ipcw_grammar}
 \end{equation}
+
+\paragraph{Regole.}
+% TODO
 
 \paragraph{Semantica.}
 \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
@@ -262,7 +284,7 @@ l'integrazione completa tra sintassi e semantica.
     \item[Identità] La relazione di identità tra prove è determinata dalla convertibilità (riduzione) tra termini: due prove sono considerate identiche se i processi di calcolo che esse sottendono convergono allo stesso risultato.
 \end{description}
 
-\subsubsection{Combinazioni del cubo logico}
+\subsubsection{Combinazioni}
 In modo del tutto analogo a quanto osservato per il calcolo dei lambda-termini, l'interazione tra gli assi degli individui ($x$), degli ordini ($y$) e dei tipi ($z$) genera otto sistemi logici distinti. 
 Come mostrato nella Tabella \ref{tab:logic_cube_combinations}, ogni sistema poggia sulle fondamenta della logica proposizionale intuizionista (IPC), estendendone il potere espressivo attraverso diverse 
 forme di quantificazione. Questa gerarchia non è solo una classificazione tassonomica, ma rappresenta lo specchio logico del cubo di Barendregt: la perfetta corrispondenza tra queste classi di logiche e 
@@ -272,18 +294,18 @@ i sistemi di tipo precedentemente analizzati costituisce il cuore dell'isomorfis
     \centering
     \small
     \setlength{\tabcolsep}{4pt}
-    \begin{tabular}{lcccc}
+    \begin{tabular}{ccccc}
         \hline
-        \textbf{Sistema Logico} & \textbf{IPC (Base)} & \textbf{Individui ($x$)} & \textbf{Ordini ($y$)} & \textbf{Tipi ($z$)} \\ 
-                                & (Connettivi)        & (Primo Ordine)           & (Secondo Ordine)      & (Tipi Semplici)     \\ \hline
-        IPC                     & \checkmark          & --                       & --                    & --                  \\
-        IQC / IFOL              & \checkmark          & \checkmark               & --                    & --                  \\
-        $\text{IPC}^2$          & \checkmark          & --                       & \checkmark            & --                  \\
-        ISOL                    & \checkmark          & \checkmark               & \checkmark            & --                  \\
-        $\text{IPC}_\omega$     & \checkmark          & --                       & --                    & \checkmark          \\
-        $\text{IQC}_\omega$     & \checkmark          & \checkmark               & --                    & \checkmark          \\
-        $\text{IPC}^2_\omega$   & \checkmark          & --                       & \checkmark            & \checkmark          \\
-        IHOL                    & \checkmark          & \checkmark               & \checkmark            & \checkmark          \\ \hline
+        \textbf{Sistema}      & \textbf{IPC} & \textbf{Individui} & \textbf{Ordini}  & \textbf{Tipi}   \\ 
+        \textbf{Logico}       & (Connettivi) & (Primo Ordine)     & (Secondo Ordine) & (Tipi Semplici) \\ \hline
+        IPC                   & \checkmark   & --                 & --               & --              \\
+        IFOL                  & \checkmark   & \checkmark         & --               & --              \\
+        $\text{IPC}^2$        & \checkmark   & --                 & \checkmark       & --              \\
+        ISOL                  & \checkmark   & \checkmark         & \checkmark       & --              \\
+        $\text{IPC}_\omega$   & \checkmark   & --                 & --               & \checkmark      \\
+        $\text{IQC}_\omega$   & \checkmark   & \checkmark         & --               & \checkmark      \\
+        $\text{IPC}^2_\omega$ & \checkmark   & --                 & \checkmark       & \checkmark      \\
+        IHOL                  & \checkmark   & \checkmark         & \checkmark       & \checkmark      \\ \hline
     \end{tabular}
     \caption{Le otto combinazioni del cubo logico intuizionista.}
     \label{tab:logic_cube_combinations}
@@ -297,11 +319,11 @@ può spaziare su qualsiasi tipo della gerarchia. Rappresenta il sistema più esp
 \paragraph{Grammatica.}
 \begin{equation}
     \begin{array}{lrll}
-        \text{Tipi:}    & \sigma, \tau & ::= \iota \mid o \mid \sigma \to \tau                  & \text{(Individui, Formule, Funzioni)}  \\
-        \text{Termini:} & M, N         & ::= x^\sigma \mid c^\sigma \quad                       & \text{(Variabili e costanti tipate)}   \\
-                        &              & \mid (M N) \mid (\lambda x^\sigma. M)                  & \text{(Applicazione e Astrazione)}     \\
-        \text{Formule:} & \Phi, \Psi   & ::= M^o \mid \bot \mid \dots \quad                     & \text{(Termini di tipo } o \text{)}    \\
-                        &              & \mid \forall x^\sigma \Phi \mid \exists x^\sigma \Phi  & \text{(Quantificazione su ogni tipo)}
+        \text{Types:}       & \sigma, \tau & ::= \iota \mid o \mid \sigma \to \tau                  & \text{(Individui, Formule, Funzioni)}  \\
+        \text{Terms:}       & M, N         & ::= x^\sigma \mid c^\sigma \quad                       & \text{(Variabili e costanti tipate)}   \\
+                            &              & \mid (M N) \mid (\lambda x^\sigma. M)                  & \text{(Applicazione e Astrazione)}     \\
+        \text{Formulas:}    & \Phi, \Psi   & ::= M^o \mid \bot \mid \dots \quad                     & \text{(Termini di tipo } o \text{)}    \\
+                            &              & \mid \forall x^\sigma \Phi \mid \exists x^\sigma \Phi  & \text{(Quantificazione su ogni tipo)}
     \end{array}
     \tag{IHOL}
     \label{eq:ihol_grammar}
@@ -319,7 +341,7 @@ In IHOL, la verità di una formula non è un valore statico, ma è legata alla d
 originariamente per i termini del $\lambda$-calcolo, operano qui per determinare l'equivalenza tra formule. Due enunciati sono considerati logicamente indistinguibili se i 
 termini di tipo $o$ che li definiscono sono convertibili tra loro.
 
-\subsection{Unificazione dei costruttori in IHOL}
+\subsection{Unificazione dei costrutti in IHOL}
 La gerarchia dei tipi di IHOL permette al quantificatore universale ($\forall x^\sigma \Phi$) di assumere significati logici differenti a seconda del tipo $\sigma$ su cui agisce:
 \begin{itemize}[leftmargin=1.5em]
     \item Se $\sigma = \iota$, si ricade nella logica del primo ordine (quantificazione su individui).

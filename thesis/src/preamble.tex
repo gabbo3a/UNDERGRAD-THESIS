@@ -50,6 +50,23 @@
         labelfont=bf                % Set the label (e.g., "Listing 1.1") in bold face
     }
 
+% Def: Paragraph break
+\newcommand{\breakpara}{\leavevmode\par\vspace{0.3em}}
+
+% Def:    Ruleblock template
+% Arg #1: Title (e.g., Implication)
+% Arg #2: Tree Contents (minipage, test trees)
+% Arg #3: Comment
+\newcommand{\ruleblock}[3]{
+    \noindent\rule{\textwidth}{0.4pt}
+    \vspace{0.3em}
+    \noindent \textbf{#1} 
+    \begin{center} \small #2 \end{center}
+    \vspace{-0.5em}
+    \noindent {\small \textit{#3}}
+    \vspace{1.5em}
+}
+
 % Lean Language Configuration (Safe for UTF-8)
 \lstdefinelanguage{lean}{
     keywords={

@@ -1,0 +1,86 @@
+\ruleblock{Assurdo ($\bot$)}{
+    \begin{prooftree}
+        \hypo{\bot} 
+        \infer1[($\bot E$)]{\phi}
+    \end{prooftree}
+}
+{La regola di eliminazione esprime il principio "ex falso quodlibet". 
+Non esiste una regola di introduzione poiché, secondo la semantica BHK, 
+una contraddizione non ha dimostrazione costruttiva.}
+
+\ruleblock{Implicazione ($\to$)}{
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{[\phi]^i} 
+            \infer1{\psi} 
+            \infer1[($\to I^i$)]{\phi \to \psi}
+        \end{prooftree}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\phi \to \psi} 
+            \hypo{\phi} 
+            \infer2[($\to E$)]{\psi}
+        \end{prooftree}
+    \end{minipage}
+}{La regola di introduzione estingue il debito logico $[\phi]^i$ internalizzandolo in 
+un costruttore al di sotto della riga. Viceversa, la regola di eliminazione consuma 
+l'implicazione al di sopra della riga per rilasciare la conclusione.}
+
+\ruleblock{Congiunzione ($\land$)}{
+    \begin{minipage}{0.38\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\phi} 
+            \hypo{\psi} 
+            \infer2[($\land I$)]{\phi \land \psi}
+        \end{prooftree}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.58\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\phi \land \psi} 
+            \infer1[($\land E_1$)]{\phi}
+        \end{prooftree}
+        \quad
+        \begin{prooftree}
+            \hypo{\phi \land \psi} 
+            \infer1[($\land E_2$)]{\psi}
+        \end{prooftree}
+    \end{minipage}
+}{La regola di introduzione sintetizza una coppia di verità al di sotto della linea.
+Le regole di eliminazione agiscono come proiezioni, analizzando e decostruendo il
+termine posto al di sopra della linea.}
+
+\ruleblock{Disjunction ($\lor$)}{
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\phi} 
+            \infer1[($\lor I_1$)]{\phi \lor \psi}
+        \end{prooftree}
+        \qquad
+        \begin{prooftree}
+            \hypo{\psi} 
+            \infer1[($\lor I_2$)]{\phi \lor \psi}
+        \end{prooftree}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.48\textwidth} 
+        \centering
+        \small
+        \begin{prooftree}
+            \hypo{\phi \lor \psi} 
+            \hypo{[\phi]^i} \infer1{\chi} 
+            \quad 
+            \hypo{[\psi]^j} \infer1{\chi} 
+            \infer3[($\lor E^{i,j}$)]{\chi}
+        \end{prooftree}
+    \end{minipage}
+}{La regola di eliminazione esegue un'analisi dei casi sul costruttore sopra 
+la riga, estinguendo simultaneamente due debiti ipotetici ($i, j$) per 
+raggiungere una conclusione comune.}
