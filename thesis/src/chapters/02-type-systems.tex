@@ -272,9 +272,9 @@ sistemi di tipo per la maggior parte delle combinazioni sono l'unione dei nomi d
 \begin{table}[H]
     \centering
     \small
-    \begin{tabular}{lcccc}
+    \begin{tabular}{ccccc}
         \hline
-        \textbf{Sistema}                 & \textbf{Term-Term} & \textbf{Term-Tipo} & \textbf{Tipo-Tipo}             & \textbf{Tipo-Term} \\ 
+        \textbf{Sistema}                 & \textbf{Term-Term} & \textbf{Term-Type} & \textbf{Type-Type}             & \textbf{Type-Term} \\ 
                                          & ($\lambda^\to$)    & ($\lambda 2$)      & ($\lambda \underline{\omega}$) & ($\lambda \Pi$)    \\ \hline
         $\lambda^\to$                    & \checkmark         & --                 & --                             & --                 \\
         $\lambda 2$                      & \checkmark         & \checkmark         & --                             & --                 \\
@@ -323,7 +323,7 @@ loro dominio di applicazione.Mentre nei sistemi più semplici (come il sistema $
 nel CoC esse agiscono in modo uniforme sull'intera categoria dei pseudo-termini. Ciò significa che la computazione non è più confinata alla fase di esecuzione, 
 ma diventa parte integrante della definizione stessa dei tipi.
 
-\subsection{Unificazione dei costruttori nel CoC}
+\subsection{Unificazione dei costrutti nel CoC}
 L'unione delle categorie sintattiche permette al prodotto dipendente ($\Pi x : A. B$) di agire come \emph{costruttore universale}. L'unificazione dal CoC permette 
 al tipo $\Pi$ di assumere significati logici e computazionali differenti a seconda della natura (ovvero del \textit{sort}) dei termini coinvolti:
 \begin{description}
