@@ -51,3 +51,45 @@ che ne testimonia la correttezza. Il \emph{type checking} agisce quindi come un 
 L'importanza di tale isomorfismo risiede nella possibilità di traslare i risultati di un dominio nell'altro. Il dominio
 della programmaizone riceve rigore logico-matematico, invece il dominio della logica riceve una connotazione algoritmica con il
 quale verificare le dimostrazioni.
+
+\subsection{Indipendeza dalla semantica}
+Un aspetto fondamentale dell'isomorfismo di Curry-Howard è la sua natura puramente \emph{sintattica}. La corrispondenza non dipende 
+dall'interpretazione semantica dei termini, ma esclusivamente dalle regole di formazione e manipolazione dei simboli. In questo contesto, 
+la validità di una dimostrazione logica non è legata al concetto di verità assoluta in un modello, bensì alla corretta applicazione delle 
+regole di inferenza. Nel $\lambda$-calcolo, la correttezza di un programma è garantita dal rispetto dei vincoli sintattici imposti dal 
+sistema di tipi. Questa indipendenza permette di traslare le proprietà del $\lambda$-calcolo tipato in garanzie di coerenza logica. Se un 
+sistema di tipi è corretto (sound), esso non permetterà mai la costruzione di un termine che abiti il tipo vuoto ($\bot$), indipendentemente 
+dalla semantica operazionale del linguaggio sottostante. L'effetto di maggiore impatto di tale indipendeza è la possibilta di poter utilizzare 
+la logica intuizionistica e le sue regole per la dimostrazione del'isomorfismo. Nonostante in questo momento della trattazione su tale logica 
+non sia ancora definita una semantica rigorosa. 
+
+\subsection{Metodologia dimostrativa}
+La metodologia utilizzata per stabilire l'isomorfismo tra i sistemi di tipo e i sistemi logici si basa sulla comparazione strutturale tra
+gli \emph{alberi di derivazione} della deduzione naturale e gli \emph{alberi di tipizzazione} del $\lambda$-calcolo. I type checking nella 
+precedente trattazione sono stati definiti come oggetti operazionali, un algortmi ricorsivo. Tale definizione rende implicito l'albero di 
+tipizzazione, la struttura della computazione, che pero è il vero oggetto del'isomorfismo. La dimostrazione per induzione sulla struttura 
+degli alberi di derivazione avrà come obiettivo la preservazione dei seguenti costrutti e proprietà fondamentali.
+
+
+\paragraph{Corrispondenze statiche.}
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item[Isomorfismo dei giudizi] 
+    Si stabilisce l'identità formale $\Gamma \vdash M : A \iff \Gamma \vdash A$. Il contesto $\Gamma$ rappresenta simultaneamente l'insieme 
+    delle dichiarazioni di tipo per le variabili e l'insieme delle ipotesi logiche attive. In questo senso, il termine $M$ non è un elemento 
+    esterno, ma la prova stessa della proposizione $A$ derivata sotto le ipotesi contenute in $\Gamma$.
+    \item[Mappatura delle regole di inferenza] 
+        Per ogni asse del cubo, si dimostra che ogni regola di formazione dei tipi (sintattica) è isomorfa a una regola di introduzione o 
+        eliminazione di un connettivo logico. L'albero di tipizzazione del termine $M$ riproduce esattamente i passi della derivazione logica.
+    \item[Identità tra astrazione e scaricamento] 
+        L'astrazione funzionale ($\lambda x:A$) mappa sul costrutto logico di \emph{scaricare un'ipotesi}. Il legame (\emph{binding}) sintattico 
+        della variabile $x$ nel termine garantisce la chiusura della sezione corrispondente nell'albero di derivazione.
+\end{description}
+
+\paragraph{Corrispondenze dinamiche.}
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item[Riduzione come semplificazione] 
+        La $\beta$-riduzione dei termini corrisponde al processo di \emph{cut-elimination} (o normalizzazione) della logica. Calcolare un valore equivale a trasformare una dimostrazione indiretta in una \emph{forma normale} priva di passaggi ridondanti.
+    
+    \item[Coerenza e non-abitabilità] 
+        La coerenza del sistema logico (l'impossibilità di dimostrare il falso $\bot$) mappa sulla non-abitabilità del tipo vuoto. Un sistema di tipi solido (\emph{sound}) assicura che non esista alcun termine chiuso capace di testimoniare una contraddizione logica.
+\end{description}
