@@ -1,3 +1,53 @@
 % !TEX root = ../main.tex
 \chapter{Corrispondenza di Curry-Howard}
 \label{chap:curry_howard_isomorphism}
+
+\section{Definizione generale di isomorfismo}
+Il concetto di \emph{isomorfismo} è uno dei pilastri della matemantica. Esso identifica una relazione di equivalenza 
+profonda tra due strutture che, pur operando in domini distinti e/o utilizzando notazioni distinte, condividono la 
+medesima architettura interna. In questa sezione definiremo le condizioni necessarie e sufficenti affinche due sistemi 
+formali possano considerarsi isomorfi. 
+
+\subsection{Biunivocità e preservazione della struttura}
+In termini algebrici classici, un isomorfismo tra due strutture di $\mathcal{X}$ e $\mathcal{Y}$ è definito come un 
+\emph{omomorfismo biunivoco}. Se consideriamo due insiemi dotati di operazioni interne $(\mathcal{X}, C_{\mathcal{X}})$ 
+e $(\mathcal{Y}, C_{\mathcal{Y}})$, un funzione $f: \mathcal{X} \to \mathcal{Y}$ è un isomorfismo se soddisfa:
+
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item[Biunivocità] 
+        La funzione $f$ deve essere una biiezione. Questo garantisce l'esistenza di una funzione inversa $f^{-1}$, permettendo
+        un processo di \emph{round-trip} tra due domini. In un sistema formale, ciò assicura che non vi sia perdita di contenuto 
+        informativo, ogni elemento del primo sistema ha un'immagine unica nel secondo e viceversa.
+    \item[Omomorfismo]
+        La funzione deve preservare la struttura delle operazioni. Per n-upla di elementi $x_1, \dots, x_n \in \mathcal{X}$ deve 
+        valere l'identita, $f(C_{\mathcal{X}}(x_1, \dots, x_n)) = C_{\mathcal{Y}}(f(x_1), \dots, f(x_n))$.
+\end{description}
+
+\section{L'isomorfismo di Curry-Howard}
+L'isomorfismo di Curry-Howard stabilisce un'identità tra la teoria della dimostrazione e la teoria del tipi. Secondo tale 
+principio, una proposizione logica non è una affermazione binaria, ma un \emph{tipo}. Tale identità porta una dimostrazione 
+a essere un \emph{termine} appartenente a un determinato tipo. Questa corrispondenza trasforma l'attività logica e quella 
+computazionale in due manifestazioni del medesimo processo formale.
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{lll}
+        \hline
+        \textbf{Categoria} & \textbf{Logica}   & \textbf{Informatica} \\ \hline
+        Oggetto astratto   & Proposizione $A$  & Tipo $\tau$          \\
+        Oggetto concreto   & Dimostrazione $d$ & Termine $M$          \\
+        Validità           & $d$ prova $A$     & $M : \tau$           \\
+        Assunzioni         & Ipotesi           & Contesto $\Gamma$    \\
+        Provabilità        & Teorema           & Abitabilità          \\
+        Contraddizione     & Falso ($\bot$)    & Tipo vuoto           \\
+        Dinamica           & Semplificazione   & $\beta$-riduzione    \\
+        Risultato          & Prova normale     & Forma normale        \\ \hline
+    \end{tabular}
+    \caption{Corrispondenze sintetiche dell'isomorfismo.}
+    \label{tab:curry_howard_isomorphism}
+\end{table}\noindent
+Questa mappatura implica che la validità di una formula coincida con la costruzione di un oggetto matematico, il termine,
+che ne testimonia la correttezza. Il \emph{type checking} agisce quindi come un verificatore meccanico di prove logiche.
+L'importanza di tale isomorfismo risiede nella possibilità di traslare i risultati di un dominio nell'altro. Il dominio
+della programmaizone riceve rigore logico-matematico, invece il dominio della logica riceve una connotazione algoritmica con il
+quale verificare le dimostrazioni.

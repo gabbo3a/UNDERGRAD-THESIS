@@ -19,14 +19,14 @@ Un sistema logico è formalmente definito dalla terna $\mathcal{L} = \langle \ma
 % TODO: aggiungere valida, soddisfacibile, contraddizione
 
 \section{Sistemi di deduzione}
-Un sistema di sistema di deduzione (o sistema di prova) si definisce come un algoritmo d'inferenza preposto alla generazione di dimostrazioni. Mentre il sistema logico stabilisce, 
+Un sistema di deduzione (o sistema di prova) si definisce come un algoritmo d'inferenza preposto alla generazione di dimostrazioni. Mentre il sistema logico stabilisce, 
 sul piano semantico, quali enunciati siano conseguenza logica di altri ($\Gamma \models A$), un sistema di prova definisce un insieme finito di regole sintattiche atte 
 a derivare tali conclusioni attraverso passaggi meccanici. In tal senso, il sistema di prova rappresenta il corrispettivo sintattico della relazione di conseguenza logica
 $\models$. Tale relazione di derivabilità sintattica viene formalmente indicata con il simbolo di turnstile $\vdash$.
 
 \subsection{Correttezza (Soundness)} 
 La correttezza o soundness è la proprita di un sistema di deduzione di derivare solo verita rispetto al sistema logico di riferimento. Nello specifico,
-se si prova $A$ nel sistema ($\Gamma \vdash A$), allora $A$ è una verità logica ($\Gamma \models A$). Il mio sistema non produce errori.
+se $A$ è derivabile ($\Gamma \vdash A$), allora $A$ è una verità logica ($\Gamma \models A$). Il mio sistema non produce errori.
 
 \subsection{Completezza (Completeness)}
 La completezza o completeness è la proprita di un sistema di deduzione di poter derivare tutte verita possibili rispetto a un sistema logico. Nello specifico,
@@ -34,8 +34,8 @@ Se $A$ è una verità logica ($\Gamma \models A$), allora esiste certamente una 
 potente da trovare tutte le verità.    
 
 \subsection{Classificazione di sistemi di deduzione}
-La classificazione dei sistemi di deduzione è secondo molti punti di vista connfusionaria, tale confuzione è dovuta alla natura algoritmica degli stessi applicata alle filosofie specifiche
-di ogni logica. Nonostante i sistemi di deduzione siano indipendenti dalla logiche ne devono rispettare intrinseca definizione di verita derivato dalla semantica. Inoltre sono sistemi d'inferenza
+La classificazione dei sistemi di deduzione è secondo molti punti di vista confusionaria, tale confusione è dovuta alla natura algoritmica degli stessi applicata alle filosofie specifiche
+di ogni logica. Nonostante i sistemi di deduzione siano indipendenti dalla logiche ne devono ispettarne l'intrinseca definizione di verita derivato dalla semantica. Inoltre sono sistemi d'inferenza
 percio algoritmi sintattici, questo loro aspetto viene potenziato e valorizzato in molti sistemi logici mentre in altri viene solamente utilizzato come strumento posteriore. Di seguito sono riportati
 i sistemi di deduzione piu utilizzati. 
 
@@ -195,11 +195,21 @@ estensioni del cubo.
 
 \paragraph{Semantica.}
 \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
-    \item[$\phi \land \psi$] Una prova è costituita da una coppia ordinata $\langle e_1, e_2 \rangle$ che contiene simultaneamente un'evidenza $e_1$ per $\phi$ e un'evidenza $e_2$ per $\psi$.
-    \item[$\phi \lor \psi$] Una prova è una coppia $\langle i, e \rangle$ dove l'indice $i \in \{0, 1\}$ agisce da selettore: se $i=0$ l'evidenza $e$ prova il disgiunto $\phi$, mentre se $i=1$ essa prova il disgiunto $\psi$.
-    \item[$\phi \to \psi$] Una prova è una costruzione funzionale $f$ in grado di trasformare ogni possibile prova di $\phi$ in una prova di $\psi$, definendo così un metodo effettivo di derivazione.
-    \item[$\bot$] Rappresenta l'assurdo logico e non possiede alcuna prova; coerentemente, non è possibile fornire alcuna costruzione valida per questo enunciato.
-    \item[$\neg \phi$] Equivalente a $\phi \to \bot$, la sua prova è una costruzione che trasforma ogni ipotetica evidenza di $\phi$ in una prova della contraddizione ($\bot$), mostrandone l'asseribilità impossibile.
+    \item[$\phi \land \psi$] 
+        Una prova è costituita da una coppia ordinata $\langle e_1, e_2 \rangle$ che contiene simultaneamente un'
+        evidenza $e_1$ per $\phi$ e un'evidenza $e_2$ per $\psi$.
+    \item[$\phi \lor \psi$] 
+        Una prova è una coppia $\langle i, e \rangle$ dove l'indice $i \in \{0, 1\}$ agisce da selettore: se $i=0$ 
+        l'evidenza $e$ prova il disgiunto $\phi$, mentre se $i=1$ essa prova il disgiunto $\psi$.
+    \item[$\phi \to \psi$] 
+        Una prova è una costruzione funzionale $f$ in grado di trasformare ogni possibile prova di $\phi$ in una prova 
+        di $\psi$, definendo così un metodo effettivo di derivazione.
+    \item[$\bot$] 
+        Rappresenta l'assurdo logico e non possiede alcuna prova; coerentemente, non è possibile fornire alcuna 
+        costruzione valida per questo enunciato.
+    \item[$\neg \phi$] 
+        Equivalente a $\phi \to \bot$, la sua prova è una costruzione che trasforma ogni ipotetica evidenza di 
+        $\phi$ in una prova della contraddizione ($\bot$), mostrandone l'asseribilità impossibile.
 \end{description}
 
 \paragraph{Regole.} \breakpara
@@ -276,9 +286,15 @@ l'integrazione completa tra sintassi e semantica.
 
 \paragraph{Semantica.}
 \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
-    \item[Termini $M^o$] Il significato di una formula è determinato dal contenuto informativo (valore) della costruzione definita dal termine di tipo $o$; la verità risiede nell'effettiva esecuzione del processo logico descritto.
-    \item[$\forall x^\sigma \Phi$] Una prova è una costruzione funzionale il cui dominio è l'intero insieme di tutti i termini (costruzioni) appartenenti al tipo $\sigma$ all'interno della gerarchia definita.
-    \item[Identità] La relazione di identità tra prove è determinata dalla convertibilità (riduzione) tra termini: due prove sono considerate identiche se i processi di calcolo che esse sottendono convergono allo stesso risultato.
+    \item[Termini $M^o$] 
+        Il significato di una formula è determinato dal contenuto informativo (valore) della costruzione definita
+        dal termine di tipo $o$; la verità risiede nell'effettiva esecuzione del processo logico descritto.
+    \item[$\forall x^\sigma \Phi$] 
+        Una prova è una costruzione funzionale il cui dominio è l'intero insieme di tutti i termini (costruzioni) 
+        appartenenti al tipo $\sigma$ all'interno della gerarchia definita.
+    \item[Identità] 
+        La relazione di identità tra prove è determinata dalla convertibilità (riduzione) tra termini: due prove 
+        sono considerate identiche se i processi di calcolo che esse sottendono convergono allo stesso risultato.
 \end{description}
 
 \paragraph{Regole.} \breakpara
@@ -311,7 +327,7 @@ i sistemi di tipo precedentemente analizzati costituisce il cuore dell'isomorfis
     \label{tab:logic_cube_combinations}
 \end{table}
 
-\section{Logica di Ordine Superiore (IHOL)}
+\section{Logica di ordine superiore (IHOL)}
 La logica di ordine superiore rappresenta l'apice dell'espressività dei sistemi logici intuizionisti. Come anticipato nella classificazione del cubo, essa unifica le distinzioni 
 tra termini, formule e funzioni all'interno di una gerarchia di tipi completa. In questo sistema, i predicati sono trattati come funzioni a tutti gli effetti e la quantificazione 
 può spaziare su qualsiasi tipo della gerarchia. Rappresenta il sistema più espressivo, dove il confine tra logica e calcolo diventa puramente sintattico.
@@ -331,10 +347,18 @@ può spaziare su qualsiasi tipo della gerarchia. Rappresenta il sistema più esp
 
 \paragraph{Semantica.}
 \begin{description}[leftmargin=3.5em, style=nextline, font=\bfseries]
-    \item[Termini $M^o$] Il contenuto informativo (o valore) della costruzione definita dal termine di tipo $o$. La verità di una formula è legata alla capacità di esibire un termine che la abiti.
-    \item[$\forall x^\sigma \Phi$] Una costruzione funzionale il cui dominio è l'insieme di tutti i termini appartenenti al tipo $\sigma$ nella gerarchia.
-    \item[Identità] La relazione di convertibilità (riduzione) tra termini, intesa come equivalenza tra processi di calcolo che convergono allo stesso risultato.
+    \item[Termini $M^o$] 
+        Il contenuto informativo (o valore) della costruzione definita dal termine di tipo $o$. 
+        La verità di una formula è legata alla capacità di esibire un termine che la abiti.
+    \item[$\forall x^\sigma \Phi$] 
+        Una costruzione funzionale il cui dominio è l'insieme di tutti i termini appartenenti 
+        al tipo $\sigma$ nella gerarchia.
+    \item[Identità] 
+        La relazione di convertibilità (riduzione) tra termini, intesa come equivalenza tra processi 
+        di calcolo che convergono allo stesso risultato.
 \end{description}
+
+% TODO: \paragraph{Regole.}
 
 \subsection{Relazioni di calcolo}
 In IHOL, la verità di una formula non è un valore statico, ma è legata alla dinamica di riduzione del termine che la rappresenta. Le relazioni di $\beta$-riduzione, introdotte 
