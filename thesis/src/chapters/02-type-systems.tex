@@ -163,10 +163,34 @@ contrario $\beta$-riduzione viene estesa con la medesima logica sui costrutti d'
 Il sistema $\lambda 2$ gode della proprietà di normalizzazione forte, il che garantiche che l'esistenza di una forma normale
 per ogni termine del sistema. Tale risultato fondamentale è stato dimostrato da Girard \cite{Girard1989}
 
-\paragraph{Type checking e Type inference.} 
-Per quanto riguarda il type checking nel sistema $\lambda 2$, e importante osservare che rimane decidibile. Al contrario
-la type inference almeno nel caso generele è indecidibile , come dimostrato da Wells \cite{wells1994}.Per questo si utilizzano strategie basate su metavaribili e unificazione
-che pero nel caso peggiore richiederanno le annotazioni esplicite.
+\paragraph{Type checking.}
+Per quanto riguarda il type checking nel sistema $\lambda 2$, e importante osservare che rimane decidibile. Il processo 
+di verifica per il sistema $\lambda 2$ estende l'algoritmo \eqref{eq:simple_typed_lambda_type_cheking_algorithm} per 
+gestire l'astrazione e l'applicazione di tipo, garantendo che le variabili di tipo siano gestite correttamente nel contesto.
+\begin{equation}
+    \text{type}(\Gamma, e) = 
+    \begin{cases} 
+        \sigma & \text{if } e = x \land (x : \sigma) \in \Gamma \\
+        \sigma \to \text{type}(\Gamma, x:\sigma, e') & \text{if } e = \lambda x : \sigma . e' \\
+        \forall \alpha. \text{type}(\Gamma, e') & \text{if } e = \Lambda \alpha. e' \land \alpha \notin FV(\Gamma) \\
+        \sigma[\tau/\alpha] & \text{if } 
+            \begin{cases} 
+                e = e' \tau \\ 
+                \text{type}(\Gamma, e') = \forall \alpha. \sigma 
+            \end{cases} \\
+        \tau & \text{if } 
+            \begin{cases} 
+                e = e_1 e_2 \\ 
+                \text{type}(\Gamma, e_1) = \sigma \to \tau \\ 
+                \text{type}(\Gamma, e_2) = \sigma 
+            \end{cases} \\
+        \perp & \text{otherwise}
+    \end{cases}
+\end{equation}
+
+\paragraph{Type inference.} 
+Type inference almeno nel caso generele è indecidibile, come dimostrato da Wells \cite{wells1994}. Per questo si utilizzano 
+strategie basate su metavaribili e unificazione che pero nel caso peggiore richiederanno le annotazioni esplicite.
 
 \subsection{Sistema \texorpdfstring{$\lambda\underline{\omega}$}{Lambda-omega-under}}
 
@@ -212,10 +236,29 @@ Il che garantiche che un termine abbia sempre una forma normale. Questo risultat
 e kinds ed il \ref{eq:simple_typed_lambda_grammar} esisteza un isomorfismo, ovvero possiedono comportameti indistinguibili sulla relazioni e riduzioni. Alla luce del 
 risultato precedente si utilizza la stessa strategia con la categoria sintattica dei termini, considerando che i costruttori di tipo ammetono sempre forma normale.
 
-\paragraph{Type checking e Type inference.}
-Il type checking del sistema, a differenza del calcolo semplicemente tipato (\ref{eq:simple_typed_lambda_grammar}) dove consiste in un mero confronto sintattico, acquisisce vere e proprie 
-capacità di calcolo percio di dice \emph{type checking modulo $\beta$-conversione}. Due termini appartengono alla stesso tipo sse la forma normale dei loro tipi è $\alpha$-equivalente. 
-Cosiderando il terorema di normalizzazione orte a livello di costruttori di tipi ne seguen la decidibilita.
+\paragraph{Type checking.}
+Il type checking del sistema, a differenza del calcolo semplicemente tipato (\ref{eq:simple_typed_lambda_grammar}) dove consiste in un mero confronto sintattico, 
+acquisisce vere e proprie capacità di calcolo, percio di dice \emph{type checking modulo $\beta$-conversione}. Due termini appartengono alla stesso tipo sse la 
+forma normale dei loro tipi è $\alpha$-equivalente. Cosiderando il terorema di normalizzazione forte a livello di costruttori di tipi ne segue la decidibilita.
+Riportato di seguito il processo di verifica per il sistema $\lambda\underline{\omega}$ che estende l'algoritmo \eqref{eq:simple_typed_lambda_type_cheking_algorithm} 
+per gestire i costruttori di tipo e i conseguenti kinds.
+\begin{equation}
+    \text{type}(\Gamma, e) =
+    \begin{cases}
+        A & \text{if } e = x \land (x : A) \in \Gamma \\
+        A \to \text{type}(\Gamma, x:A, e') & \text{if } e = \lambda x : A . e' \land \text{kind}(\Gamma, A) = \ast \\
+        B & \text{if }
+            \begin{cases}
+                e = e_1 e_2 \\
+                \text{type}(\Gamma, e_1) \equiv_\beta A \to B \\
+                \text{type}(\Gamma, e_2) \equiv_\beta A
+            \end{cases} \\
+        \perp & \text{otherwise}
+    \end{cases}
+\end{equation}
+
+\paragraph{Type inference.}
+% TODO
 
 \subsection{Sistema \texorpdfstring{$\lambda$}{Lambda}\texorpdfstring{$\Pi$}{Pi}}
 
@@ -226,14 +269,14 @@ termini di tipo A. Si puo notare che ($A \to B$) non sia altro che un caso parti
 ma di livello superiore, tratta sempre la categoria sintattica dei termini.
 \begin{equation}
     \begin{array}{lrll}
-        \text{Kinds:}   & K           & ::= \ast                & \text{(Tipo dei tipi)}        \\
-                        &             & \mid \Pi x : A. K       & \text{(Kind dipendente)}      \\
-        \text{Types:}   & A, B        & ::= c                   & \text{(Costanti di tipo)}     \\
-                        &             & \mid \Pi x : A. B       & \text{(Prodotto dipendente)}  \\
-                        &             & \mid A M                & \text{(Applicazione di tipo)} \\
-        \text{Terms:}   & M, N        & ::= x                   & \text{(Variabili)}            \\
-                        &             & \mid \lambda x : A. M   & \text{(Astrazione)}           \\
-                        &             & \mid M N                & \text{(Applicazione)}
+        \text{Kinds:}           & K           & ::= \ast                & \text{(Tipo dei tipi)}        \\
+                                &             & \mid \Pi x : A. K       & \text{(Kind dipendente)}      \\
+        \text{Types Families:}  & A, B        & ::= c                   & \text{(Costanti di tipo)}     \\
+                                &             & \mid \Pi x : A. B       & \text{(Prodotto dipendente)}  \\
+                                &             & \mid A M                & \text{(Applicazione di tipo)} \\
+        \text{Terms:}           & M, N        & ::= x                   & \text{(Variabili)}            \\
+                                &             & \mid \lambda x : A. M   & \text{(Astrazione)}           \\
+                                &             & \mid M N                & \text{(Applicazione)}
     \end{array}
     \tag{$\lambda \Pi$}
     \label{eq:grammar_system_p}
@@ -257,11 +300,30 @@ ma richieda l'esecuzione dei termini contenuti nei tipi stessi.
 Il sistema $\lambda \Pi$ gode della proprietà di normalizzaione forte, questo garantisce sempre l'esistenza di una forma normale.
 Per una trattazione esaustiva del formalismo e della prova di normalizzazione per l'intero Cubo \cite{barendregt1992}.
 
-\paragraph{Type checking e Type inference.}
-Nel sistema $\lambda \Pi$, il processo di type checking è decidibile ma richiede l'integrazione di fasi di calcolo esplicito. A differenza del calcolo semplicemente tipato, l'uguaglianza 
-tra tipi non è un mero confronto sintattico, ma viene verificata modulo $\beta$-conversione e  \eqref{eq:lp_type_application}. L'algoritmo di verifica deve quindi 
-essere in grado di ridurre i termini contenuti nei tipi alle rispettive forme normali per accertarne l'equivalenza. Per quanto concerne la \textit{type inference}, essa rimane decidibile dato un 
-contesto e un'applicazione $(M N)$, il sistema determina il tipo del risultato sostituendo l'argomento $N$ nel prodotto dipendente $\Pi x:A. B$, come formalizzato in \eqref{eq:lp_type_application}.
+\paragraph{Type checking.}
+Nel sistema $\lambda \Pi$, il processo di type checking è decidibile ma richiede l'integrazione di fasi di calcolo esplicito. 
+A differenza del calcolo semplicemente tipato, l'uguaglianza tra tipi non è un mero confronto sintattico, ma viene verificata 
+modulo $\beta$-conversione e \eqref{eq:lp_type_application}. L'algoritmo di verifica deve quindi essere in grado di ridurre i 
+termini contenuti nei tipi alle rispettive forme normali per accertarne l'equivalenza. 
+\begin{equation}
+    \text{gen}(\Gamma, e) =
+    \begin{cases}
+        (A, \emptyset) & \text{if } e = x \land (x : A) \in \Gamma \\
+        (\Pi x : A. B, \mathcal{C}) & \text{if } e = \lambda x : A. e' \land (B, \mathcal{C}) = \text{gen}(\Gamma, x:A, e') \\
+        (B[e_2/x], \mathcal{C}_{all}) & \text{if } e = e_1 e_2 \text{ dove:} \\ 
+        & \begin{cases}
+            (A', \mathcal{C}_1) = \text{gen}(\Gamma, e_1)   \\
+            (A'', \mathcal{C}_2) = \text{gen}(\Gamma, e_2)  \\
+            \mathcal{C}_{all} = \mathcal{C}_1 \cup \mathcal{C}_2 \cup \{A' \equiv_\beta \Pi x : A. B, A'' \equiv_\beta A\}
+        \end{cases}
+    \end{cases}
+\end{equation}
+
+\paragraph{Type inference.}
+Nel sistema $\lambda\Pi$, il processo di \emph{type inference} rimane decidibile. Data un'applicazione $(M \, N)$, l'algoritmo determina 
+il tipo del risultato non solo verificando la coerenza tra il tipo dell'argomento e il dominio della funzione, ma effettuando una sostituzione 
+esplicita. Il tipo finale viene ottenuto sostituendo il termine $N$ all'interno del prodotto dipendente $\Pi x:A. B$, come formalizzato in 
+\eqref{eq:lp_type_application}. Questo passaggio è cruciale, poiché il tipo dell'output è ora funzione del valore dell'input.
 
 \subsection{Combinazioni}
 Una volta introdotti tutti i tre assi è possibile osservare, come detto precedentemente, che esisteno otto combinazione di sistema di tipo distinti.
