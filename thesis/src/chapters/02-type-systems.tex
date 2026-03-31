@@ -189,17 +189,34 @@ gestire l'astrazione e l'applicazione di tipo, garantendo che le variabili di ti
 \end{equation}
 
 \paragraph{Type inference.} 
-Type inference almeno nel caso generele è indecidibile, come dimostrato da Wells \cite{wells1994}. Per questo si utilizzano 
+la type inference almeno nel caso generele è indecidibile, come dimostrato da Wells \cite{wells1994}. Per questo si utilizzano 
 strategie basate su metavaribili e unificazione che pero nel caso peggiore richiederanno le annotazioni esplicite.
 
+\paragraph{Esempi di termini e tipi.}
+Nel sistema $\lambda 2$, il polimorfismo permette di definire termini che operano uniformemente su diversi tipi. 
+Un esempio fondamentale è la funzione identità universale $ID \equiv \Lambda \alpha. \lambda x : \alpha. x$, 
+il cui tipo è $\forall \alpha. \alpha \to \alpha$. Per applicare tale funzione a un valore concreto, è necessaria 
+una fase preliminare di applicazione di tipo.
+\begin{equation}
+    (ID \: Nat \: 5 ) \to_\beta (\lambda x : Nat. x) \: 5 \to_\beta 5
+\end{equation}
+Questa espressività consente di codificare strutture dati logiche come i Booleani di Church, definiti dal tipo 
+$\mathbb{B} \equiv \forall \alpha. \alpha \to \alpha \to \alpha$. In questa cornice, i valori di verità sono 
+termini che selezionano il primo o il secondo argomento del tipo generico scelto.
+\begin{align*}
+    \mathbf{true}  &\equiv \Lambda \alpha. \lambda x:\alpha. \lambda y:\alpha. x \\
+    \mathbf{false} &\equiv \Lambda \alpha. \lambda x:\alpha. \lambda y:\alpha. y
+\end{align*}
+L'applicazione $(\mathbf{true} \: Nat \: 1 \: 0)$ riduce a $1$ attraverso passi consecutivi di $\beta$-riduzione a 
+livello di tipo e di termine, dimostrando come il polimorfismo gestisca l'astrazione sui dati in modo computazionale.
 \subsection{Sistema \texorpdfstring{$\lambda\underline{\omega}$}{Lambda-omega-under}}
 
 \paragraph{Grammatica.}
 La grammatica del sistema $\lambda\underline{\omega}$ estende la grammatica del \ref{eq:simple_typed_lambda_grammar} tramite: una categoria sintattica chiamata kinds,  
 il costrutto di \emph{astrazione di tipo su tipo} e \emph{applicazione di tipo su tipo}. In tale sistema si permette a un tipo di poter dipendere da un tipo, rendendo
 i tipi delle funzioni, chiamate \emph{operatori di tipo}. Per garantire che gli operatori di tipo siano ben formate si utilizza la categoria sintattica kinds, ovvero 
-il tipo dei tipi. Indroduzione dei costrutti di astrazione e applicazione di tipo su tipo traforma la categoria sintattica dei Type in Type Constructors un calcolo separato
-sui tipi.
+il tipo dei tipi. Indroduzione dei costrutti di astrazione e applicazione di tipo su tipo traforma la categoria sintattica dei type in type constructors un calcolo 
+separato sui tipi.
 \begin{equation}
     \begin{array}{lrll}
         \text{Kinds:}               & K           & ::= \ast                & \text{(Kind terminale)}       \\
@@ -259,6 +276,25 @@ per gestire i costruttori di tipo e i conseguenti kinds.
 
 \paragraph{Type inference.}
 % TODO
+
+\paragraph{Esempi di termini e tipi.}
+Nel sistema $\lambda\underline{\omega}$, l'introduzione dei costruttori di tipo permette di definire operatori che agiscono sulla struttura dei tipi stessi. 
+Un esempio classico è l'operatore prodotto $\text{Pair}$, che può essere definito come un'astrazione di tipo su tipo con kind $\ast \to \ast \to \ast$.
+\begin{equation}
+    \text{Pair} \equiv \lambda \alpha : \ast. \lambda \beta : \ast. \alpha \to \beta \to \ast
+\end{equation}
+Si osservi che $\text{Pair}$ non è un tipo "abitabile" da termini, ma un operatore che richiede due tipi base per convergere a un tipo concreto ($\ast$). 
+Applicando l'operatore ai tipi $Nat$ e $Bool$, otteniamo un nuovo tipo costruttore:
+\begin{center}
+    \setlength{\tabcolsep}{2pt}
+    \begin{tabular}{r @{\hspace{5pt}} c @{\hspace{5pt}} l}
+        $(\text{Pair} \: Nat \: Bool)$ & $\equiv$ & $(\lambda \alpha : \ast. \lambda \beta : \ast. \alpha \to \beta \to \ast) \: Nat \: Bool$ \\
+        & $\to_\beta$ & $(\lambda \beta : \ast. Nat \to \beta \to \ast) \: Bool$ \\
+        & $\to_\beta$ & $Nat \to Bool \to \ast$
+    \end{tabular}
+\end{center}
+Si puo notare che il risultato del calcolo è un costruttore che riceve in input due tipi prefissati e restituise un'altro. È importante notare che la definizione 
+del'operatore di tipo permettere di manipolare soltanto i tipi e non permetterano di scrivere funzioni che operano su termini.
 
 \subsection{Sistema \texorpdfstring{$\lambda$}{Lambda}\texorpdfstring{$\Pi$}{Pi}}
 
@@ -324,6 +360,17 @@ Nel sistema $\lambda\Pi$, il processo di \emph{type inference} rimane decidibile
 il tipo del risultato non solo verificando la coerenza tra il tipo dell'argomento e il dominio della funzione, ma effettuando una sostituzione 
 esplicita. Il tipo finale viene ottenuto sostituendo il termine $N$ all'interno del prodotto dipendente $\Pi x:A. B$, come formalizzato in 
 \eqref{eq:lp_type_application}. Questo passaggio è cruciale, poiché il tipo dell'output è ora funzione del valore dell'input.
+
+\paragraph{Esempi di termini e tipi.}
+L'esempio classico di termine per i tipi dipendenti è il vettore di dimensione $n$. Si cosideri una famiglia di tipi $Vect : Nat \to \ast$. 
+Possiamo definire su tale famiglia una funzione $\text{head}$ che estrae il primo elemento di un vettore di lunghezza $n+1$, garantendo staticamente 
+l'assenza di errori out of bounds.
+\begin{equation}
+    \text{head} : \Pi n : Nat. VectA \, (n+1) \to A
+\end{equation}
+È importante notare che A deve essere un tipi prefissato, poiche nel sistema $\lambda\Pi$ non è presente polimorfismo. Se tentassimo di applicare 
+$\text{head}$ a un vettore di tipo $Vect \, 0$, l'algoritmo di unificazione fallirebbe poiché $0$ non è unificabile con $n+1$ per alcun $n \in Nat$. 
+Il type checking diventa così una forma di verifica formale della correttezza del software.
 
 \subsection{Combinazioni}
 Una volta introdotti tutti i tre assi è possibile osservare, come detto precedentemente, che esisteno otto combinazione di sistema di tipo distinti.
