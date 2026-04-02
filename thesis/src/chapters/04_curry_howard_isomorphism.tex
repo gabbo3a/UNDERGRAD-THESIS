@@ -23,7 +23,7 @@ e $(\mathcal{Y}, C_{\mathcal{Y}})$, un funzione $f: \mathcal{X} \to \mathcal{Y}$
         valere l'identita, $f(C_{\mathcal{X}}(x_1, \dots, x_n)) = C_{\mathcal{Y}}(f(x_1), \dots, f(x_n))$.
 \end{description}
 
-\section{L'isomorfismo di Curry-Howard}
+\section{Introduzione isomorfismo di Curry-Howard}
 L'isomorfismo di Curry-Howard stabilisce un'identità tra la teoria della dimostrazione e la teoria del tipi. Secondo tale 
 principio, una proposizione logica non è una affermazione binaria, ma un \emph{tipo}. Tale identità porta una dimostrazione 
 a essere un \emph{termine} appartenente a un determinato tipo. Questa corrispondenza trasforma l'attività logica e quella 
@@ -70,7 +70,6 @@ precedente trattazione sono stati definiti come oggetti operazionali, un algortm
 tipizzazione, la struttura della computazione, che pero è il vero oggetto del'isomorfismo. La dimostrazione per induzione sulla struttura 
 degli alberi di derivazione avrà come obiettivo la preservazione dei seguenti costrutti e proprietà fondamentali.
 
-
 \paragraph{Corrispondenze statiche.}
 \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
     \item[Isomorfismo dei giudizi] 
@@ -88,8 +87,102 @@ degli alberi di derivazione avrà come obiettivo la preservazione dei seguenti c
 \paragraph{Corrispondenze dinamiche.}
 \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
     \item[Riduzione come semplificazione] 
-        La $\beta$-riduzione dei termini corrisponde al processo di \emph{cut-elimination} (o normalizzazione) della logica. Calcolare un valore equivale a trasformare una dimostrazione indiretta in una \emph{forma normale} priva di passaggi ridondanti.
+        La $\beta$-riduzione dei termini corrisponde al processo di \emph{cut-elimination} (o normalizzazione) della logica. 
+        Calcolare un valore equivale a trasformare una dimostrazione indiretta in una \emph{forma normale} priva di passaggi 
+        ridondanti.
     
     \item[Coerenza e non-abitabilità del falso] 
-        La coerenza del sistema logico (l'impossibilità di dimostrare il falso $\bot$) mappa sulla non-abitabilità del tipo vuoto. Un sistema di tipi solido (\emph{sound}) assicura che non esista alcun termine chiuso capace di testimoniare una contraddizione logica.
+        La coerenza del sistema logico (l'impossibilità di dimostrare il falso $\bot$) mappa sulla non-abitabilità del tipo 
+        vuoto. Un sistema di tipi solido (\emph{sound}) assicura che non esista alcun termine chiuso capace di testimoniare 
+        una contraddizione logica.
 \end{description}
+
+\section{\texorpdfstring{$\lambda$}{Lambda}-calcolo semplicemente tipato con FADT}
+Il $\lambda$-calcolo semplicemente tipato ($\lambda^{\to}$) presentato nel \ref{chap:type_systems}, pur essendo un ottimo modello di calcolo,
+risualta limitato se osservato dal punto di vista del'isomorfismo di Curry-Howard. Esso infatti risulta isomorfo al solo \emph{frammento implicativo}
+della logica intuizionista. Tuttavia una logica proposizionale completa richiede la capacita di esprimere congiunzioni ($\land$), disgiunzioni ($\lor$) 
+e costanti di verità ($\top$) e falsità ($\bot$). Per sopperire a questa mancanza, è necessario arrichire il calcolo tramite i cosidetti \emph{Finite 
+Algebraic Data Types (FADT)}. L'introduzione di tipi prodotto, somma, unit e void non risponde quindi a una mera esigenza di programmazione (come la 
+definizione di strutture dati), ma alla necessità logica di fornire un'immagine computazionale a ogni connettivo della deduzione naturale. Tale sistema
+viene indicato con $\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$.
+
+\subsection{Grammatica}
+La grammatica del sistema $\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$ estende il $\lambda^{\to}$ tramite un tipo per ogni costrutto della significativo
+della logica proposizionale, con relatico costruttori e distruttori. Per costruttore si intende un costrutto sintattico che memorizza informazione e per distruttore
+l'analogo che la estrae, similmente a come accade con l'astrazione e applicazione del $\lambda^{\to}$. 
+\begin{equation}
+    \begin{array}{lrll}
+        \text{Types:}   & \tau, \sigma & ::= \iota                                      & \text{(Tipo base / atomico)}      \\
+                        &              & \mid \tau \to \sigma                           & \text{(Tipo funzione)}            \\
+                        &              & \mid \tau \times \sigma                        & \text{(Tipo prodotto)}            \\
+                        &              & \mid \tau + \sigma                             & \text{(Tipo somma)}               \\
+                        &              & \mid \mathbf{1}                                & \text{(Tipo Unit)}                \\
+                        &              & \mid \mathbf{0}                                & \text{(Tipo Void)}                \\[6pt]
+        \text{Terms:}   & e            & ::= x                                          & \text{(Variabile)}                \\
+                        &              & \mid \lambda x : \tau . e                      & \text{(Astrazione)}               \\
+                        &              & \mid e_1 \, e_2                                & \text{(Applicazione)}             \\
+                        &              & \mid \langle e_1, e_2 \rangle                  & \text{(Coppia)}                   \\
+                        &              & \mid \mathsf{fst} \ e                          & \text{(Proiezione sx)}            \\
+                        &              & \mid \mathsf{snd} \ e                          & \text{(Proiezione dx)}            \\
+                        &              & \mid \mathsf{inl} \ e                          & \text{(Iniezione sx)}             \\
+                        &              & \mid \mathsf{inr} \ e                          & \text{(Iniezione dx)}             \\
+                        &              & \mid \mathsf{case}\ e \ \mathsf{of} \ \dots    & \text{(Analisi per casi)}         \\
+                        &              & \mid ()                                        & \text{(Costante Unit)}            \\
+                        &              & \mid \mathsf{absurd}_\tau \ e                  & \text{(Eliminazione del falso)}       
+    \end{array}
+    \tag{STLC+}
+    \label{eq:extended_stlc_grammar}
+\end{equation}
+
+\subsection{\texorpdfstring{$\beta$}{beta}-riduzione}
+La semantica operazionale del sistema $\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$ definisce le regole di riduzione per i nuovi costrutti di dati. 
+Ogni regola di $\beta$-riduzione specifica l'interazione tra un costruttore e il corrispondente distruttore, formalizzando il processo di calcolo per i tipi 
+prodotto e somma.
+\begin{equation}
+    \begin{array}{lll}
+        % Product redex
+        \mathsf{fst} \, \langle e_1, e_2 \rangle & \to_\beta e_1 & \text{(Proiezione sx)} \\
+        \mathsf{snd} \, \langle e_1, e_2 \rangle & \to_\beta e_2 & \text{(Proiezione dx)} \\[8pt]
+        % Sum redex
+        \mathsf{case} \, (\mathsf{inl} \, v) \, \mathsf{of} \, \{ \mathsf{inl} \, x \Rightarrow e_1 \mid \dots \} & \to_\beta e_1[v/x] & \text{(Ramo sx)} \\
+        \mathsf{case} \, (\mathsf{inr} \, v) \, \mathsf{of} \, \{ \dots \mid \mathsf{inr} \, y \Rightarrow e_2 \} & \to_\beta e_2[v/y] & \text{(Ramo dx)}
+    \end{array}
+    \label{eq:fadt_beta_reduction}
+\end{equation}
+
+\paragraph{Nota sulla coerenza.} 
+Si osservi che per il tipo $\mathbf{0}$ (falso) non esistono regole di riduzione. Ciò riflette la coerenza logica del sistema: in un contesto vuoto non 
+è possibile costruire un termine di tipo $\mathbf{0}$, rendendo il costrutto $\mathsf{absurd}$ (ex falso quodlibet) un ramo di esecuzione logicamente 
+irraggiungibile. Parallelamente, per il tipo $\mathbf{1}$ non sono necessarie riduzioni poiché non esiste un distruttore associato: la costante $()$ è 
+già in forma normale.
+
+\subsection{Type checking}
+L'algoritmo di \emph{type checking} per il sistema $\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$ estende il processo definito per il $\lambda^{\to}$ integrando 
+le regole di tipizzazione per i nuovi costruttori e distruttori.Mentre il costruttore della coppia ($\times$) richiede la presenza di entrambi i sottotermini per 
+determinare il tipo in modo simmetrico, il caso dell'unione disgiunta ($+$) presenta una asimmetria: essendo presente un solo sottotermine ($\mathsf{inl}$ o $\mathsf{inr}$), 
+è necessario esplicitare il tipo del ramo mancante come pedice del costruttore per preservare l'univocità del tipo.
+\begin{equation}
+    \text{type}(\Gamma, e) = 
+    \begin{cases} 
+        \dots               & \text{(Casi del $\lambda^{\to}$)}                                                                                     \\
+        \tau \times \sigma  & \text{if } e = \langle e_1, e_2 \rangle \land \text{type}(\Gamma, e_1) = \tau \land \text{type}(\Gamma, e_2) = \sigma \\
+        \tau                & \text{if } e = \mathsf{fst} \ e' \land \text{type}(\Gamma, e') = \tau \times \sigma                                   \\
+        \sigma              & \text{if } e = \mathsf{snd} \ e' \land \text{type}(\Gamma, e') = \tau \times \sigma                                   \\
+        \tau + \sigma       & \text{if } e = \mathsf{inl}_{\sigma} \ e' \land \text{type}(\Gamma, e') = \tau                                        \\
+        \tau + \sigma       & \text{if } e = \mathsf{inr}_{\tau} \ e' \land \text{type}(\Gamma, e') = \sigma                                        \\
+        \rho                & \text{if } 
+            \begin{cases} 
+                e = \mathsf{case} \ e_0 \ \mathsf{of} \ \mathsf{inl} \ x \Rightarrow e_1 \mid \mathsf{inr} \ y \Rightarrow e_2  \\
+                \text{type}(\Gamma, e_0) = \tau + \sigma                                                                        \\
+                \text{type}(\Gamma, x:\tau, e_1) = \rho                                                                         \\
+                \text{type}(\Gamma, y:\sigma, e_2) = \rho 
+            \end{cases}                                                                                                         \\
+        \mathbf{1} & \text{if } e = ()                                                                      \\
+        \tau       & \text{if } e = \mathsf{absurd}_{\tau} \ e' \land \text{type}(\Gamma, e') = \mathbf{0}  \\
+        \perp      & \text{otherwise}
+    \end{cases}
+\end{equation}
+Si osservi infine la natura delle regole riguardanti i tipi $\mathbf{1}$ e $\mathbf{0}$. Mentre il tipo \emph{Unit} è abitato dall'unica costante $()$, il tipo \emph{Void} 
+non possiede costruttori espliciti: il termine $\mathsf{absurd}$ non produce un valore di tipo $\mathbf{0}$, ma ne richiede uno come input per derivare un tipo arbitrario $\tau$.
+
+\subsection{Corrispondenza con la logica proposizionale intuizionista}
