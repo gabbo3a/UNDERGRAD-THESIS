@@ -1,0 +1,63 @@
+% !TEX root = ../main.tex
+
+% \chapter{Calculus of Inductive Constructions in Lean 4}
+\chapter{Calcolo delle costruzioni induttive}
+\label{chap:cic}
+
+\section{Motivazioni}
+Per poter parlare del kernel di Lean 4, è necessario approfondire il modello logico che i progetisti del linguaggio hanno deciso di implementare
+e dei motivi per è stato necessario estendere il calcolo delle costruzioni. I sistemi di tipo e linguaggi finora esaminati appartenenti al lambda
+cubo (\ref{tab:barendregt_combinations}), sono ottimali per indagare le proprita e i limiti teorici, ma possiedono delle criticita nel'utilizzo e 
+nel'implementazione concreta. Per ovviare a tali criticita si definiscono delle estensioni che non alterano l'espressivita, cosi da poter mantenere
+i risultati precedentemente dimostrati. Sebbene tali problemi siano condivisi da tutti i vertici del lambda cubo, per semplificare la trattazione
+si utilizzera il calcolo delle costruzioni (\ref{eq:coc_grammar}). La metodologia utilizzata per ovviare a tali svantaggi potra essere generalizzata
+e adattata a sistemi meno espressivi, mantenendo i vantaggi ottenuti.
+
+\subsection{Limiti delle codifiche alla Church}
+Nel calcolo delle costruzioni (\ref{sec:coc}) non esisteno tipi di dato primitivi. Per rappresentare strutture come i numeri naturali, si
+utilizzavano le \emph{codifiche alla Church}. In tale paradgma, i dati non sono entita statiche, ma funzioni di ordine superiore che modellano
+il proprio schema di iterazione. Tali definizioni comportano principalmente l'inefficienza algoritmica e la difficolta della definizione di un 
+principio di induzione condiviso tra tutti i tipi.
+
+\subsubsection{Inefficienza algoritmica dei numeri naturali}
+Il limite più evidente delle codifiche alla Church è la degradazione delle performance computazionali. Poiché un numero $n$ è codificato come 
+l'applicazione $n$-esima di una funzione, operazioni che intuitivamente dovrebbero essere istantanee diventano costose.
+
+\begin{itemize}
+    \item 
+        \textbf{Il predecessore di Kelly-Church:} 
+        Calcolare il predecessore richiede una ricostruzione laboriosa della sequenza. L'algoritmo standard ha una complessità 
+        temporale di $O(n)$, rendendo operazioni come la sottrazione o la divisione proibitive per valori grandi.
+    \item 
+        \textbf{Costo della normalizzazione e conversione:}
+        Il controllo dell'uguaglianza definizionale ($\equiv$) è l'operazione più frequente eseguita dal kernel di Lean. Nelle codifiche 
+        alla Church, i numeri non sono dati statici ma programmi; pertanto, per verificare se due termini sono uguali, il kernel è costretto 
+        a "eseguire" interamente le funzioni coinvolte, riducendo alberi di applicazioni $\lambda$ potenzialmente enormi. Questo processo 
+        satura rapidamente le risorse di memoria e rallenta il \emph{type checking}.
+\end{itemize}
+
+\subsubsection{Svantaggi logici}
+Il limite piu invalidante per un sistema cone Lean delle codifiche alla Church è di di natura fondazionale. Nel calcolo delle costruzioni, tali
+codifiche non garantiscono intrinsecamente il \emph{principio di induzione} nel senso dell'aritmetica.
+
+\begin{itemize}
+    \item 
+        \textbf{Mancanza di dipendenza:} 
+        La codifica di Church è intrinsecamente polimorfica ma fatica a integrarsi con la logica dipendente. Risulta estremamente complesso 
+        formulare predicati che dipendano dal valore specifico del dato (ad esempio, proprietà aritmetiche come la commutatività) senza ricorrere 
+        ad assiomi esterni che appesantiscono la coerenza del sistema.
+    \item 
+        \textbf{Difficoltà nella distinzione dei costruttori:} 
+        Nel paradigma funzionale, non esiste un meccanismo nativo per garantire che rappresentazioni diverse corrispondano a entità distinte. 
+        Dimostrare proprietà fondamentali come l'iniettività del successore o la disuguaglianza tra lo zero e il successore ($\text{zero} \neq 
+        \text{succ}(n)$) richiedea costruzione manuale di funzioni discriminanti ad differenti per ogni tipo di dato, rendendo la logica del 
+        sistema meno intuitiva.
+
+    \item 
+        \textbf{Problemi di estensionalità e uguaglianza:} 
+        Poiché i dati sono codificati come funzioni, il sistema eredita i limiti della conversione funzionale $\eta$-riduzione. Due rappresentazioni 
+        dello stesso valore che differiscono anche minimamente nella loro struttura logica interna (pur essendo estensionalmente identiche nel comportamento) 
+        non vengono riconosciute come definizionalmente uguali ($\equiv$) dal kernel. Questa frammentazione impedisce al sistema di convergere verso una 
+        forma canonica univoca per ogni dato, costringendo l'utente a gestire manualmente complesse prove di equivalenza proposizionale anche per identità 
+        che, in una rappresentazione strutturale, risulterebbero ovvie per semplice calcolo.
+\end{itemize}
