@@ -1,6 +1,5 @@
 % !TEX root = ../main.tex
 
-% \chapter{Calculus of Inductive Constructions in Lean 4}
 \chapter{Calcolo delle costruzioni induttive}
 \label{chap:cic}
 
@@ -61,3 +60,79 @@ codifiche non garantiscono intrinsecamente il \emph{principio di induzione} nel 
         forma canonica univoca per ogni dato, costringendo l'utente a gestire manualmente complesse prove di equivalenza proposizionale anche per identità 
         che, in una rappresentazione strutturale, risulterebbero ovvie per semplice calcolo.
 \end{itemize}
+
+\section{Gerarchia degli universi in Lean 4}
+Per evitare il paradosso di Girard (l'equivalente di Russell nella teoria dei tipi), Lean 4 non ammette l'esistenza di un "tipo di tutti i tipi" 
+($Type : Type$). Al contrario, organizza i mondi dei tipi in una gerarchia infinita di livelli, chiamati \emph{universi}.
+
+\subsection{Gerarchia infinita degli universi}
+In Lean 4, ogni termine ha un tipo, e ogni tipo risiede in un \emph{Sort}. I \emph{Sort} sono a tutti gli effetti dei tipi, ma a differenza dei 
+tipi di dati comuni (come i numeri naturali o i booleani), essi rappresentano gli universi in cui i tipi stessi risiedono. 
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item 
+        [Prop (Sort 0)]
+        Rappresenta l'universo delle proposizioni logiche. Tutti gli elementi di un tipo in $Prop$ sono dimostrazioni. Lean applica 
+        qui il principio della \emph{proof irrelevance}, per il sistema due prove qualunque dello stesso teorema sono considerate uguali.
+    \item 
+        [Type u (Sort u+1)]
+        Rappresenta la gerarchia dei tipi di dati e delle strutture. $Type\,0$ è l'universo dei tipi 
+        piccoli come $Nat$ e $Bool$. $Type\,1$ è l'universo che contiene $Type\,0$, cosi all'infinito.
+\end{description}
+La distinzione tra $Prop$ e $Type\,u$ è fondamentale poiche permette il matenimento di proprietà computazionali opposte: \emph{predicativita} e 
+\emph{impredicativita}. Nonostante le proprita logico-compuatazionali opposte vengono unificati tramite il costrutto di $Sort\,u$, Formalmente 
+$Type\,u$ è un'abbreviazione per $Sort\,(u+1)$. 
+
+\subsection{Proprietà logico-computazionali degli universi}
+Nei sistemi basati sul Calcolo delle Costruzioni, la gerarchia degli universi non serve solo a evitare paradossi sintattici, ma definisce il 
+comportamento del kernel rispetto alla computazione e alla logica. In Lean 4, la distinzione tra $Prop$ (Sort 0) e $Type$ (Sort $u+1$) riflette 
+una separazione netta tra ciò che è \emph{logicamente vero} e ciò che è \emph{computazionalmente rilevante}. Questa divergenza si manifesta 
+attraverso la quantificazione.
+
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item 
+        [Impredicativita (Prop)] 
+        L'universo $Prop$ è \emph{chiuso} rispetto alla quantificazione universale su qualsiasi altro universo. 
+        Una proposizione può essere definita quantificando su \emph{tutte} le proposizioni, inclusa se stessa, 
+        o persino su tutti i tipi di una gerarchia superiore, senza mai abbandonare il livello $Sort \, 0$. Ad 
+        esempio, il principio di non contraddizione $\forall (P : Prop), \neg(P \wedge \neg P)$ risiede in $Prop$ 
+        nonostante quantifichi sull'intera estensione dell'universo proposizionale. Questa impredicatività è ciò 
+        che conferisce a Lean la potenza della logica di ordine superiore, permettendo di definire connettivi logici
+        e uguaglianze in modo estremamente espressivo.
+    \item 
+        [Predicativita (Type u)] 
+        Al contrario, la gerarchia dei dati è strettamente predicativa. Un tipo risiedente in $Type \, u$ non può 
+        essere definito quantificando su tutti i tipi dello stesso livello $u$: l'atto di quantificare su una collezione 
+        di tipi "astrae" la definizione a un livello di complessità superiore, forzando il risultato a risiedere in 
+        $Type\,(u+1)$. Formalmente, se abbiamo un prodotto dipendente $\Pi (x : A), B$ dove $B : Sort \, v$ ($v > 0$), 
+        il livello del risultato sarà $\max(u, v)$. Questa stratificazione impedisce la creazione di tipi autoreferenziali 
+        che porterebbero alla non terminazione del calcolo delle conversioni nel kernel.
+\end{description}
+Tale distinzione, oltre alla quantificazione e alla coerenza logica, governa la rilevanza computazionale. Il kernel di Lean 4
+applica la \emph{proof irrelevance} ai termini di $Prop$ trattando tutte le dimostrazioni sulla stessa proposizione in modo 
+definizionalmente equivalente. Differentemente i termini in $Type$ mantengono la propria identità strutturale, poiché rappresentano 
+i dati su cui il programma deve effettivamente operare.
+
+\subsection{Principio di cumulatività degli universi}
+Lean implementa un sistema di universi \emph{cumulativi}. Ciò significa che ogni termine che appartiene a un universo di livello $u$ 
+appartiene automaticamente anche a ogni universo di livello $v > u$. Se $A : Sort \, u$ e $u \le v$, allora $A : Sort \, v$. Questo 
+principio semplifica enormemente la scrittura del codice, poiché permette di utilizzare tipi definiti a livelli bassi (come $Nat$) 
+all'interno di strutture definite a livelli superiori.
+
+\subsection{Polimorfismo degli universi con variabili di livello}
+Per evitare di dover riscrivere le stesse definizioni per ogni livello della gerarchia (es. una lista di $Type\,0$, una lista di $Type\,1$, etc.), 
+Lean introduce il \textbf{polimorfismo degli universi}. Le definizioni possono essere parametrizzate da variabili di livello, solitamente indicate 
+con $u, v, w$.
+\begin{center}
+    \begin{minipage}{0.8\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=12,
+            caption={Definizione induttiva di lista polimorfica}]
+            inductive List.{u} (α : Type u) : Type u where
+              | nil  : List α
+              | cons : α → List α → List α
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+In questo modo, $List$ diventa uno schema che può generare una lista per qualsiasi livello di universo, garantendo la massima riusabilità del codice 
+senza sacrificare la sicurezza logica del kernel.
