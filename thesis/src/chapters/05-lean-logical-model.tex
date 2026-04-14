@@ -1,5 +1,4 @@
 % !TEX root = ../main.tex
-
 \chapter{Calcolo delle costruzioni induttive}
 \label{chap:cic}
 
@@ -136,3 +135,46 @@ con $u, v, w$.
 \end{center}
 In questo modo, $List$ diventa uno schema che può generare una lista per qualsiasi livello di universo, garantendo la massima riusabilità del codice 
 senza sacrificare la sicurezza logica del kernel.
+
+\section{Definizione formale di tipi induttivi}
+Una volta comprese le motivazioni e la struttura della gerarchia degli universi, è possibile definire formalmente i tipi induttivi nel sistema 
+di Lean 4. Nel calcolo delle costruzioni induttive (CiC), un tipo induttivo non è una semplice etichetta per una struttura dat, ma una'entita
+logica definita da un insieme di regole che ne determinano la formazione, la costruzione e l'eliminazione. In Lean 4 questo processo è nativo,
+ogni definizione induttiva estende il contesto globale con un insieme di costanti che il kernel utilizza per validare la coerenza del sistema.
+
+\subsection{Grammatica}
+Il kernel di Lean 4 utilizza un insieme minimale di costrutti. A questo livello la complessita della sintassi del linguaggio viene ridotta a una 
+grammatica formale ristretta. Il calcolo delle costrzioni induttive estende il calcolo delle costruzioni \ref{eq:coc_grammar} discusso in \ref{sec:coc},
+percio verrano discusse solo le estensioni apportate al sistema per supportare i tipi induttivi e i quozienti.
+\begin{equation}
+    \begin{array}{lrll}
+        \text{Sorts:}   & s          & ::= \text{Prop} \mid \text{Type}_u      & \text{(Gerarchia di universi)}  \\
+        \text{Terms:}   & A, B, M, N & ::= x                                   & \text{(Variabili)}              \\
+                        &            & \mid s                                  & \text{(Universi)}               \\
+                        &            & \mid \lambda x : A. M                   & \text{(Astrazione)}             \\
+                        &            & \mid \Pi x : A. B                       & \text{(Prodotto dipendente)}    \\
+                        &            & \mid M \, N                             & \text{(Applicazione)}           \\
+                        &            & \mid I                                  & \text{(Tipo induttivo)}         \\
+                        &            & \mid c                                  & \text{(Costruttore)}            \\
+                        &            & \mid \text{rec}_I                       & \text{(Ricorsore)}              \\
+                        &            & \mid \text{quot}_A(R)                   & \text{(Tipo quoziente)}         \\
+                        &            & \mid \text{quot.mk}_R(x)                & \text{(Introduzione quoziente)} \\
+                        &            & \mid \text{quot.lift}(f, h)             & \text{(Eliminazione quoziente)}
+    \end{array} 
+    \tag{CiC}
+    \label{eq:cic_grammar_lean_extended}
+\end{equation}
+Le estensioni introdotte nel calcolo (\ref{eq:cic_grammar_lean_extended}) permettono al kernel di Lean di operare su una base logica estremamente 
+ristretta ma espressiva, dove ogni operazione computazionale o logica viene ricondotta a tre pilastri fondamentali:
+
+\begin{itemize}
+    \item \textbf{Nucleo funzionale:} 
+        Gli operatori $\lambda$ e $\Pi$ ereditati dal calcolo delle costruzioni permettono di gestire funzioni e tipi dipendenti. In particolare
+        il prodotto dipendente è lo strumento fondamentale per modellare sia la computazione che il ragionamento logico.
+    \item \textbf{Tipi induttivo:} 
+        Le costanti $I$, $c$ e $\text{rec}_I$ formano il cuore del sistema. L'uso del ricorsore $\text{rec}_I$ garantisce che ogni forma di ricorsione 
+        sia strutturalmente ben fondata, assicurando che il calcolo converga sempre verso una forma canonica (normalizzazione forte).
+    \item \textbf{Tipi quozienti:} 
+        L'inclusione di $\text{quot}$ e dei relativi operatori di introduzione ed eliminazione è una caratteristica distintiva di Lean. Queste costanti 
+        permettono al kernel di trattare nativamente l'uguaglianza tra classi di equivalenza, semplificando la formalizzazione di concetti matematici.
+\end{itemize}
