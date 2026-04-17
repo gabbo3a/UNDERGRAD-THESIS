@@ -179,27 +179,78 @@ ristretta ma espressiva, dove ogni operazione computazionale o logica viene rico
         permettono al kernel di trattare nativamente l'uguaglianza tra classi di equivalenza, semplificando la formalizzazione di concetti matematici.
 \end{itemize}
 
-\subsection{Regole di formazione con parametri e indici}
+\subsection{Regole di formazione dei tipi induttivi} % con parametri e indici
 La regola di formazione stabilisce che ogni tipo induttivo $I$ sia introdotto nel kernel come una costante con il seguente tipo, dove $P$ è un 
 insieme di parametri e $A$ è un insieme di indici. Il ricorsore sarà polimorfico rispetto ai parametri, ma dovrà operare una distinzione per casi 
 basata sui valori degli indici. Questa distinzione è una misura fondamenatel per garantire efficacia e coerenza nella definizione dei tipi induttivi.
-
-\vspace{0.1em}
-    \begin{equation}
-        I : \Pi (p : P) (i : A), \text{Sort } u
-        \label{eq:inductive_formation_rule}
-    \end{equation}
-\vspace{0.1em}
+\begin{equation}
+    I : \Pi (p : P) (i : A), \text{Sort } u
+    \label{eq:inductive_formula}
+\end{equation}
 Per comprendere come il kernel stabilisca la struttura logica di un tipo e ne generi i relativi ricorsori, è necessario approfondire la natura degli 
 argomenti che compongono la sua arità. Questi vengono ripartiti in due categorie funzionalmente distinte parametri e indici, riportate di seguito.
 \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
-    \item [Parametri ($p$)]
+    \item [Parametri ($p : P$)]
         Sono argomenti che rimangono costanti in tutte le applicazioni del tipo e in tutti i tipi dei suoi costruttori. 
         Ad esempio, nella definizione \texttt{List $\alpha$}, $\alpha$ è un parametro perche ogni occorrenza di \texttt{List} 
         all'interno dei costruttori \texttt{nil} e \texttt{cons} deve riferirsi allo stesso $\alpha$. Per il kernel, i parametri 
         sono variabili locali fisse che non influenzano la struttura di eliminazione.
-    \item [Indici ($i$)]
+    \item [Indici ($i : A$)]
         Sono argomenti che possono variare tra un costruttore e l'altro, permettendo la creazione di famiglie di tipi dipendenti. 
         Un esempio classico è il tipo \texttt{Vector $\alpha$ n}, dove $n$ è un indice perche il costruttore \texttt{nil} forza 
         $n=0$, mentre il costruttore \texttt{cons} incrementa $n$.
 \end{description}
+
+\subsection{Meccanismo di introduzione tramite i costruttori}
+I costruttori $c$ rappresentano le regole di introduzione del tipo induttivo. Dal punto di vista del kernel, essi sono costanti primitive prive 
+di una definizione interna e costituiscono le forme canoniche del tipo $I$. La loro struttura formale è definita dalla seguente sintassi.
+\begin{equation}
+    c : \Pi (p : P) (x : A), I \, p \, i
+    \label{eq:constructor_formula}
+\end{equation}
+La seguente segnatura riporta i concetti di parametri e indici di tipo induttivo $I$ approvonditi precedentemente addatandoli al contesto del singolo
+costruttore, garantendo che ogni costruttore sia coerente con la definizione generale del tipo induttivo. Di seguito è riportata l'analisi di ciascuna
+componente della formula del costruttore.
+
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item [Parametri $(p : P)$] 
+        Ogni costruttore devo accettare come primi argomenti i parametri della famiglia induttiva. Questi rimangono invariati rispetto 
+        alla definizione generale del tipo $I$, garantendo che un costruttore per \texttt{List Nat} produca coerentemente un termine di 
+        tipo \texttt{List Nat}.
+    \item [Argomenti $(x : A)$]  % concreti e ricorsivi
+        Rappresentano i dati effettivamente memorizzati nel costruttore, questi possono essere termini di tipi già esistenti o occorrenze 
+        ricorsive del tipo $I$ stesso. Ad esempio, nel costruttore \texttt{succ} $n$ di \texttt{Nat} dove $n$ è un argomento ricorsivo di 
+        tipo $Nat$.
+    \item [Indici $(i : A)$] 
+        A differenza dei parametri, gli indici nel tipo di ritorno $I \, p \, i$ sono espressioni vincolate agli argomenti $x$ del costruttore. 
+        Ad esempio, nel caso di un vettore vuoto, l'indice è fissato al valore costante $0$, mentre in un vettore non vuoto esso è tipicamente 
+        una funzione della lunghezza della coda.
+\end{description}
+
+\subsubsection{Proprietà fondamentali dei costruttori}
+Per poter permettere al sistema di garantire la correttezza del pattern matching e la decidibilità dell'uguaglianza, il kernel impone ai costruttori di 
+soddisfare due proprietà logiche fondamentali, note come proprietà di \emph{no-confusion}.
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item [Iniettività] 
+        Formalmente, se $c \, x = c \, y$, allora $x = y$, tale proprietà è detta contromonimale. Questa proprietà assicura che i costruttori non ``perdano'' 
+        informazioni durante la costruzione del dato. Se due termini generati dal medesimo costruttore sono uguali, devono esserlo anche i loro argomenti. Ciò 
+        garantisce che i campi interni siano sempre recuperabili attraverso operazioni di proiezione.
+    \item [Disgiunzione]
+        Costruttori diversi generano termini distinti (ad esempio, $\text{zero} \neq \text{succ } n$). Questa proprietà garantisce che il tipo induttivo sia 
+        una somma disgiunta delle sue varianti, permettendo al sistema di escludere rami di esecuzione logicamente impossibili durante l'analisi per casi e di 
+        distinguere univocamente la forma canonica di un termine.
+\end{description}
+
+\newcommand{\notacategoriale}{
+    Dal un punto di vista categoriale, queste proprietà assicurano che i tipi induttivi rispettino le proprietà universali dei tipi somma e prodotto. 
+    La disgiunzione riflette la natura dei coprodotti, mentre l'iniettività riflette quella dei prodotti (più generalmente, di colimiti e limiti). Senza 
+    queste proprietà, i tipi induttivi perderebbero la loro struttura algebrica fondamentale, rendendo impossibile definire operazioni di eliminazione 
+    coerenti e affidabili.}
+
+Queste garanzie strutturali permettono al sistema di ``smontare'' i dati in modo univoco durante la fase di computazione \footnote{\notacategoriale}. Senza di 
+esse, il meccanismo di eliminazione non avrebbe la certezza di trovarsi di fronte a un unico costruttore identificabile, rendendo impossibile sia la riduzione 
+dei termini che la coerenza logica del sistema.
+
+\subsection{Meccanismo di eliminazione tramite i ricorsori}
+
+\subsection{Condizione di positività stretta}
