@@ -240,17 +240,41 @@ soddisfare due proprietà logiche fondamentali, note come proprietà di \emph{no
         una somma disgiunta delle sue varianti, permettendo al sistema di escludere rami di esecuzione logicamente impossibili durante l'analisi per casi e di 
         distinguere univocamente la forma canonica di un termine.
 \end{description}
-
 \newcommand{\notacategoriale}{
     Dal un punto di vista categoriale, queste proprietà assicurano che i tipi induttivi rispettino le proprietà universali dei tipi somma e prodotto. 
     La disgiunzione riflette la natura dei coprodotti, mentre l'iniettività riflette quella dei prodotti (più generalmente, di colimiti e limiti). Senza 
     queste proprietà, i tipi induttivi perderebbero la loro struttura algebrica fondamentale, rendendo impossibile definire operazioni di eliminazione 
     coerenti e affidabili.}
-
 Queste garanzie strutturali permettono al sistema di ``smontare'' i dati in modo univoco durante la fase di computazione \footnote{\notacategoriale}. Senza di 
 esse, il meccanismo di eliminazione non avrebbe la certezza di trovarsi di fronte a un unico costruttore identificabile, rendendo impossibile sia la riduzione 
 dei termini che la coerenza logica del sistema.
 
-\subsection{Meccanismo di eliminazione tramite i ricorsori}
+\subsubsection{Condizione di positività stretta}
+Per garantire che il calcolo delle costruzioni induttive rimanga coerente e che ogni funzione definita su di esso termini, Lean impone un vincolo 
+strutturale rigoroso, la \emph{positività stretta}. Un tipo induttivo $I$ è considerato strettamente positivo se, in ogni tipo di ogni costruttore
+$c$ il tipo $I$ non appare mai in ``posizione negativa'', ovvero a sinistra di un prodotto dipendente. Di seguito è riportato un esempio di definizione 
+che viola questa condizione, in sintassi Lean 4.
+\begin{center}
+    % Usiamo una minipage molto più stretta (circa la metà pagina)
+    \begin{minipage}{0.5\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=12,
+            caption={Esempio di definizione illegale},
+            % Queste opzioni risolvono l'allineamento orizzontale
+            xleftmargin=0pt,
+            framesep=0pt,
+            captionpos=t
+        ]
+            inductive Bad : Prop where
+              | mk : (Bad → Prop) → Bad
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+In questo caso, \texttt{Bad} appare come argomento di una funzione che viene poi passata al costruttore \texttt{mk}. Se il kernel accettasse questa definizione, 
+sarebbe possibile codificare l'auto-applicazione del lambda calcolo (similmente al termine $\Omega$), permettendo la costruzione di termini che non convergono mai
+a una forma canonica. Tale circolarità distruggerebbe la coerenza logica, rendendo possibile dimostrare \texttt{False} e rendendo il type-checking indecidibile. 
+La positività stretta assicura che il tipo induttivo sia effettivamente ``costruito'' a partire da componenti preesistenti più semplici, garantendo la natura ben 
+fondata della ricorsione.
 
-\subsection{Condizione di positività stretta}
+\subsection{Meccanismo di eliminazione tramite i ricorsori}
