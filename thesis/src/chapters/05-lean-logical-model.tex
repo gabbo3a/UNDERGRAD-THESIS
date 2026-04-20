@@ -346,3 +346,34 @@ Il kernel di Lean impone vincoli rigorosi sulla $\iota$-riduzione per preservare
 è ammessa esclusivamente poiché opera per \emph{decrescita strutturale}, il ricorsore viene applicato ricorsivamente solo su componenti strettamente contenute 
 nel termine originario. Questa proprietà assicura che ogni sequenza di $\iota$-riduzioni sia finita, garantendo che ogni funzione definita tramite ricorsore sia 
 totale e che il controllo dell'uguaglianza definizionale rimanga decidibile.
+
+\section{Meccanismi di uguaglianza}
+L'introduzione della $\iota$-riduzione completa le regole di calcolo associate ai tipi induttivi, ma solleva una questione fondamentale legata
+alla uguaglianza. Quando è possibile considerare due termini ``identici'' all'interno del sistema, questa domanda in Lean trova risposta nella 
+distinzione tra l'uguaglianza algoritmica e l'uguaglianza logica (dimostrazione).
+
+\subsection{Uguaglianza definizionale (\texorpdfstring{$\equiv$}{equiv})}
+L'uguaglianza definizionale rappresenta l'identità per calcolo. Due termini $M$ e $N$ sono definizionalmente uguali se possono essere ridotti a 
+una forma normale comune attraverso una sequenza finita di $\alpha\beta\delta\zeta\iota$-conversione. Questa forma di uguaglianza possiede seguenti
+proprietà.
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item [Decidibilità] 
+        Il kernel può verificare autonomamente se $M \equiv N$ rieseguendo le riduzioni fino alla convergenza.
+    \item [Trasparenza] 
+        Se due termini sono definizionalmente uguali, il sistema li tratta come intercambiabili. Ad esempio, i termini $(1+1)$ e 
+        $2$ sono definizionalmente uguali poiché la riduzione $\iota$ del ricorsore della somma permette di computare il primo fino 
+        a ottenere il secondo.
+\end{description}
+
+% TODO: aggiungere la definizione di \zeta e \delta conversioni (let e def)
+
+\subsection{Uguaglianza proposizionale (\texorpdfstring{$=$}{eq})}
+L'uguaglianza proposizionale, espressa tramite il tipo induttivo \texttt{Eq}, è un'affermazione logica che richiede una prova esplicita per essere 
+validata. Essa interviene dove il calcolo automatico si arresta. Un esempio emblematico è la commutatività della somma: $n + m = m + n$. Sebbene i due 
+lati dell'equazione rappresentino lo stesso valore numerico, il kernel non può ridurli alla stessa forma normale tramite la sola $\iota$-riduzione, 
+poiché quest'ultima rimane "bloccata" dalla natura simbolica delle variabili $n$ e $m$.
+
+\subsection{Il ruolo del kernel}
+Mentre l'uguaglianza proposizionale appartiene al regno della logica ($Prop$), l'uguaglianza definizionale è il motore del kernel. Il compito del kernel non è 
+``dimostrare'' teoremi, ma verificare che la prova fornita dall'utente sia corretta tramite passi di riduzione. La complessità computazionale di un programma in 
+Lean coincide spesso con lo sforzo dal kernel nel risolvere le catene di $\iota$-riduzioni necessarie a stabilire un'uguaglianza definizionale.
