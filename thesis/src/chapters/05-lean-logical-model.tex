@@ -278,3 +278,71 @@ La positività stretta assicura che il tipo induttivo sia effettivamente ``costr
 fondata della ricorsione.
 
 \subsection{Meccanismo di eliminazione tramite i ricorsori}
+Il ricorsore di un tipo induttivo $I$, denotato $I.rec$ è l'unico strumento che fornisce il kernel come meccanismo di eliminazione. Esso funge 
+da operatore universale di eliminazione, mentre i costruttori permettono di introdurre termini in un tipo, il ricorsore definisce l'unico modo 
+sistematico per estrarre informazioni o definire computazioni su di essi. 
+
+\subsubsection{Segnatura teorica e componenti logiche}
+Il ricorsore è una funzione d'ordine superiore che il kernel gestisce per garantire che la ricorsione su ogni tipo induttivo sia ``sicura''. La struttura 
+del ricorsore è definita da una serie di input che devono essere soddisfatte per ottenere una conclusione nel tipo target detto \emph{motivo}. Di seguito 
+utilizzando la notazione dei prodotti dipendenti è riportata la segnatura di $I.rec$.
+\begin{equation}
+    \begin{aligned}
+        I.rec : \quad & \Pi \, (P : I \to \text{Sort } u) && \text{\small (Motivo)}               \\ & 
+        \to f_{c_1} : \text{PremessaMinore}(c_1, P)        && \text{\small (Premessa minore 1)}   \\ & 
+        \vdots                                            &&                                      \\ & 
+        \to f_{c_n} : \text{PremessaMinore}(c_n, P)        && \text{\small (Premessa minore $n$)} \\ & 
+        \to \Pi \, (t : I), \, P(t)                       && \text{\small (Premessa maggiore, Conclusione)}
+    \end{aligned}
+\end{equation}
+In questa formalizzazione, il \emph{motivo} $P$ specifica il tipo del risultato (che può dipendere dal valore di $t$), la \emph{premessa maggiore} 
+$t$ è il termine da analizzare, e le \emph{premesse minori} $f_{c_i}$ forniscono le istruzioni locali per ogni costruttore.
+
+% TODO: aggiungere approfondimento sul motivo e sulle premesse minori
+
+\paragraph{Esempio di segnatura del ricorsore per i numeri naturali.}
+\begin{center}
+    \begin{minipage}{0.9\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            frame=lines, 
+            gobble=12, 
+            caption={Segnatura del ricorsore primitivo per il tipo Nat}]
+            @Nat.rec : {motive : Nat -> Sort u}
+            -> motive Nat.zero 
+            -- Premessa minore (caso base)
+            -> ((n : Nat) -> motive n -> motive (Nat.succ n))
+            -- Premessa minore (passo induttivo)
+            -> (t : Nat) -> motive t
+            -- Premessa maggiore (target)
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+
+\subsubsection{\texorpdfstring{$\iota$}{iota}-riduzione}
+Il significato computazionale del ricorsore è governato dalla $\iota$-riduzione. Questa regola di riscrittura si attiva esclusivamente quando la premessa maggiore del 
+ricorsore è espressa in \emph{forma canonica}, ovvero quando il termine è stato ridotto al suo costruttore principale. Teoricamente, la $\iota$-riduzione rappresenta 
+l'atto di ``separazione'' dell'informazione contenuta nella struttura induttiva, essa scarta il costruttore e applica la corrispondente premessa minore ai dati in esso 
+contenuti. Se il costruttore è ricorsivo, la riduzione innesca automaticamente l'applicazione del ricorsore sulle sotto-strutture, fornendo alla premessa minore il 
+risultato parziale del calcolo (ipotesi induttiva). Senza la presenza di un costruttore esplicito nella posizione della premessa maggiore, il termine del ricorsore è 
+considerato \emph{neutro} e la computazione rimane bloccata. Solo una volta che la premessa maggiore è stata ridotta a un costruttore, il kernel può applicare la 
+$\iota$-riduzione e generare il flusso del calcolo.
+
+\paragraph{Definizione formale della $\iota$-riduzione.}
+Sia $I$ tipo induttivo e $\vec{f} = \{f_{c_1}, \dots, f_{c_n}\}$ l'insieme delle premesse minori fornite al ricorsore. La dinamica della $\iota$-riduzione 
+per un generico costruttore $c_i$ è definita dalla seguente contrazione.
+\begin{equation}
+    I.rec \, P \, \vec{f} \, (c_i \, \vec{a} \, \vec{r}) \quad 
+    \to_\iota 
+    \quad f_{c_i} \, \vec{a} \, \vec{r} \, ((\lambda x. \, I.rec \, P \, \vec{f} \, x) \, \vec{r})
+\end{equation}
+La premessa maggiore è formata dal costruttore $c_i$, i parametri atomici del costruttore $\vec{a}$ e i suoi argomenti ricorsivi $\vec{r}$. Si osservi che l'espressione 
+$(\lambda x. \, I.rec \, P \, \vec{f} \, x) \, \vec{r}$ indica l'applicazione distributiva del ricorsore su ogni componente del vettore degli argomenti ricorsivi, un abuso 
+di notazione per indicare una operazione map. La $\iota$-riduzione percorre l'albero sintattico del termine in forma canonica, applicando sistematicamente il ricorsere e di
+conseguenza le premesse minori, fino a raggiungere i termini atomici che fungono da base per la computazione.
+
+\paragraph{Decrescita strutturale e terminazione.}
+Il kernel di Lean impone vincoli rigorosi sulla $\iota$-riduzione per preservare la coerenza logica e prevenire la divergenza della computazione. La riduzione 
+è ammessa esclusivamente poiché opera per \emph{decrescita strutturale}, il ricorsore viene applicato ricorsivamente solo su componenti strettamente contenute 
+nel termine originario. Questa proprietà assicura che ogni sequenza di $\iota$-riduzioni sia finita, garantendo che ogni funzione definita tramite ricorsore sia 
+totale e che il controllo dell'uguaglianza definizionale rimanga decidibile.
