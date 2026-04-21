@@ -385,8 +385,59 @@ Sebbene il Calcolo delle Costruzioni Induttive fornisca una base solida, la form
 la ricorsione strutturale semplice. Lean 4 integra nel suo kernel alcune estensioni fondamentali e supporta l'uso di assiomi che ne estendono la potenza 
 logica senza compromettere la coerenza del sistema.
 
-\subsection{Tipi Induttivi Mutui e Nidificati}
-% TODO
+\subsection{Tipi induttivi mutui e nidificati}
+Nella pratica della formalizzazione, molte strutture dati presentano dipendenze circolari o gerarchie nidificate che superano lo schema induttivo semplice. 
+Lean 4 affronta queste strutture non espandendo le regole primitive del kernel, ma riconducendole a tipi induttivi standard tramite un processo di elaborazione 
+e trasformazione.
+
+\subsubsection{Tipi Mutui}
+Si parla di induttività mutua quando due o più tipi sono definiti simultaneamente, poiché ciascuno funge da base per i costruttori dell'altro. 
+Un esempio classico è la definizione della parità dei numeri naturali tramite \texttt{Even} e \texttt{Odd}. Da notare che come discusso della
+gerarchia degli universi, si posso definre due versioni di tipi mutui, una in $Prop$ per la parità come proprietà logica e una in $Type$ per la 
+parità come struttura dati. In entrambi i casi, il kernel di Lean non gestisce direttamente la mutua induttività, ma la riduce a un unico tipo 
+induttivo con un tag enumerativo aggiuntivo per distinguere tipi originali. Di seguito sono riportate enrambe le verioni, in $Prop$ e in $Type$.
+\begin{center}
+    \begin{minipage}{0.85\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=12,
+            caption={Esempio di tipi mutui computazionalmente non rilevanti}]
+            mutual
+              inductive Even : Nat -> Prop where
+                | zero : Even 0
+                | succ : (n : Nat) -> Odd n -> Even (n + 1)
+
+              inductive Odd : Nat -> Prop where
+                | succ : (n : Nat) -> Even n -> Odd (n + 1)
+            end
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+\begin{center}
+    \begin{minipage}{0.85\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=12,
+            caption={Esempio di tipi mutui computazionalmente rilevanti}]
+            mutual
+                inductive Even: Nat -> Type where
+                    | zero : Even 0
+                    | succ : (n : Nat) -> Odd n -> Even (n + 1)
+
+                inductive Odd : Nat -> Type where
+                    | succ : (n : Nat) -> Even n -> Odd (n + 1)
+            end
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+Internamente, il kernel di Lean non possiede una regola nativa per gestire la mutua induttività. L'elaboratore, che verra approfondito nel prossimo capitolo, unifica 
+queste definizioni in un unico tipo induttivo ``somma'' che utilizza un indice aggiuntivo (un \textit{tag} enumerativo) per distinguere tra i blocchi originari. Viene 
+generato un solo ricorsore primitivo, da questo Lean deriva poi i ricorsori mutui individuali come semplici definizioni ($\delta$-espansioni). La derivazione avvende
+tramite la generazione di definizioni che utilizzano il tag per selezionare il ricorsore primitivo tramite una costante specializzandolo. Questo approccio garantisce 
+che la coerenza logica del sistema dipenda solo dalla validità dei tipi induttivi semplici, mantenendo il kernel ridotto e affidabile, mentre la complessità della mutua 
+induttività è gestita a livello di elaborazione. 
+
+% TODO: Nidificati
 
 \subsection{Quozienti e loro impatto sulla logica del sistema}
 Una caratteristica distintiva di Lean rispetto ad altri assistenti di prova (come Coq) è l'inclusione dei \textbf{tipi quoziente} come costrutti primitivi. Un 
