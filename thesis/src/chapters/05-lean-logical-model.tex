@@ -390,7 +390,7 @@ Nella pratica della formalizzazione, molte strutture dati presentano dipendenze 
 Lean 4 affronta queste strutture non espandendo le regole primitive del kernel, ma riconducendole a tipi induttivi standard tramite un processo di elaborazione 
 e trasformazione.
 
-\subsubsection{Tipi Mutui}
+\subsubsection{Tipi mutui}
 Si parla di induttività mutua quando due o più tipi sono definiti simultaneamente, poiché ciascuno funge da base per i costruttori dell'altro. 
 Un esempio classico è la definizione della parità dei numeri naturali tramite \texttt{Even} e \texttt{Odd}. Da notare che come discusso della
 gerarchia degli universi, si posso definre due versioni di tipi mutui, una in $Prop$ per la parità come proprietà logica e una in $Type$ per la 
@@ -437,7 +437,67 @@ tramite la generazione di definizioni che utilizzano il tag per selezionare il r
 che la coerenza logica del sistema dipenda solo dalla validità dei tipi induttivi semplici, mantenendo il kernel ridotto e affidabile, mentre la complessità della mutua 
 induttività è gestita a livello di elaborazione. 
 
-% TODO: Nidificati
+\subsubsection{Tipi nidificati}
+La nidificazione (\textit{nesting}) si verifica quando un tipo induttivo $I$ appare come argomento di un altro tipo induttivo (tipicamente una collezione come 
+\texttt{List} o \texttt{Array}) all'interno della definizione dei suoi stessi costruttori. Si consideri la seguente struttura di un albero con ramificazione variabile.
+\begin{center}
+    \begin{minipage}{0.85\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=12, 
+            caption={Esempio di tipo induttivo nidificato (leaf-labeled tree)}]
+            inductive Tree (alpha : Type u) where
+            | leaf : alpha -> Tree alpha
+            | node : List (Tree alpha) -> Tree alpha
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+In questo caso, il tipo \texttt{Tree} è nidificato all'interno di \texttt{List}. Dal punto di vista del kernel, questa definizione è problematica: il ricorsore 
+di \texttt{Tree} non possiede una conoscenza intrinseca della struttura interna di \texttt{List} e non sarebbe in grado di ``attraversare'' tale collezione per 
+raggiungere i sotto-alberi in essa contenuti. Per preservare la propria minimalità, Lean 4 risolve il problema tramite una tecnica di \emph{unrolling}. Questo 
+processo consiste nel trasformare la ricorsione nidificata in una forma di induttività mutua equivalente. L'elaboratore agisce tramite i seguenti tre passaggi 
+fondamentali.
+\begin{enumerate}
+    \item \textbf{Internalizzazione:} 
+        Viene generata una copia locale del tipo contenitore (nell'esempio, la lista), specializzata per contenere il tipo ricorsivo. Questa nuova struttura, 
+        che chiameremo \texttt{ListOfTree}, non è più una dipendenza esterna opaca, ma una componente esplicita del blocco induttivo.
+    \item \textbf{Trasformazione in blocco mutuo:} 
+        La definizione originale viene riscritta come un sistema di tipi mutui, dove \texttt{Tree} e \texttt{ListOfTree} si richiamano a vicenda. In questa 
+        forma, il kernel può chiaramente identificare che ogni chiamata ricorsiva avviene su un componente strutturalmente più piccolo (un elemento della lista 
+        o la coda della stessa).
+    \item \textbf{Validazione della positività stretta:} 
+        Solo dopo l'unrolling il kernel convalida la \textit{positività stretta}, assicurandosi che il tipo nidificato non appaia in posizioni illegittime 
+        (come l'argomento di una funzione), il che previene l'insorgere di paradossi logici.
+\end{enumerate}
+Una volta ricondotta alla forma mutua, la struttura viene ulteriormente semplificata tramite il processo di aggionzione del tag discusso precedentemente. Ciò permette 
+al kernel di generare un unico ricorsore primitivo capace di operare sull'intera gerarchia dell'albero, garantendo la corretezza del sistema senza dover estendere le 
+regole di base del calcolo delle costruzioni induttive.
+
+\paragraph{La trasformazione di unrolling}
+Per comprendere concretamente l'operazione di \textit{unrolling}, si consideri come la definizione di \texttt{Tree} (presentata nel Listato 2.6) venga interpretata 
+dall'elaboratore per essere sottoposta al kernel. La struttura nidificata viene ``svolta'' nel seguente blocco mutuo equivalente:
+
+\begin{center}
+    \begin{minipage}{0.85\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=12, 
+            caption={Rappresentazione interna post-unrolling (leaf-labeled tree)}]
+            mutual
+                inductive Tree' (alpha : Type u) where
+                    | leaf : alpha -> Tree' alpha
+                    | node : ListOfTree alpha -> Tree' alpha
+
+                inductive ListOfTree (alpha : Type u) where
+                    | nil  : ListOfTree alpha
+                    | cons : Tree' alpha -> ListOfTree alpha -> ListOfTree alpha
+            end
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+In questa forma, la ricorsione non è più mediata dal tipo esterno \texttt{List}, ma è diventata diretta. Questa trasformazione permette al kernel di generare un 
+ricorsore che non deve più ``saltare'' in una definizione esterna, ma può procedere lungo i costruttori \texttt{node}, \texttt{cons} e \texttt{nil}. Solo grazie 
+a questo passaggio l'unificatore del kernel può garantire la terminazione del calcolo.
 
 \subsection{Quozienti e loro impatto sulla logica del sistema}
 Una caratteristica distintiva di Lean rispetto ad altri assistenti di prova (come Coq) è l'inclusione dei \textbf{tipi quoziente} come costrutti primitivi. Un 
@@ -458,11 +518,11 @@ derivabili dalle regole di $\alpha\beta\delta\zeta\iota$-riduzione.
 \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
     \item [Quot.sound]
         Collega l'uguaglianza nel quoziente all'uguaglianza proposizionale. Afferma che se $x \sim y$, allora $\text{Quot.mk } x = \text{Quot.mk } y$.
-    \item [Assioma di Scelta (Choice)]
+    \item [Assioma di scelta (Choice)]
         Implementato tramite la costante \texttt{Classical.choice}, permette di produrre un elemento di un tipo $A$ a partire da una prova di 
         esistenza $\exists x : A$. Questo assioma rende la logica di Lean \textit{non-costruttiva}, permettendo di derivare il principio del 
         terzo escluso ($P \vee \neg P$).
-    \item [Estensionalità Funzionale (FunExt)]
+    \item [Estensionalità funzionale (FunExt)]
         Afferma che se due funzioni $f$ e $g$ producono lo stesso output per ogni input $\forall x, f(x) = g(x)$, allora le funzioni sono uguali $f = g$. 
         Sebbene sia una proprietà intuitiva, essa non è garantita dalla conversione del kernel e richiede un'assunzione esplicita per essere utilizzata nelle 
         dimostrazioni.
