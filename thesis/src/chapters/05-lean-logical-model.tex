@@ -341,13 +341,19 @@ $(\lambda x. \, I.rec \, P \, \vec{f} \, x) \, \vec{r}$ indica l'applicazione di
 di notazione per indicare una operazione map. La $\iota$-riduzione percorre l'albero sintattico del termine in forma canonica, applicando sistematicamente il ricorsere e di
 conseguenza le premesse minori, fino a raggiungere i termini atomici che fungono da base per la computazione.
 
-\paragraph{Decrescita strutturale e terminazione.}
-Il kernel di Lean impone vincoli rigorosi sulla $\iota$-riduzione per preservare la coerenza logica e prevenire la divergenza della computazione. La riduzione 
-è ammessa esclusivamente poiché opera per \emph{decrescita strutturale}, il ricorsore viene applicato ricorsivamente solo su componenti strettamente contenute 
-nel termine originario. Questa proprietà assicura che ogni sequenza di $\iota$-riduzioni sia finita, garantendo che ogni funzione definita tramite ricorsore sia 
-totale e che il controllo dell'uguaglianza definizionale rimanga decidibile.
+\section{Fondamenti di terminazione}
+La coerenza logica di Lean, basata sull'isomorfismo di Curry-Howard, richiede che il sistema sia \emph{fortemente normalizzante}, ogni computazione 
+deve terminare in un tempo finito. Se fosse possibile definire funzioni non terminanti (divergenti), si potrebbe abitare qualsiasi tipo, incluso il 
+tipo vuoto \texttt{False}, rendendo il sistema inconsistente.
 
-% TODO: aggiungere il controllo della terminazione e well-founded recursion (strutturale vs non strutturale)
+\subsection{Ricorsione strutturale}
+La ricorsione strutturale è la forma primaria di terminazione gestita dal kernel. Essa si basa sul principio che una funzione è sicura se richiama 
+sé stessa esclusivamente su \emph{sotto-termini sintattici} immediati dell'argomento originale. Il kernel valida questa proprietà attraverso la 
+\textit{$\iota$-riduzione} dei ricorsori. Poiché i tipi induttivi sono costruiti in modo aciclico, smontare un costruttore garantisce una decrescita 
+del termine, rendendo la terminazione intrinseca alla struttura del dato.
+
+\subsection{Ricorsione ben fondata}
+% TODO: well-founded recursion
 
 \section{Meccanismi di uguaglianza}
 L'introduzione della $\iota$-riduzione completa le regole di calcolo associate ai tipi induttivi, ma solleva una questione fondamentale legata
@@ -403,12 +409,12 @@ induttivo con un tag enumerativo aggiuntivo per distinguere tipi originali. Di s
             gobble=12,
             caption={Esempio di tipi mutui computazionalmente non rilevanti}]
             mutual
-              inductive Even : Nat -> Prop where
-                | zero : Even 0
-                | succ : (n : Nat) -> Odd n -> Even (n + 1)
+                inductive Even : Nat -> Prop where
+                    | zero : Even 0
+                    | succ : (n : Nat) -> Odd n -> Even (n + 1)
 
-              inductive Odd : Nat -> Prop where
-                | succ : (n : Nat) -> Even n -> Odd (n + 1)
+                inductive Odd : Nat -> Prop where
+                    | succ : (n : Nat) -> Even n -> Odd (n + 1)
             end
         \end{lstlisting}
     \end{minipage}
@@ -447,8 +453,8 @@ La nidificazione (\textit{nesting}) si verifica quando un tipo induttivo $I$ app
             gobble=12, 
             caption={Esempio di tipo induttivo nidificato (leaf-labeled tree)}]
             inductive Tree (alpha : Type u) where
-            | leaf : alpha -> Tree alpha
-            | node : List (Tree alpha) -> Tree alpha
+                | leaf : alpha -> Tree alpha
+                | node : List (Tree alpha) -> Tree alpha
         \end{lstlisting}
     \end{minipage}
 \end{center}
