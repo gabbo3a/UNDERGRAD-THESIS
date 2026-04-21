@@ -347,6 +347,8 @@ Il kernel di Lean impone vincoli rigorosi sulla $\iota$-riduzione per preservare
 nel termine originario. Questa proprietà assicura che ogni sequenza di $\iota$-riduzioni sia finita, garantendo che ogni funzione definita tramite ricorsore sia 
 totale e che il controllo dell'uguaglianza definizionale rimanga decidibile.
 
+% TODO: aggiungere il controllo della terminazione e well-founded recursion (strutturale vs non strutturale)
+
 \section{Meccanismi di uguaglianza}
 L'introduzione della $\iota$-riduzione completa le regole di calcolo associate ai tipi induttivi, ma solleva una questione fondamentale legata
 alla uguaglianza. Quando è possibile considerare due termini ``identici'' all'interno del sistema, questa domanda in Lean trova risposta nella 
@@ -377,3 +379,40 @@ poiché quest'ultima rimane "bloccata" dalla natura simbolica delle variabili $n
 Mentre l'uguaglianza proposizionale appartiene al regno della logica ($Prop$), l'uguaglianza definizionale è il motore del kernel. Il compito del kernel non è 
 ``dimostrare'' teoremi, ma verificare che la prova fornita dall'utente sia corretta tramite passi di riduzione. La complessità computazionale di un programma in 
 Lean coincide spesso con lo sforzo dal kernel nel risolvere le catene di $\iota$-riduzioni necessarie a stabilire un'uguaglianza definizionale.
+
+\section{Estensioni e assiomi nel kernel di Lean}
+Sebbene il Calcolo delle Costruzioni Induttive fornisca una base solida, la formalizzazione della matematica moderna richiede costrutti che superano 
+la ricorsione strutturale semplice. Lean 4 integra nel suo kernel alcune estensioni fondamentali e supporta l'uso di assiomi che ne estendono la potenza 
+logica senza compromettere la coerenza del sistema.
+
+\subsection{Tipi Induttivi Mutui e Nidificati}
+% TODO
+
+\subsection{Quozienti e loro impatto sulla logica del sistema}
+Una caratteristica distintiva di Lean rispetto ad altri assistenti di prova (come Coq) è l'inclusione dei \textbf{tipi quoziente} come costrutti primitivi. Un 
+quoziente permette di definire un nuovo tipo a partire da un tipo $A$ e una relazione di equivalenza $R$, identificando tra loro elementi diversi ma equivalenti 
+(ad esempio, le frazioni $1/2$ e $2/4$).
+\begin{itemize}
+    \item \textbf{Integrazione nel kernel:} 
+        Lean introduce costanti primitive come \texttt{Quot.mk} per creare un elemento del quoziente e \texttt{Quot.lift} per definire funzioni sul quoziente.
+    \item \textbf{Impatto sulla riduzione:} 
+        I quozienti introducono una regola di riduzione supplementare. Se $f$ è una funzione definita su $A$ che rispetta la relazione $R$, allora 
+        \texttt{Quot.lift f h (Quot.mk x)} si riduce a \texttt{f x}. Questa estensione permette al kernel di gestire l'estensionalità e l'uguaglianza 
+        matematica in modo molto più naturale rispetto alla sola induzione.
+\end{itemize}
+
+\subsection{Assiomi aggiuntivi e/o opzionali}
+Lean è basato su una logica costruttiva, ma per supportare la matematica classica permette l'aggiunta di tre assiomi fondamentali che non sono 
+derivabili dalle regole di $\alpha\beta\delta\zeta\iota$-riduzione.
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item [Quot.sound]
+        Collega l'uguaglianza nel quoziente all'uguaglianza proposizionale. Afferma che se $x \sim y$, allora $\text{Quot.mk } x = \text{Quot.mk } y$.
+    \item [Assioma di Scelta (Choice)]
+        Implementato tramite la costante \texttt{Classical.choice}, permette di produrre un elemento di un tipo $A$ a partire da una prova di 
+        esistenza $\exists x : A$. Questo assioma rende la logica di Lean \textit{non-costruttiva}, permettendo di derivare il principio del 
+        terzo escluso ($P \vee \neg P$).
+    \item [Estensionalità Funzionale (FunExt)]
+        Afferma che se due funzioni $f$ e $g$ producono lo stesso output per ogni input $\forall x, f(x) = g(x)$, allora le funzioni sono uguali $f = g$. 
+        Sebbene sia una proprietà intuitiva, essa non è garantita dalla conversione del kernel e richiede un'assunzione esplicita per essere utilizzata nelle 
+        dimostrazioni.
+\end{description}
