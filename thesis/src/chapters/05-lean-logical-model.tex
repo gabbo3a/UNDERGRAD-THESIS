@@ -289,9 +289,9 @@ utilizzando la notazione dei prodotti dipendenti è riportata la segnatura di $I
 \begin{equation}
     \begin{aligned}
         I.rec : \quad & \Pi \, (P : I \to \text{Sort } u) && \text{\small (Motivo)}               \\ & 
-        \to f_{c_1} : \text{PremessaMinore}(c_1, P)        && \text{\small (Premessa minore 1)}   \\ & 
+        \to f_{c_1} : \text{PremessaMinore}(c_1, P)       && \text{\small (Premessa minore 1)}    \\ & 
         \vdots                                            &&                                      \\ & 
-        \to f_{c_n} : \text{PremessaMinore}(c_n, P)        && \text{\small (Premessa minore $n$)} \\ & 
+        \to f_{c_n} : \text{PremessaMinore}(c_n, P)       && \text{\small (Premessa minore $n$)}  \\ & 
         \to \Pi \, (t : I), \, P(t)                       && \text{\small (Premessa maggiore, Conclusione)}
     \end{aligned}
 \end{equation}
@@ -352,8 +352,55 @@ sé stessa esclusivamente su \emph{sotto-termini sintattici} immediati dell'argo
 \textit{$\iota$-riduzione} dei ricorsori. Poiché i tipi induttivi sono costruiti in modo aciclico, smontare un costruttore garantisce una decrescita 
 del termine, rendendo la terminazione intrinseca alla struttura del dato.
 
-\subsection{Ricorsione ben fondata}
-% TODO: well-founded recursion
+\subsection{Ricorsione well-founded}
+In molti casi, la semplice ricorsione strutturale non è sufficiente per esprimere algoritmi complessi o efficenti. Esistono algoritmi la cui terminazione non 
+è riconducibile alla semplice decrescita sintattica dei termini, si pensi al \textit{MergeSort} dove l'argomento ricorsivo è il risultato di un calcolo e non 
+un sotto-termine dell'input. Per gestire questi casi senza estendere il kernel, Lean utilizza la \textit{well-founded recursion}, una tecnica che traduce una 
+proprietà logica di un ordine in una struttura induttiva utilizzabile per la ricorsione strutturale.
+
+\subsubsection{Predicato di accessibilità}
+L'architettura di questo meccanismo ruota attorno al tipo induttivo \texttt{Acc} (\textit{Accessibility}). Esso funge da certificato strutturale che 
+garantisce l'assenza di catene discendenti infinite partendo da un elemento $x$ rispetto a una relazione $r$.
+\begin{center}
+    \begin{minipage}{0.85\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=12,
+            caption={Definizione del predicato di accessibilità}]
+            inductive Acc 
+                {α : Sort u} 
+                (r : α → α → Prop) (x : α) : Prop where
+                | intro (x : α) : 
+                    (∀(y : α), r y x → Acc r y) → Acc r x
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+Il costruttore \texttt{intro} modella il concetto di accessibilità in modo ricorsivo, un elemento $x$ è accessibile se ogni suo predecessore $y$ nel reticolo definito 
+da $r$ è accessibile. Dal punto di vista della struttura dati, una prova di \texttt{Acc r x} non è un semplice valore booleano, ma un \emph{albero di testimoni}. Ogni 
+nodo dell'albero rappresenta un valore nel reticolo, e i suoi figli sono le prove di accessibilità per tutti i valori ``minori'' secondo la relazione $r$. Se la relazione 
+$r$ non fosse ben fondata (possedendo cicli o regredendo all'infinito), il tentativo di costruire tale albero porterebbe a un termine infinito, che il sistema rifiuterebbe 
+in fase di costruzione.
+
+\subsubsection{La riduzione alla ricorsione strutturale}
+Il punto di forza di questo approccio risiede nel disaccoppiamento tra la semantica dell'algoritmo e la prova della sua terminazione. L'elaboratore non invia al kernel 
+la funzione così come definita dall'utente, ma genera una funzione ausiliaria (\textit{auxiliary function}) la cui firma è estesa con un argomento supplementare, ovvero 
+il testimone di accessibilità dell'input. Di seguito è riportato, il processo di trasformazione e riduzione.
+\begin{enumerate}
+    \item \textbf{Selezione della relazione ben fondata:} 
+        Viene individuata (o fornita dall'utente) una relazione $r$ per la quale esiste una prova di \textit{well-foundedness} 
+        ($\forall x, \text{Acc} \, r \, x$). Tale relazione definisce lo spazio di decrescita ammesso per la funzione.
+    \item \textbf{Generazione obblighi di prova:} 
+        Per ogni chiamata ricorsiva $f(y)$ all'interno di $f(x)$, l'elaboratore genera un obbligo di prova (\textit{proof obligation}) per l'asserzione 
+        $r \, y \, x$. Il successo di questa prova permette di estrarre, tramite il ricorsore di \texttt{Acc}, il sotto-testimone di accessibilità relativo 
+        a $y$ a partire da quello di $x$.
+    \item \textbf{Linearizzazione strutturale:} 
+        Al livello del kernel, la ricorsione non avviene più sul valore dei dati, ma per \textbf{decrescita strutturale sul testimone di accessibilità}. 
+        Poiché \texttt{Acc} è un tipo induttivo standard, la sua riduzione $\iota$ è nativamente supportata.
+\end{enumerate}
+% TODO: aggiungere esempio di definizione di funzione con ricorsione ben fondata (es. merge sort)
+In conclusione, la ricorsione ben fondata non è una primitiva del kernel di Lean, bensì una tecnica attuata dal elaboratore. Questo meccanismo sposta l'onere 
+della prova di terminazione dal kernel, che rimane minimale e limitato, al sistema logico superiore e all'elaboratore. Di consegunenza la complessità degli 
+algoritmi supportati è limitata solo dalla capacità del sistema di dimostrare la decrescita dei salti computazionali all'interno della relazione di accessibilità.
 
 \section{Meccanismi di uguaglianza}
 L'introduzione della $\iota$-riduzione completa le regole di calcolo associate ai tipi induttivi, ma solleva una questione fondamentale legata
@@ -452,9 +499,9 @@ La nidificazione (\textit{nesting}) si verifica quando un tipo induttivo $I$ app
             language=lean, 
             gobble=12, 
             caption={Esempio di tipo induttivo nidificato (leaf-labeled tree)}]
-            inductive Tree (alpha : Type u) where
-                | leaf : alpha -> Tree alpha
-                | node : List (Tree alpha) -> Tree alpha
+            inductive Tree (α : Type u) where
+                | leaf : α -> Tree α
+                | node : List (Tree α) -> Tree α
         \end{lstlisting}
     \end{minipage}
 \end{center}
@@ -479,10 +526,9 @@ Una volta ricondotta alla forma mutua, la struttura viene ulteriormente semplifi
 al kernel di generare un unico ricorsore primitivo capace di operare sull'intera gerarchia dell'albero, garantendo la corretezza del sistema senza dover estendere le 
 regole di base del calcolo delle costruzioni induttive.
 
-\paragraph{La trasformazione di unrolling}
+\paragraph{Unrolling.}
 Per comprendere concretamente l'operazione di \textit{unrolling}, si consideri come la definizione di \texttt{Tree} (presentata nel Listato 2.6) venga interpretata 
 dall'elaboratore per essere sottoposta al kernel. La struttura nidificata viene ``svolta'' nel seguente blocco mutuo equivalente:
-
 \begin{center}
     \begin{minipage}{0.85\textwidth}
         \begin{lstlisting}[
@@ -490,13 +536,13 @@ dall'elaboratore per essere sottoposta al kernel. La struttura nidificata viene 
             gobble=12, 
             caption={Rappresentazione interna post-unrolling (leaf-labeled tree)}]
             mutual
-                inductive Tree' (alpha : Type u) where
-                    | leaf : alpha -> Tree' alpha
-                    | node : ListOfTree alpha -> Tree' alpha
+                inductive Tree' (α : Type u) where
+                    | leaf : α -> Tree' α
+                    | node : ListOfTree α -> Tree' α
 
-                inductive ListOfTree (alpha : Type u) where
-                    | nil  : ListOfTree alpha
-                    | cons : Tree' alpha -> ListOfTree alpha -> ListOfTree alpha
+                inductive ListOfTree (α : Type u) where
+                    | nil  : ListOfTree α
+                    | cons : Tree' α -> ListOfTree α -> ListOfTree α
             end
         \end{lstlisting}
     \end{minipage}
