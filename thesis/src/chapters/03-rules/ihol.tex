@@ -1,0 +1,25 @@
+\ruleblock{Regole Unificate (Stile Sequente)}{
+    \begin{prooftree}
+        \hypo{\Gamma, x:\sigma \vdash \Phi} 
+        \infer1[($\forall I$)]{\Gamma \vdash \forall x^\sigma \Phi}
+    \end{prooftree}
+    \qquad
+    \begin{prooftree}
+        \hypo{\Gamma \vdash \forall x^\sigma \Phi} 
+        \hypo{\Gamma \vdash t:\sigma} 
+        \infer2[($\forall E$)]{\Gamma \vdash \Phi[t/x]}
+    \end{prooftree}
+    \\[2em]
+    \begin{prooftree}
+        \hypo{\Gamma \vdash t:\sigma} 
+        \hypo{\Gamma \vdash \Phi[t/x]} 
+        \infer2[($\exists I$)]{\Gamma \vdash \exists x^\sigma \Phi}
+    \end{prooftree}
+    \qquad
+    \begin{prooftree}
+        \hypo{\Gamma \vdash \exists x^\sigma \Phi} 
+        \hypo{\Gamma, x:\sigma, \Phi \vdash \Psi} 
+        \infer2[($\exists E$)]{\Gamma \vdash \Psi}
+    \end{prooftree}
+}{Regole unificate per la logica dei predicati nella notazione basata sul contesto 
+$\Gamma \vdash \Phi$, che integrano il controllo dei tipi e la derivazione logica.}
