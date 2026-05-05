@@ -1,0 +1,35 @@
+% !TEX root = ../main.tex
+\chapter{Architettura di Lean 4}
+\label{chap:architecture}
+
+% TODO: add cappello
+
+\section{Pipeline di compilazione}
+L'architettura di Lean 4 si distingue nel panorama dei linguaggi moderni per la sua duplice natura, contemporaneamente un assistente alla dimostrazione interattivo 
+(\emph{interactive theorem prover}) e un linguaggio di programmazione general-purpose. Per supportare questa ambivalenza, il processo di compilazione non è un semplice 
+traduttore da codice sorgente a linguaggio macchina, ma una sofisticata pipeline che accompagna il codice attraverso molteplici livelli di astrazione. La pipeline di 
+compilazione, dal file di testo fino all'esecuzione, può essere compsreso analizzando tre macro-fasi distinte, ognuna con responsabilità rigorosamente separate. 
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item [Frontend]
+        Il responsabile dell'interazione con l'utente. Qui il testo viene analizzato, le eventuali macro vengono espanse (risolvendo il cosiddetto ``zucchero sintattico'') 
+        e il codice viene elaborato fino a diventare un'espressione formale pura. È la fase che colma il divario tra l'intuizione umana e il rigore meccanico.
+    \item [Kernel]
+        Il responsabile della corretezza matematica del sistema, agisce come un controllore inflessibile dove la sua unica funzione è verificare la logica delle espressioni 
+        prodotte dal frontend. Costituisce la \textit{Trusted Computing Base} (TCB) di Lean, ovvero l'unica parte del sistema di cui ci si deve fidare per garantire la validità 
+        delle dimostrazioni. Per garantire una buon livello di affidabilità, il kernel è progettato per essere il più piccolo e semplice possibile.
+    \item [Backend]
+        Una volta che il kernel ha validato la correttezza logica, il backend si occupa di ottimizzare e compilare il codice. Questa fase è completamente separata dalla logica 
+        formale. Tale processo avviene esclusivamente per le espressioni computazionali, eliminando ogni informazione matematica superflua e generando codice macchina ``efficiente''.
+\end{description}
+Questa netta separazione delle preoccupazioni (\textit{separation of concerns}) garantisce che l'efficienza dell'esecuzione non comprometta mai l'assoluta affidabilità 
+delle dimostrazioni matematiche.
+
+\subsection{Frontend: Parsing ed Elaborazione}
+% Syntax -> Expr -> ... Kernel
+
+\subsection{Il Kernel e la Trusted Computing Base (TCB)}
+% Qui inserisci il concetto fondamentale che solo questa piccola
+% parte valida le dimostrazioni, isolando i bug del resto del compilatore.
+
+\subsection{Backend: Ottimizzazione ed Esecuzione}
+% LCNF -> Lean IR e come l'Expr verificata (se è computabile) -> codice C.
