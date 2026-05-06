@@ -50,9 +50,24 @@ modulare mantiene l'elaboratore semantico snello, sollevandolo dal dover conosce
 % \subsubsection{Elaboratore}
 % TODO
 
-\subsection{Il Kernel e la Trusted Computing Base (TCB)}
-% Qui inserisci il concetto fondamentale che solo questa piccola
-% parte valida le dimostrazioni, isolando i bug del resto del compilatore.
+\subsection{Kernel e Trusted Computing Base (TCB)}
+L'elaborazione descritta in precedenza culmina con la generazione di un termine \texttt{Expr} completamente esplicito. A questo punto, il termine lascia il dominio del frontend 
+e viene sottoposto al giudizio del \textbf{Kernel}. In Lean 4, il Kernel rappresenta la \textit{Trusted Computing Base} (TCB) del sistema, ovvero l'unica, vitale componente software 
+della cui correttezza l'utente deve fidarsi per garantire la solidità matematica delle dimostrazioni.
+
+\subsubsection{Principio di de Bruijn}
+Questa netta separazione architetturale incarna il \emph{Principio di de Bruijn}. Tale principio fondazionale per gli assistenti alla dimostrazione stabilisce che un sistema di verifica 
+formale debba separare rigorosamente la fase di costruzione della prova dalla fase di verifica della stessa. Il frontend (comprendente parser, macro e algoritmi di elaborazione) è costituito 
+da decine di migliaia di righe di codice complesso. Per la natura intrinseca dello sviluppo software, esso è statisticamente incline a contenere bug informatici e viene pertanto considerato 
+non fidato (\textit{untrusted}). Non possiede alcuna autorità per dichiarare un teorema valido: si limita a fungere da intermediario, proponendo una potenziale prova.
+
+\subsubsection{Verifica meccanica}
+Per mitigare il rischio di errori logiche, il Kernel è progettato all'insegna del minimalismo e dell'isolamento. Attualmente implementato in C++ (per ragioni storiche e di performance), il Kernel 
+è un pezzo di codice volutamenete compatto. Il suo unico compito è l'esecuzione di un algoritmo deterministico di \textit{Type Checking}. A differenza dell'elaboratore, il Kernel è ``cieco'' alle 
+euristiche, non effettua alcuna inferenza, non sa cosa siano le typeclass e metavariabili non risolte. Esso si limita a ispezionare il termine \texttt{Expr} fornito, verificando meccanicamente e 
+passo dopo passo che esso rispetti gli assiomi e le regole deduttive del \textit{Calculus of Inductive Constructions} (CIC), discussi del capitolo \ref{chap:cic}. Se il type checker convalida il 
+termine, la dichiarazione viene accettata e memorizzata nell'ambiente (\textit{Environment}) come matematicamente ineccepibile. Qualora la \texttt{Expr} contenga un errore o derivi da un bug del 
+frontend, il Kernel la rifiuterà inflessibilmente, impedendo a priori la corruzione del sistema formale.
 
 \subsection{Backend: Ottimizzazione ed Esecuzione}
 % LCNF -> Lean IR e come l'Expr verificata (se è computabile) -> codice C.
