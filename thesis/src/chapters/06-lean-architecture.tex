@@ -11,7 +11,7 @@ traduttore da codice sorgente a linguaggio macchina, ma una sofisticata pipeline
 compilazione, dal file di testo fino all'esecuzione, può essere compsreso analizzando tre macro-fasi distinte, ognuna con responsabilità rigorosamente separate. 
 \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
     \item [Frontend]
-        Il responsabile dell'interazione con l'utente. Qui il testo viene analizzato, le eventuali macro vengono espanse (risolvendo il cosiddetto ``zucchero sintattico'') 
+        Il responsabile dell'interazione con l'utente. Qui il testo viene analizzato, le eventuali macro vengono espanse (risolvendo lo ``zucchero sintattico'') 
         e il codice viene elaborato fino a diventare un'espressione formale pura. È la fase che colma il divario tra l'intuizione umana e il rigore meccanico.
     \item [Kernel]
         Il responsabile della corretezza matematica del sistema, agisce come un controllore inflessibile dove la sua unica funzione è verificare la logica delle espressioni 
@@ -24,8 +24,31 @@ compilazione, dal file di testo fino all'esecuzione, può essere compsreso anali
 Questa netta separazione delle preoccupazioni (\textit{separation of concerns}) garantisce che l'efficienza dell'esecuzione non comprometta mai l'assoluta affidabilità 
 delle dimostrazioni matematiche.
 
-\subsection{Frontend: Parsing ed Elaborazione}
-% Syntax -> Expr -> ... Kernel
+\subsection{Frontend dal parsing alla laborazione}
+Il \textit{Frontend} di Lean 4 è l'interfaccia architetturale che media tra l'utente (tramite l'editor) e il rigoroso mondo del Kernel. A differenza dei compilatori 
+tradizionali, il frontend di Lean è progettato per essere interattivo, incrementale ed estensibile a runtime dall'utente stesso. Esso trasforma un flusso di caratteri 
+testuali in un'espressione validabile (\texttt{Expr}), attraversando tre fasi computazionali distinte: parsing, espansione delle macro ed elaborazione.
+
+\subsubsection{Lexing, Parsing e l'Albero Sintattico Concreto (CST)}
+Il processo ha inizio con il \emph{Parser}, il quale analizza il codice sorgente. A differenza di molti linguaggi funzionali che utilizzano generatori di parser statici 
+(come Yacc o Bison), Lean 4 implementa un parser a discesa ricorsiva estensibile, basato su un algoritmo noto come \textit{Pratt Parsing} (parsing a precedenza di operatori). 
+Questo permette all'utente di definire nuove notazioni sintattiche al volo, assegnando loro specifici livelli di precedenza. Il risultato del parsing non è un tradizionale
+\textit{Abstract Syntax Tree} (AST), ma un \textit{Albero Sintattico Concreto} (CST), denotato in Lean dal tipo induttivo \texttt{Syntax}. Il tipo \texttt{Syntax} è progettato 
+per essere una rappresentazione completamente fedele (fully faithful) del file sorgente. Nello specifico, esso memorizza simultaneamente la struttura gerarchica dei nodi sintattici, 
+i metadati lessicali (\texttt{SourceInfo}) per tracciare le esatte coordinate di riga e colonna, e le informazioni tipografiche, preservando gli spazi bianchi (\textit{whitespaces}) 
+e i commenti adiacenti a ogni token. Questa scelta di conservare le informazioni non semantiche è cruciale poiche permette al server linguistico di Lean (LSP) di fornire feedback 
+visivo, autocompletamento e \textit{refactoring} testuale direttamente nell'editor, garantendo che la manipolazione automatica del codice non ne distrugga la formattazione originale.
+
+\subsubsection{Espansione delle macro}
+Una volta generato l'albero concreto tramite il tipo induttivo \texttt{Syntax}, il controllo passa al sistema delle Macro. In Lean 4, una macro è una funzione
+pura che mappa sintassi in sintassi (\texttt{Syntax $\rightarrow$ MacroM Syntax}), operando all'interno della monade \texttt{MacroM}. L'obiettivo delle macro è 
+la "dezuccherizzazione" (\textit{desugaring}), costrutti di alto livello o notazioni create dall'utente vengono meccanicamente tradotte in costrutti più primitivi. 
+Questo processo avviene prima che il compilatore tenti di risolvere i tipi del programma. Ad esempio, un costrutto come la notazione per le liste \texttt{[a, b, c]} 
+non esiste nel nucleo del linguaggio. Tale notazione viene espansa tramite macro in funzioni ricorsive o catene di costruttori (\texttt{List.cons}). Questo approccio 
+modulare mantiene l'elaboratore semantico snello, sollevandolo dal dover conoscere ogni singola notazione derivata.
+
+% \subsubsection{Elaboratore}
+% TODO
 
 \subsection{Il Kernel e la Trusted Computing Base (TCB)}
 % Qui inserisci il concetto fondamentale che solo questa piccola
