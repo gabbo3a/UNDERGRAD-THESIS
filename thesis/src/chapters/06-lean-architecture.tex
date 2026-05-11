@@ -52,7 +52,7 @@ modulare mantiene l'elaboratore semantico snello, sollevandolo dal dover conosce
 
 \subsection{Kernel e Trusted Computing Base (TCB)}
 L'elaborazione descritta in precedenza culmina con la generazione di un termine \texttt{Expr} completamente esplicito. A questo punto, il termine lascia il dominio del frontend 
-e viene sottoposto al giudizio del \textbf{Kernel}. In Lean 4, il Kernel rappresenta la \textit{Trusted Computing Base} (TCB) del sistema, ovvero l'unica, vitale componente software 
+e viene sottoposto al giudizio del \textbf{Kernel}. In Lean 4, il kernel rappresenta la \textit{Trusted Computing Base} (TCB) del sistema, ovvero l'unica, vitale componente software 
 della cui correttezza l'utente deve fidarsi per garantire la solidità matematica delle dimostrazioni.
 
 \subsubsection{Principio di de Bruijn}
@@ -62,12 +62,33 @@ da decine di migliaia di righe di codice complesso. Per la natura intrinseca del
 non fidato (\textit{untrusted}). Non possiede alcuna autorità per dichiarare un teorema valido: si limita a fungere da intermediario, proponendo una potenziale prova.
 
 \subsubsection{Verifica meccanica}
-Per mitigare il rischio di errori logiche, il Kernel è progettato all'insegna del minimalismo e dell'isolamento. Attualmente implementato in C++ (per ragioni storiche e di performance), il Kernel 
-è un pezzo di codice volutamenete compatto. Il suo unico compito è l'esecuzione di un algoritmo deterministico di \textit{Type Checking}. A differenza dell'elaboratore, il Kernel è ``cieco'' alle 
+Per mitigare il rischio di errori logiche, il kernel è progettato all'insegna del minimalismo e dell'isolamento. Attualmente implementato in C++ (per ragioni storiche e di performance), il kernel 
+è un pezzo di codice volutamenete compatto. Il suo unico compito è l'esecuzione di un algoritmo deterministico di \textit{Type Checking}. A differenza dell'elaboratore, il kernel è ``cieco'' alle 
 euristiche, non effettua alcuna inferenza, non sa cosa siano le typeclass e metavariabili non risolte. Esso si limita a ispezionare il termine \texttt{Expr} fornito, verificando meccanicamente e 
 passo dopo passo che esso rispetti gli assiomi e le regole deduttive del \textit{Calculus of Inductive Constructions} (CIC), discussi del capitolo \ref{chap:cic}. Se il type checker convalida il 
 termine, la dichiarazione viene accettata e memorizzata nell'ambiente (\textit{Environment}) come matematicamente ineccepibile. Qualora la \texttt{Expr} contenga un errore o derivi da un bug del 
-frontend, il Kernel la rifiuterà inflessibilmente, impedendo a priori la corruzione del sistema formale.
+frontend, il kernel la rifiuterà inflessibilmente, impedendo a priori la corruzione del sistema formale.
 
-\subsection{Backend: Ottimizzazione ed Esecuzione}
-% LCNF -> Lean IR e come l'Expr verificata (se è computabile) -> codice C.
+\subsection{Backend dal'ottimizzazione all'esecuzione}
+Per le espressioni dotate di semantica operazionale (come le funzioni introdotte dalle parole chiave \texttt{def} o \texttt{abbrev}), la validità logica stabilita dal kernel rappresenta solo un traguardo 
+intermedio. Per poter permettere a Lean 4 di competere in termini di prestazioni con i linguaggi di programmazione industriali, il codice funzionale deve essere compilato in istruzioni macchina altamente 
+ottimizzate. Tale compito è l'esclusiva responsabilità del backend. Il passaggio dal dominio logico a quello computazionale avviene attraverso una pipeline di \emph{lowering} che degrada progressivamente 
+l'astrazione matematica per modellare i rigidi vincoli dell'hardware sottostante.
+
+\subsubsection{Eliminazione del contenuto proposizionale}
+Il termine \texttt{Expr} approvato dal kernel è completamente annotato di dettagli logici, come tipi dipendenti complessi e intere dimostrazioni di correttezza intrise nel codice. Tali dettagli sebbene cruciali 
+per la coretteza del sistema formale a \textit{runtime} non sono necessari per l'esecuzione effettiva del programma. Pertanto, la prima operazione del backend è la cancellazione dei tipi (\texttt{Type Erasure}). 
+Il compilatore analizza l'espressione e sopprime tutti i sotto-termini appartenenti all'universo proposizionale (\texttt{Prop}). Poiché le dimostrazioni non hanno alcun effetto sul comportamento a runtime, esse 
+vengono rimosse e sostituite internamente con un valore fittizio e unitario (denotato come \texttt{lcErased} o \scalebox{0.8}{$\blacksquare$}). Questo processo garantisce che il codice generato non paghi alcun 
+\textit{overhead} prestazionale per il rigore logico preteso nelle fasi precedenti.
+
+\subsubsection{LCNF, A-Normal Form per l'ottimizzazione funzionale}
+
+\subsubsection{Lean IR, Gestione della memoria e in-place mutation}
+
+\subsubsection{Compilazione nativa mediante delega architetturale}
+L'ultima parte della pipeline è sorprendentemente pragmatica. La Lean IR è progettata per essere semanticamente vicina al linguaggi imperativi, in particolare al linguaggio C. Il backend mappa i blocchi base 
+e le istruzioni di \textit{reference counting} in codice sorgente C standard, appoggiandosi a un \textit{runtime} minimale scritto in C++. Tale runtime fornisce i servizi di base per la gestione della memoria, 
+come l'allocazione dinamica e la deallocazione (tramite la struttura \texttt{lean\_object}), interi a precisione arbitraria e gestione della processazione parallela. Al fine mi massimizzare la portabilità e 
+minimizzare la complessità, il backend non tenta di generare codice macchina direttamente. Tale compito è delegato a compilatori industriali consolidati (come GCC o LLVM/Clang). Questi strumenti prendono il 
+codice C generato e vi applicano decenni di ottimizzazioni hardware di basso livello, producendo infine eseguibili binari nativi ad altissime prestazioni.
