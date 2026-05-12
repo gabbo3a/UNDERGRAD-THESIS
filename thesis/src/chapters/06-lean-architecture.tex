@@ -24,8 +24,8 @@ compilazione, dal file di testo fino all'esecuzione, può essere compsreso anali
 Questa netta separazione delle preoccupazioni (\textit{separation of concerns}) garantisce che l'efficienza dell'esecuzione non comprometta mai l'assoluta affidabilità 
 delle dimostrazioni matematiche.
 
-\subsection{Frontend dal parsing alla laborazione}
-Il \textit{Frontend} di Lean 4 è l'interfaccia architetturale che media tra l'utente (tramite l'editor) e il rigoroso mondo del Kernel. A differenza dei compilatori 
+\subsection{Frontend dal parsing all'elaborazione}
+Il \textit{Frontend} di Lean 4 è l'interfaccia architetturale che media tra l'utente (tramite l'editor) e il rigoroso mondo del kernel. A differenza dei compilatori 
 tradizionali, il frontend di Lean è progettato per essere interattivo, incrementale ed estensibile a runtime dall'utente stesso. Esso trasforma un flusso di caratteri 
 testuali in un'espressione validabile (\texttt{Expr}), attraversando tre fasi computazionali distinte: parsing, espansione delle macro ed elaborazione.
 
@@ -47,8 +47,66 @@ Questo processo avviene prima che il compilatore tenti di risolvere i tipi del p
 non esiste nel nucleo del linguaggio. Tale notazione viene espansa tramite macro in funzioni ricorsive o catene di costruttori (\texttt{List.cons}). Questo approccio 
 modulare mantiene l'elaboratore semantico snello, sollevandolo dal dover conoscere ogni singola notazione derivata.
 
-% \subsubsection{Elaboratore}
-% TODO
+\subsubsection{Elaboratore}
+L'elaboratore è il cuore computazionale del frontend. Esso prende in input un termine \texttt{Syntax} (potenzialmente arricchito da macro) e lo trasforma in un termine 
+\texttt{Expr} completamente esplicito, quando possibile. L'elaborazione è un processo iterativo e complesso che coinvolge molteplici sottosistemi, tra cui l'inferenza dei 
+tipi, la risoluzione delle typeclass, la gestione delle metavariabili e l'applicazione di euristiche per disambiguare le notazioni. L'eleboratore per gestire tale complessita 
+utilizza una architettura a pila di monadi (\emph{Monad Transformer Stack}), permettendo di comporre le gestioni degli effetti delle diverse monade. Questa struttura a consente 
+a Lean 4 di stratificare le responsabilità software. Ogni livello dello stack aggiunge capacità specifiche avvolgendo la monade sottostante.
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item [\texttt{CoreM}] 
+        La base dello stack, fornisce l'accesso all'ambiente globale (\texttt{Environment}), alla gestione delle opzioni e alla cache. È il livello che interagisce 
+        direttamente con le definizioni e gli assiomi già validati.
+    \item [\texttt{MetaM}]
+        Estende \texttt{CoreM} introducendo il contesto delle metavariabili (\texttt{MetavarContext}) e delle variabili locali (\texttt{LocalContext}). In questo 
+        strato risiede la logica di unificazione di ordine superiore (\emph{Higher-Order Unification}), permettendo al sistema di risolvere i "buchi" logici ($?m$) 
+        generati durante l'inferenza.
+    \item [\texttt{TermElabM}]
+        Una delle possibili estensioni di \texttt{MetaM}, dedicata all'interazione con la sintassi. Si occupa della traduzione del termine \texttt{Syntax} fornito 
+        dall'utente in un'espressione logica, gestendo la risoluzione dei nomi, i messaggi di errore e la mappatura delle posizioni nel codice sorgente, fungendo da 
+        interfaccia tra l'input testuale e il motore logico sottostante.
+    \item [\texttt{TacticM}]
+        Un'estensione di \texttt{MetaM} che opera in parallelo a \texttt{TermElabM}, progettata per la costruzione dinamica dei termini di prova. A differenza dell'elaboratore 
+        di termini, non si limita a tradurre una sintassi esistente, ma gestisce uno stato mutabile (\texttt{TacticState}) contenente l'elenco dei sotto-obiettivi (\emph{goals}) 
+        aperti. Questa monade permette di manipolare direttamente le metavariabili, raffinandole attraverso l'applicazione di tattiche che generano porzioni di \texttt{Expr} in 
+        risposta allo stato corrente del ragionamento, agendo di fatto come un motore generativo che costruisce il termine di prova in modo interattivo e incrementale.
+\end{description}
+
+\subsubsection{Metaprogrammazione}
+La killer feature del frontend di Lean 4 risiede nella sua natura \textit{self-hosted}, il compilatore fornisce all'utente le stesse interfaccie utilizzate dai progettisti del linguaggio. 
+Questo permette di estendere le capacità del sistema senza modificarne il nucleo, trasformandolo in una piattaforma per lo sviluppo di linguaggi di dominio specifico e automazione avanzata.
+
+\paragraph{Estensione sintattica.}
+Tramite il comando \texttt{syntax} è possibile definire nuove produzioni sintattiche, estendendo la grammatica del linguaggio a runtime. Nello specifico tali produzioni verranno utilizzate
+dal parser per generare nodi del tipo \texttt{Syntax}. Successivamente, tramite \texttt{macro\_rules}, è possibile specificare come tali nodi debbano essere espansi in altri costrutti sintattici, 
+permettendo di creare nuove notazioni, di seguito un esempio una notazione per l'operatore modulo.
+
+\begin{comment}
+    \begin{center}
+        \begin{minipage}{0.85\textwidth}
+            \begin{lstlisting}[
+                language=lean, 
+                gobble=12, 
+                caption={Estesione della sintassi per l'operatore modulo}]
+                syntax:65 term " mod " term : term
+                macro_rules
+                | ($x mod $y) => (Nat.mod $x $y)
+            \end{lstlisting}
+        \end{minipage}
+    \end{center}
+\end{comment}
+
+\paragraph{Metaprogrammazione delle tattiche.}
+Le tattiche sono meta-programmi operanti nella monade \texttt{TacticM} che automatizzano la costruzione dei termini di prova attraverso la manipolazione del \textit{proof state}. 
+Lean 4 consente di estendere questo sistema secondo due livelli di astrazione, le macro e gli elaboratori. Le macro operano una trasformazione puramente sintattica, traducendo nuovi 
+comandi in sequenze di tattiche preesistenti senza analizzare il contenuto del \textit{goal}. Al contrario, gli elaboratori interagiscono direttamente con il contesto logico tramite 
+\texttt{MetaM}, permettendo di ispezionare le ipotesi e sintetizzare dinamicamente termini \texttt{Expr} complessi attraverso l'unificazione. Questa struttura permette di integrare 
+nel frontend sia semplici abbreviazioni notazionali che sofisticati motori di automazione.
+
+\paragraph{Linguaggi di dominio specifico.}
+Per merito delle precedenti capacità di estensione, Lean 4 è un ottimo ambiente per la definizione di DSL (Domain-Specific Languages). Tramite la combinazione di estensione sintattica e metaprogrammazione, 
+è possibile creare nuovi linguaggi al suo interno che si integrano perfettamente con il sistema formale. Questa integrazione è preziosa per la formalizzazione di teorie matematiche complesse o per la 
+modellazione di domini specifici, poiche tali linguaggi ne ereditano l'ambiente.
 
 \subsection{Kernel e Trusted Computing Base (TCB)}
 L'elaborazione descritta in precedenza culmina con la generazione di un termine \texttt{Expr} completamente esplicito. A questo punto, il termine lascia il dominio del frontend 
@@ -94,10 +152,10 @@ Sfruttando la purezza referenziale del linguaggio, il compilatore interviene sul
         Nel paradigma funzionale, l'astrazione tramite l'incapsulamento in funzioni è onnipresente. L'\textit{inlining} sostituisce una chiamata a funzione direttamente con il corpo della funzione stessa. Questo passaggio 
         è cruciale non solo per eliminare l'\textit{overhead} del salto a livello di CPU, ma soprattutto per esporre il codice interno della funzione chiamata alle successive fasi di ottimizzazione nel nuovo contesto locale. 
         Il compilatore applica sofisticate euristiche per bilanciare i benefici dell'inlining ed evitare l'esplosione esponenziale della dimensione del codice (\textit{code bloat}).
-    \item [Constant folding, Propagation] 
+    \item [Constant Folding, Propagation] 
         Valutazione anticipata a tempo di compilazione. Se un'operazione coinvolge operandi staticamente noti (es. \texttt{let x := 2 + 3}), il compilatore la risolve immediatamente (\texttt{let x := 5}) e propaga la costante 
         a tutte le istruzioni successive che dipendono da \texttt{x}, eliminando calcoli inutili a \textit{runtime}.
-    \item [Common subexpression elimination] 
+    \item [Common Subexpression Elimination] 
         La struttura appiattita della LCNF rende l'identificazione di calcoli ridondanti molto semplice. Se il compilatore incontra \texttt{let a := f x} e, più avanti, \texttt{let b := f x}, la garanzia matematica di purezza 
         di \texttt{f} assicura che i due risultati saranno identici. Il backend scarta la seconda operazione e sostituisce ogni riferimento a \texttt{b} con \texttt{a}, abbattendo significativamente i cicli di calcolo.
     \item [Join Points, Tail Recursion] 
@@ -108,6 +166,8 @@ Sfruttando la purezza referenziale del linguaggio, il compilatore interviene sul
 Un aspetto architetturale di notevole eleganza è che la LCNF non è una rappresentazione opaca, ma è modellata a sua volta come un tipo induttivo nativo (\texttt{inductive Code}) all'interno del codice sorgente 
 stesso di Lean 4. Grazie a questa scelta di \textit{self-hosting}, le complesse routine di ottimizzazione appena descritte non sono altro che pure funzioni ricorsive scritte in Lean, che ispezionano e riscrivono 
 l'albero sintattico operando tramite \textit{pattern matching}.
+
+% TODO: aggiungere una nota teorica $\lambda\mu$-calcolo e le classi di continuazioni
 
 \subsubsection{Lean IR, Gestione della memoria e in-place mutation}
 Terminata l'ottimizzazione a livello funzionale, il codice LCNF subisce un drastico cambio di paradigma, venendo abbassato nella \textbf{Lean IR} (\textit{Imperative Representation}). Questa astrazione abbandona la purezza 
