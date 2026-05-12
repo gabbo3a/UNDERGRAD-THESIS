@@ -110,6 +110,14 @@ stesso di Lean 4. Grazie a questa scelta di \textit{self-hosting}, le complesse 
 l'albero sintattico operando tramite \textit{pattern matching}.
 
 \subsubsection{Lean IR, Gestione della memoria e in-place mutation}
+Terminata l'ottimizzazione a livello funzionale, il codice LCNF subisce un drastico cambio di paradigma, venendo abbassato nella \textbf{Lean IR} (\textit{Imperative Representation}). Questa astrazione abbandona la purezza 
+funzionale per modellare esplicitamente le restrizioni fisiche della memoria. Il codice viene riorganizzato in \textit{Basic Blocks}, ovvero sequenze lineari di istruzioni che terminano con istruzioni di diramazione o salto, 
+in modo analogo alla IR di LLVM. La caratteristica ingegneristica più innovativa della Lean IR è l'iniezione automatica delle istruzioni per la gestione della memoria. Lean 4 non utilizza un \textit{Garbage Collector} globale 
+tracciante, bensì un sistema deterministico di conteggio dei riferimenti (\emph{Reference Counting}). Durante questa fase, il backend esegue una rigorosa analisi di vitalità delle variabili per determinare l'esatto momento in 
+cui una risorsa viene acquisita o dismessa.Basandosi su questi dati, il compilatore inserisce esplicitamente istruzioni di incremento (\texttt{inc}) e decremento (\texttt{dec}) dei puntatori. Questa granularità di controllo è 
+fondamentale per la mutazione distruttiva (\emph{in-place mutation}). In un linguaggio funzionale tradizionale, aggiornare un vettore richiederebbe la copia dell'intera struttura per preservarne l'immutabilità, portando la 
+complessità a $O(n)$. Il backend di Lean ottimizza questo processo tramite un controllo sul \textit{reference count}. Se il valore è esattamente $1$, indicando che la funzione detiene l'uso esclusivo della risorsa, il compilatore 
+sovrascrive il valore direttamente in memoria. Questo meccanismo di \textit{destructive update} riduce la complessità a $O(1)$, garantendo la purezza matematica del codice senza sacrificare le prestazioni tipiche dei linguaggi imperativi.
 
 \subsubsection{Compilazione nativa mediante delega architetturale}
 L'ultima parte della pipeline è sorprendentemente pragmatica. La Lean IR è progettata per essere semanticamente vicina al linguaggi imperativi, in particolare al linguaggio C. Il backend mappa i blocchi base 
