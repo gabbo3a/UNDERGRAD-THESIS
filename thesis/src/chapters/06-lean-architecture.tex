@@ -80,9 +80,34 @@ Il termine \texttt{Expr} approvato dal kernel è completamente annotato di detta
 per la coretteza del sistema formale a \textit{runtime} non sono necessari per l'esecuzione effettiva del programma. Pertanto, la prima operazione del backend è la cancellazione dei tipi (\texttt{Type Erasure}). 
 Il compilatore analizza l'espressione e sopprime tutti i sotto-termini appartenenti all'universo proposizionale (\texttt{Prop}). Poiché le dimostrazioni non hanno alcun effetto sul comportamento a runtime, esse 
 vengono rimosse e sostituite internamente con un valore fittizio e unitario (denotato come \texttt{lcErased} o \scalebox{0.8}{$\blacksquare$}). Questo processo garantisce che il codice generato non paghi alcun 
-\textit{overhead} prestazionale per il rigore logico preteso nelle fasi precedenti.
+\textit{overhead} prestazionale per il rigore logico preteso nelle fasi precedenti. È importante notare che i tipi appartenenti all'universo \texttt{Type} (ovvero i tipi computazionali) non vengono cancellati, 
+poiché sono essenziali per la corretta gestione dell'esecuzione del programma, ad esempio la suddivisione dei dati in \texttt{Boxed} o \texttt{Unboxed} tra LCNF e Lean IR.
 
 \subsubsection{LCNF, A-Normal Form per l'ottimizzazione funzionale}
+Il codice privo delle prove logiche viene successivamente tradotto nella prima vera rappresentazione intermedia, la \emph{LCNF} (\textit{Lean Compiler Normal Form}). Dal punto di vista teorico, la LCNF è una variante 
+rigorosa della \textit{A-Normal Form} (ANF). La sua caratteristica fondante è l'appiattimento sistematico del flusso del codice, qualsiasi calcolo annidato viene estratto e il suo risultato assegnato forzatamentea una 
+variabile temporanea esplicita tramite costrutti \texttt{let}. Per illustrare l'impatto di questa trasformazione, si consideri una chiamata annidata della forma \texttt{f (g x) (h y)}. In LCNF, tale sintassi è inammissibile 
+e percio viene automaticamente destrutturata in una sequenza lineare: \texttt{let a := g x}, \texttt{let b := h y} e infine \texttt{f a b}. Questa linearità espone in modo cristallino il flusso dei dati (\textit{data flow}). 
+Sfruttando la purezza referenziale del linguaggio, il compilatore interviene sul codice LCNF applicando una suite aggressiva di ottimizzazioni funzionali.
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item [Inlining (Espansione delle chiamate)] 
+        Nel paradigma funzionale, l'astrazione tramite l'incapsulamento in funzioni è onnipresente. L'\textit{inlining} sostituisce una chiamata a funzione direttamente con il corpo della funzione stessa. Questo passaggio 
+        è cruciale non solo per eliminare l'\textit{overhead} del salto a livello di CPU, ma soprattutto per esporre il codice interno della funzione chiamata alle successive fasi di ottimizzazione nel nuovo contesto locale. 
+        Il compilatore applica sofisticate euristiche per bilanciare i benefici dell'inlining ed evitare l'esplosione esponenziale della dimensione del codice (\textit{code bloat}).
+    \item [Constant folding, Propagation] 
+        Valutazione anticipata a tempo di compilazione. Se un'operazione coinvolge operandi staticamente noti (es. \texttt{let x := 2 + 3}), il compilatore la risolve immediatamente (\texttt{let x := 5}) e propaga la costante 
+        a tutte le istruzioni successive che dipendono da \texttt{x}, eliminando calcoli inutili a \textit{runtime}.
+    \item [Common subexpression elimination] 
+        La struttura appiattita della LCNF rende l'identificazione di calcoli ridondanti molto semplice. Se il compilatore incontra \texttt{let a := f x} e, più avanti, \texttt{let b := f x}, la garanzia matematica di purezza 
+        di \texttt{f} assicura che i due risultati saranno identici. Il backend scarta la seconda operazione e sostituisce ogni riferimento a \texttt{b} con \texttt{a}, abbattendo significativamente i cicli di calcolo.
+    \item [Join Points, Tail Recursion] 
+        Per gestire diramazioni complesse come \textit{pattern matching} annidato o funzioni ricorsive, Lean trasforma il flusso di controllo in \textit{Join Points}. Invece di allocare costose chiusure (\textit{closures}) 
+        in memoria per gestire la computazione, il compilatore marca alcune funzioni locali con il costruttore \texttt{jmp}. A livello di esecuzione, queste chiamate si traducono in salti incondizionati altamente ottimizzati 
+        (\texttt{GOTO} del C con tipi computazionali). Questo garantisce che gli algoritmi ricorsivi in coda (\textit{tail-recursive}) vengano compilati in efficienti cicli iterativi, eliminando gli \textit{stack overflow}.
+\end{description}
+Un aspetto architetturale di notevole eleganza è che la LCNF non è una rappresentazione opaca, ma è modellata a sua volta come un tipo induttivo nativo (\texttt{inductive Code}) all'interno del codice sorgente 
+stesso di Lean 4. Grazie a questa scelta di \textit{self-hosting}, le complesse routine di ottimizzazione appena descritte non sono altro che pure funzioni ricorsive scritte in Lean, che ispezionano e riscrivono 
+l'albero sintattico operando tramite \textit{pattern matching}.
 
 \subsubsection{Lean IR, Gestione della memoria e in-place mutation}
 
