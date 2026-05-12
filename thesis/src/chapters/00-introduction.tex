@@ -121,23 +121,37 @@ Un obiettivo cruciale è comprendere perché il risultato di Lean sia considerat
 % TODO: Aggiungere l'obbietivo sulle implememtazioni e esempi concreti di codice per perndere dimestichezza con gli strumenti.
 
 \section{Struttura del lavoro}
-Il presente lavoro è organizzato secondo un percorso logico che conduce dal formalismo computazionale puro verso l'unificazione tra logica e 
-programmazione, fornendo le basi necessarie alla comprensione del funzionamento dei moderni \textit{Interactive Theorem Provers}.
+Il presente lavoro è organizzato secondo un percorso logico che conduce dal formalismo computazionale puro verso l'unificazione tra logica 
+e programmazione, fornendo le basi necessarie alla comprensione del funzionamento dei moderni \textit{Interactive Theorem Provers} tramite 
+l'approfondimento di Lean 4.
 
 \begin{itemize}
-    \item \textbf{Capitolo \ref{chap:lambda_calculus} --- \texorpdfstring{$\lambda$}{Lambda}-calcolo:} Viene introdotto il modello di 
-    calcolo di Church, analizzandone la sintassi, le regole di riduzione e le proprietà di terminazione (o divergenza) del sistema puro.
-    
-    \item \textbf{Capitolo \ref{chap:type_systems} --- Sistemi di tipi e Cubo di Barendregt:} Si esamina l'evoluzione dai tipi semplici 
-    verso strutture più espressive. Attraverso la classificazione del Cubo di Barendregt, viene delineato il percorso che conduce al Calcolo 
-    delle Costruzioni (CoC).
+    \item \textbf{Capitolo \ref{chap:lambda_calculus} --- \texorpdfstring{$\lambda$}{Lambda}-calcolo:}
+        In questo capitolo viene introdotto il modello di calcolo di Church, analizzandone la sintassi, le regole di riduzione e le 
+        proprietà di terminazione (o divergenza) del sistema puro.
+
+    \item \textbf{Capitolo \ref{chap:type_systems} --- Sistemi di tipi e Cubo di Barendregt:} 
+        In questo capitolo, si esamina l'evoluzione dai tipi semplici verso strutture più espressive. Attraverso la classificazione 
+        del Cubo di Barendregt, viene delineato il percorso che conduce al Calcolo delle Costruzioni (CoC).
         
-    \item \textbf{Capitolo \ref{chap:logical_systems} --- Sistemi logici e deduzione:} L'attenzione si sposta sul versante logico, approfondendo 
-    i paradigmi della deduzione naturale e le gerarchie della logica intuizionista, dall'ordine proposizionale a quello superiore.
+    \item \textbf{Capitolo \ref{chap:logical_systems} --- Sistemi logici e deduzione:} 
+        In questo capitolo l'attenzione si sposta sul versante logico, approfondendo i paradigmi della deduzione naturale e le gerarchie 
+        della logica intuizionista, dall'ordine proposizionale a quello superiore.
     
-    \item \textbf{Capitolo \ref{chap:curry_howard_isomorphism} --- Corrispondenza di Curry-Howard:} In questo capitolo conclusivo vengono unificati 
-    i concetti precedenti, formalizzando l'identità tra programmi e prove che permette la verifica meccanica dei teoremi matematici.
-    % TODO: Aggiungere man mano
+    \item \textbf{Capitolo \ref{chap:curry_howard_isomorphism} --- Corrispondenza di Curry-Howard:} 
+        In questo capitolo vengono unificati i concetti precedenti, formalizzando l'identità tra programmi e prove che permette la 
+        verifica meccanica dei teoremi matematici.
+    
+    \item \textbf{Capitolo \ref{chap:cic} --- Calcolo delle Costruzioni Induttive:} 
+        In questo capitolo si esplora il calcolo delle costruzioni induttive, ovvero il modello logico di Lean 4, analizzando nel 
+        dettaglio la gestione dei tipi dipendenti e la gerarchia degli universi (\texttt{Prop}, \texttt{Type}, \texttt{Sort}).
+    
+    \item \textbf{Capitolo \ref{chap:architecture} --- Architettura di Lean 4:} 
+        In questo capitolo viene esaminata l'architettura di Lean 4, analizzando come la sua struttura modulare permetta di conciliare il rigore logico di un 
+        assistente alla dimostrazione e un linguaggio di programmazione moderno. Tale obiettivo sara perpetuato percorrendo lintera pipeline di compilazione,
+        dalla rappresentazione testuale fino alle ottimizzazione piu avanzate del backend.
+    
+    % TODO: Add 7 e 8
 \end{itemize}
 
 \subsection{Metodologia di ricerca e implementazione}
