@@ -375,6 +375,7 @@ La gerarchia dei tipi di IHOL permette al quantificatore universale ($\forall x^
 \end{itemize}
 Inoltre, se la variabile $x$ non occorre libera in $\Phi$, il costruttore della funzione tra tipi ($\sigma \to \tau$) modella semanticamente l'implicazione logica.
 
+\begin{comment}
 \subsection{Normalizzazione forte}
 Il sistema IHOL gode della proprietà di \textbf{normalizzazione forte}. Poiché ogni termine ben tipato riduce in un numero finito di passi a una forma normale, il sistema è 
 intrinsecamente coerente. Questo garantisce l'assenza di paradossi logici e assicura che non sia possibile fornire una prova per l'assurdo ($\bot$), mantenendo la validità 
@@ -384,3 +385,4 @@ del sistema di prova.
 Il processo di verifica della correttezza di una prova in IHOL è decidibile. Analogamente a quanto visto per i sistemi di tipi complessi, il controllo si basa sulla riduzione 
 dei termini alle rispettive forme normali. Se una prova $M$ abita il tipo rappresentato dalla formula $\Phi$, il sistema ne garantisce la validità attraverso un algoritmo di 
 confronto sintattico modulo $\beta$-conversione.
+\end{comment}
