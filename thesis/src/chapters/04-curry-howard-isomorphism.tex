@@ -222,11 +222,43 @@ fondamentali del contesto. Tali proprietà derivano direttamente dalla natura as
     rispettivo legame del termine senza alterare l'identità del giudizio di tipizzazione.
 \end{axi}
 
-\subsection{Il principio di inversione della tipizzazione}
-Nelle dimostrazioni induttive che seguiranno, si farà un uso sistematico del \emph{Principio di Inversione} delle regole di tipizzazione. Poiché il sistema di tipi $\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$ 
-è guidato dalla sintassi (\emph{syntax-directed}), esiste una e una sola regola di tipizzazione applicabile per ogni costrutto sintattico. Il principio di inversione permette di leggere le regole formali dal basso 
-verso l'alto, se un termine composto possiede validamente un tipo $\tau$, le condizioni di tipizzazione dei suoi sotto-termini immediati devono essere necessariamente soddisfatte. Ad esempio, affermare che $\Gamma 
-\vdash \mathsf{fst} \, e : \tau$ significa, per inversione, che deve esistere un tipo $\sigma$ tale per cui vale necessariamente il giudizio interno $\Gamma \vdash e : \tau \times \sigma$.
+\subsection{Lemmi fondamentali}
+Al fine di poter enunciare e dimostrare formalemente l'isomorfismo di Curry-Howard tra la logica proposizionale intuizionista (IPC) e il sistema di tipi $\lambda^{\to}_{\times, +, \mathbf{1}, 
+\mathbf{0}}$, è necessario stabilire alcuni lemmi fondamentali che garantiscano le proprietà essenziali che il sistema dei tipi deve soddisfare per essere considerato un modello fedele della logica.
+
+\begin{lem}[Inversione della tipizzazione - Inversion of typing]
+    \leavevmode
+    \begin{description}[leftmargin=7.5em, style=sameline, itemsep=0.4em]
+        \item [$x$] 
+            Se $\Gamma \vdash x : \tau$, allora esiste un tipo $\sigma$ tale che $(x : \sigma) \in \Gamma$ con $\sigma = \tau$.
+        \item [$\lambda x:\sigma. \, e_1$] 
+            Se $\Gamma \vdash \lambda x:\sigma. \, e_1 : \tau$, allora esiste un tipo $\rho$ tale che $\tau = \sigma \to \rho$ e $\Gamma, x:\sigma \vdash e_1 : \rho$.
+        \item [$e_1 \, e_2$] 
+            Se $\Gamma \vdash e_1 \, e_2 : \tau$, allora esiste un tipo $\sigma$ tale che $\Gamma \vdash e_1 : \sigma \to \tau$ e $\Gamma \vdash e_2 : \sigma$.
+        \item [$\langle a, b \rangle$] 
+            Se $\Gamma \vdash \langle a, b \rangle : \tau$, allora esistono $\tau_1, \tau_2$ tali che $\tau = \tau_1 \times \tau_2$ con $\Gamma \vdash a : \tau_1$ e $\Gamma \vdash b : \tau_2$.
+        \item [$\mathsf{fst} \, e$] 
+            Se $\Gamma \vdash \mathsf{fst} \, e : \tau$, allora esiste un tipo $\rho$ tale che $\Gamma \vdash e : \tau \times \rho$.
+        \item [$\mathsf{snd} \, e$] 
+            Se $\Gamma \vdash \mathsf{snd} \, e : \tau$, allora esiste un tipo $\rho$ tale che $\Gamma \vdash e : \rho \times \tau$.
+        \item [$\mathsf{inl}_{\rho} \, e$] 
+            Se $\Gamma \vdash \mathsf{inl}_{\rho} \, e : \tau$, allora esiste un tipo $\tau_1$ tale che $\tau = \tau_1 + \rho$ e $\Gamma \vdash e : \tau_1$.
+        \item [$\mathsf{inr}_{\rho} \, e$] 
+            Se $\Gamma \vdash \mathsf{inr}_{\rho} \, e : \tau$, allora esiste un tipo $\tau_2$ tale che $\tau = \rho + \tau_2$ e $\Gamma \vdash e : \tau_2$.
+        \item [$\mathsf{case} \dots$] 
+            Se $\Gamma \vdash \mathsf{case} \, e_0 \, \mathsf{of} \, \{ \mathsf{inl} \, y \Rightarrow a \mid \mathsf{inr} \, z \Rightarrow b \} : \tau$, allora esistono 
+            due tipi $\rho_1, \rho_2$ tali che $\Gamma \vdash e_0 : \rho_1 + \rho_2$, $\Gamma, y:\rho_1 \vdash a : \tau$ e $\Gamma, z:\rho_2 \vdash b : \tau$.
+        \item [$()$] 
+            Se $\Gamma \vdash () : \tau$, allora $\tau = \mathbf{1}$.
+        \item [$\mathsf{absurd}_{\tau} \, e$] 
+            Se $\Gamma \vdash \mathsf{absurd}_{\tau} \, e : \tau$, allora $\Gamma \vdash e : \mathbf{0}$.
+    \end{description}
+\end{lem}
+\begin{proof}
+    La dimostrazione discende direttamente dalla natura \emph{syntax-directed} del sistema di regole di tipizzazione. Poiché per ogni costrutto sintattico esiste un'unica regola di 
+    introduzione o eliminazione applicabile in modo deterministico, l'analisi dell'ultima regola applicata nell'albero di derivazione del giudizio produce biunivocamente le rispettive 
+    premesse e vincoli sui tipi.
+\end{proof}
 
 \section{Dimostrazione del'isomorfismo IPC - \texorpdfstring{$\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$}{Lambda-Calculus with FADT}}
 % TODO
