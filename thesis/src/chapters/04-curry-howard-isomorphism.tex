@@ -342,21 +342,21 @@ capaci di mappare l'intera corrispondenza statica dei due sistemi.
 Sia $\Pi(\Gamma \vdash A)$ l'insieme delle derivazioni logiche della formula $A$ sotto le ipotesi $\Gamma$. La funzione $\mathcal{F}: \Pi(\Gamma \vdash A) \to \{ e \mid \Gamma \vdash e : \phi(A) \}$ 
 mappa ogni albero di derivazione logica nel rispettivo termine computazionale. La definizione procede per induzione sulla regola della deduzione naturale applicata dell'albero di derivazione, come segue.
 \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
-    \item[Assioma / Ipotesi:] 
+    \item[Assioma / Ipotesi] 
         L'uso di un'ipotesi attiva $A \in \Gamma$ viene mappato in una variabile fresca associata univocamente a quel cammino logico.
-        $$ \mathcal{F}\left( \frac{}{A \vdash A} \right) = x^A $$
-    \item[Implicazione ($\to$):] 
+        $$ \mathcal{F}\left( [A]^x \right) = x : {\phi(A)} $$
+    \item[Implicazione ($\to$)] 
         La regola di introduzione ($\to I$) modella l'atto logico di scaricare l'ipotesi $[A]^x$ nell'astrazione sintattica ($\lambda$). 
         La regola di eliminazione ($\to E$) si traduce nell'applicazione di un'espressione a un argomento.
         $$ \mathcal{F}\left( \frac{\begin{array}{c} [A]^x \\ \vdots \\ B \end{array}}{A \to B} (\to I) \right) = \lambda x:\phi(A). \, \mathcal{F}(\mathcal{D}_B) $$ 
-        $$\mathcal{F}\left( \frac{\mathcal{D}_{A \to B} \quad \mathcal{D}_A}{B} (\to E) \right) = \mathcal{F}(\mathcal{D}_{A \to B}) \,\, \mathcal{F}(\mathcal{D}_A) $$
-    \item[Congiunzione ($\land$):] 
+        $$ \mathcal{F}\left( \frac{\mathcal{D}_{A \to B} \quad \mathcal{D}_A}{B} (\to E) \right) = \mathcal{F}(\mathcal{D}_{A \to B}) \,\, \mathcal{F}(\mathcal{D}_A) $$
+    \item[Congiunzione ($\land$)] 
         La regola di introduzione della congiunzione ($\land I$) unifica due prove indipendenti nel costruttore di coppia $\langle e_1, e_2 \rangle$. 
         Le regole di eliminazione ($\land E_1, \land E_2$) estraggono l'informazione tramite i distruttori di proiezione $\mathsf{fst}$ e $\mathsf{snd}$.
         $$ \mathcal{F}\left( \frac{\mathcal{D}_A \quad \mathcal{D}_B}{A \land B} (\land I) \right) = \langle \mathcal{F}(\mathcal{D}_A), \mathcal{F}(\mathcal{D}_B) \rangle $$
         $$ \mathcal{F}\left( \frac{\mathcal{D}_{A \land B}}{A} (\land E_1) \right) = \mathsf{fst} \, (\mathcal{F}(\mathcal{D}_{A \land B})) \qquad 
            \mathcal{F}\left( \frac{\mathcal{D}_{A \land B}}{B} (\land E_2) \right) = \mathsf{snd} \, (\mathcal{F}(\mathcal{D}_{A \land B})) $$
-    \item[Disgiunzione ($\lor$):] 
+    \item[Disgiunzione ($\lor$)] 
         L'introduzione della disgiunzione ($\lor I_1, \lor I_2$) mappa direttamente nelle iniezioni tipate $\mathsf{inl}$ e $\mathsf{inr}$. L'eliminazione 
         ($\lor E$) mappa sull'analisi per casi ($\mathsf{case}$), legando localmente le variabili $x$ e $y$ nei rispettivi rami di esecuzione.
         $$ \mathcal{F}\left( \frac{\mathcal{D}_A}{A \lor B} (\lor I_1) \right) = \mathsf{inl}_{\phi(B)} \, (\mathcal{F}(\mathcal{D}_A)) \qquad 
@@ -369,12 +369,57 @@ mappa ogni albero di derivazione logica nel rispettivo termine computazionale. L
             \right) 
             \!=\! \mathsf{case} \, \mathcal{F}(\mathcal{D}_{A \lor B}) \, \mathsf{of} \, \{ \mathsf{inl} \, x \Rightarrow \mathcal{F}(\mathcal{D}_{C1}) \mid \! \mathsf{inr} \, y \Rightarrow \mathcal{F}(\mathcal{D}_{C2}) \}
         \end{equation*}
-    \item[Verità ($\top$):] 
+    \item[Verità ($\top$)] 
         L'introduzione della costante di verità ($\top I$) non richiede ipotesi e mappa direttamente sulla costante vana (Unit).
         $$ \mathcal{F}\left( \frac{}{\top} (\top I) \right) = () $$
-    \item[Falsità ($\bot$):] 
+    \item[Falsità ($\bot$)] 
         La regola del assurdo (\emph{ex falso quodlibet}, $\bot E$) prende una prova dell'assurdo e costruisce il 
         termine di terminazione logica $\mathsf{absurd}$, parametrizzato al tipo di arrivo per preservare l'univocità.
         $$ \mathcal{F}\left( \frac{\mathcal{D}_\bot}{A} (\bot E) \right) = 
         \mathsf{absurd}_{\phi(A)} \, (\mathcal{F}(\mathcal{D}_\bot)) $$
+\end{description}
+
+\subsection{Omomorfismo inverso \texorpdfstring{$\mathcal{G}$}{G} (Termini \texorpdfstring{$\to$}{to} Prove)}
+La funzione inversa $\mathcal{G}$ accetta un termine ben tipato $e$ appartenente a $\mathcal{C}_{\text{STLC}}$ e ne ricostruisce l'esatto albero di derivazione logica in $\mathcal{L}_{\text{NJ}}$. 
+La scomposizione formale mappa ogni costrutto nel seguente schema logico.
+
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item[Variabile]
+        Il giudizio di una variabile estratta dal contesto produce l'albero logico atomico contenente la formula associata come ipotesi attiva.
+        $$ \mathcal{G}(\Gamma, x : \tau \vdash x : \tau) = [\phi^{-1}(\tau)]^x $$
+    \item[Astrazione / Applicazione] 
+        L'astrazione di una variabile corrisponde all'introduzione dell'implicazione ($\to I$), dove l'ipotesi legata viene scaricata. L'applicazione 
+        di termini si traduce, all'indietro, nella regola di eliminazione dell'implicazione ($\to E$).
+        $$ \mathcal{G}(\Gamma \vdash \lambda x:\tau. e : \tau \to \sigma) = \frac{\mathcal{G}(\Gamma, x:\tau \vdash e : \sigma)}{\tau \to \sigma} \, (\to I) $$
+        $$ \mathcal{G}(\Gamma \vdash e_1 \, e_2 : \sigma) = \frac{\mathcal{G}(\Gamma \vdash e_1 : \tau \to \sigma) \quad \mathcal{G}(\Gamma \vdash e_2 : \tau)}{\sigma} \, (\to E) $$
+    \item[Coppia / Proiezioni] 
+        Il costruttore di coppie viene scisso nella regola di introduzione della congiunzione ($\land I$) applicata alle sotto-prove dei singoli elementi. Le proiezioni $\mathsf{fst}$ e $\mathsf{snd}$ si invertono nelle rispettive regole di eliminazione ($\land E_1, \land E_2$).
+        $$ \mathcal{G}(\Gamma \vdash \langle e_1, e_2 \rangle : \tau \times \sigma) = 
+            \frac{\mathcal{G}(\Gamma \vdash e_1 : \tau) \quad \mathcal{G}(\Gamma \vdash e_2 : \sigma)}{\tau \land \sigma} \, (\land I) $$
+        $$ \mathcal{G}(\Gamma \vdash \mathsf{fst} \, e : \tau) = 
+            \frac{\mathcal{G}(\Gamma \vdash e : \tau \times \sigma)}{\tau} \, (\land E_1) $$
+        $$ \mathcal{G}(\Gamma \vdash \mathsf{snd} \, e : \sigma) = 
+            \frac{\mathcal{G}(\Gamma \vdash e : \tau \times \sigma)}{\sigma} \, (\land E_2) $$
+    \item[Iniezioni / Analisi per casi] 
+        Le iniezioni del tipi somma ($\mathsf{inl}, \mathsf{inr}$) si aprono nelle regole di introduzione della disgiunzione. Il costrutto di pattern 
+        matching ($\mathsf{case}$) mappa sulla regola di eliminazione della disgiunzione ($\lor E$), ricongiungendo le derivazioni logiche dei singoli rami.
+        \begin{align*}
+            \mathcal{G}(\Gamma \vdash \mathsf{inl}_{\sigma} \, e : \tau + \sigma) &= 
+                \frac{\mathcal{G}(\Gamma \vdash e : \tau)}{\tau \lor \sigma} \, (\lor I_1) \\[0.4em]
+            \mathcal{G}(\Gamma \vdash \mathsf{inr}_{\tau} \, e : \tau + \sigma) &= 
+                \frac{\mathcal{G}(\Gamma \vdash e : \sigma)}{\tau \lor \sigma} \, (\lor I_2) \\[0.6em]
+            \mathcal{G}(\Gamma \vdash \mathsf{case} \, e_0 \, \mathsf{of} \, \dots : \rho) &= 
+                \frac{
+                    \begin{smallmatrix} 
+                        \mathcal{G}(e_0 : \tau + \sigma)                & 
+                        \mathcal{G}(\Gamma, x:\tau \vdash e_1 : \rho)   & 
+                        \mathcal{G}(\Gamma, y:\sigma \vdash e_2 : \rho) 
+                    \end{smallmatrix}
+                }{\rho} \, (\lor E)
+        \end{align*}
+    \item[Costanti (Unit / Absurd)]
+        Il termine vuoto unitario $()$ ricostruisce l'assioma di introduzione della verità ($\top I$), mentre l'operatore $\mathsf{absurd}$ modella il 
+        principio logico dell'ex falso quodlibet tramite l'eliminazione del falso ($\bot E$).
+        $$ \mathcal{G}(\Gamma \vdash () : \mathbf{1}) = \frac{}{\top} \, (\top I) \qquad 
+           \mathcal{G}(\Gamma \vdash \mathsf{absurd}_{\tau} \, e : \tau) = \frac{\mathcal{G}(\Gamma \vdash e : \mathbf{0})}{\tau} \, (\bot E) $$
 \end{description}
