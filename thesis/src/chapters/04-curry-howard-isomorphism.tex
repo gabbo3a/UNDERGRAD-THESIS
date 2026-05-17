@@ -3,6 +3,7 @@
 \label{chap:curry_howard_isomorphism}
 
 \section{Definizione generale di isomorfismo}
+\label{sec:isomorphism}
 Il concetto di \emph{isomorfismo} è uno dei pilastri della matemantica. Esso identifica una relazione di equivalenza 
 profonda tra due strutture che, pur operando in domini distinti e/o utilizzando notazioni distinte, condividono la 
 medesima architettura interna. In questa sezione definiremo le condizioni necessarie e sufficenti affinche due sistemi 
@@ -316,5 +317,23 @@ Al fine di poter enunciare e dimostrare formalemente l'isomorfismo di Curry-Howa
     \end{description}
 \end{proof}
 
-\section{Dimostrazione del'isomorfismo IPC - \texorpdfstring{$\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$}{Lambda-Calculus with FADT}}
-% TODO
+\section{Dimostrazione per IPC - \texorpdfstring{$\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$}{Lambda-Calculus with FADT}}
+Per dimostrare formalmete l'somorfismo di Curry-Howard tra la logica proposizionale intuizionista completa (IPC) e il sistema di tipi $\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$, si utilizzera 
+la definizione algebrica di isomorfismo tra due strutture algebriche, come enunciato nella sezione \ref{sec:isomorphism}. In particolare, si stabilirà una corrispondenza biunivoca tra le formule logiche 
+e i tipi del sistema, nonché tra le prove formali e i termini tipati (giudizi di tipizzazione). Per tale scopo, introduciamo le seguenti due strutture formali.
+\begin{itemize}
+    \item $\mathcal{L}_{\text{NJ}}$:
+        sistema di Deduzione Naturale per la logica proposizionale intuizionistica completa, dove gli oggetti sono le formule $A$ e le relazioni sono gli alberi di derivazione (prove) $\mathcal{D}$.
+    \item $\mathcal{C}_{\text{STLC}}$: 
+        sistema lambda calcolo semplicemente tipato con FADT ($\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$), dove gli oggetti sono i tipi $\tau$ e le relazioni sono i giudizi di tipizzazione 
+        $\Gamma \vdash e : \tau$.
+\end{itemize}
+Inoltre risulta utile definire per induzione strutturale una mappa di traduzione degli oggetti $\phi: \mathcal{L}_{\text{NJ}} \to \mathcal{C}_{\text{STLC}}$ dalle formule ai tipi.
+\begin{gather*}
+    \phi(A \to B) = \phi(A) \to \phi(B)      \\
+    \phi(A \land B) = \phi(A) \times \phi(B) \\
+    \phi(A \lor B) = \phi(A) + \phi(B)       \\
+    \phi(\top) = \mathbf{1} \qquad \phi(\bot) = \mathbf{0}
+\end{gather*}
+Per estendere questa corrispondenza a un vero e proprio \emph{omomorfismo biunivoco}, definiamo ora induttivamente due funzioni sulle prove, denominate $\mathcal{F}$ e $\mathcal{G}$, 
+capaci di mappare l'intera corrispondenza statica dei due sistemi.
