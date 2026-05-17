@@ -21,9 +21,9 @@ le varibili, l'astarzione e l'applicazione. La grammatica definisce solo il sist
 essa non assegna alcuna semantica e nessuna relazione tra gli stessi ad esclusione di quelle sintattiche.
 \begin{equation}
     \begin{array}{lrll}
-        \text{Terms:}   & M, N & ::= x               & \text{(Variabili)}   \\
-                        &      & \mid (\lambda x. M) & \text{(Astrazione)}  \\
-                        &      & \mid (M N)          & \text{(Applicazione)}
+        \text{Terms:}   & M, N & ::= x             & \text{(Variabili)}   \\
+                        &      & \mid \lambda x. M & \text{(Astrazione)}  \\
+                        &      & \mid M N          & \text{(Applicazione)}
     \end{array}
     \label{eq:lambda_grammar}
 \end{equation}
@@ -35,8 +35,51 @@ che la definizione di queste proprietà appartiene almeno per ora al metalinguag
 Le relaioni tra termini del $\lambda$-calcolo sono cio che traforma una insieme di puramente sintattico in un effettivo formalismo computazionale. 
 Alcune di esse sono necessarie 
 
-% \subsection{Definizioni preliminari}
-% TODO: Variabili libere e legate, Sostituzione, Sottotermini
+\subsection{Variabili libere e legate}
+Prima di definire formalmente le relazioni di calcolo, è necessario introdurre la natura delle variabili che compaiono all'interno dei termini. L'occorrenza 
+di una variabile può essere \emph{libera} o \emph{legata},un'occorrenza della variabile $x$ si dice legata se si trova sotto il raggio d'azione di un'astrazione 
+$\lambda x$, mentre si dice libera in caso contrario. L'insieme delle \emph{variabili libere} $FV(M)$ (da \emph{Free Variables}) e delle \emph{variabili legate} 
+$BV(M)$ (da \emph{Bound Variables}) di un termine $M$ vengono definiti ricorsivamente sulla struttura del termine come segue.
+\begin{equation}
+    \begin{array}{lcl}
+        FV(x)            & = & \{x\}                 \\
+        FV(\lambda x. M) & = & FV(M) \setminus \{x\} \\
+        FV(M N)          & = & FV(M) \cup FV(N)
+    \end{array}
+    \qquad
+    \begin{array}{lcl}
+        BV(x)            & = & \emptyset        \\
+        BV(\lambda x. M) & = & BV(M) \cup \{x\} \\
+        BV(M N)          & = & BV(M) \cup BV(N)
+    \end{array}
+    \label{eq:fv_bv_definitions}
+\end{equation}
+Un termine $M$ si dice \emph{chiuso} (o combinatore) se non contiene variabili libere, ovvero se $FV(M) = \emptyset$.
+
+\subsection{Sostituzione}
+L'operazione di sostituzione formale è fondamentale per la $\beta$-riduzione. La notazione $M[N/x]$ (o $M[x := N]$) 
+indica il termine ottenuto sostituendo l'espressione $N$ a ogni occorrenza libera della variabile $x$ nel termine $M$. 
+L'operazione viene definita ricorsivamente sulla struttura del termine $M$ come segue.
+\begin{equation}
+    M[N/x] = 
+    \begin{cases} 
+        N & \text{if } M = x                        \\
+        y & \text{if } M = y \text{ e } y \neq x    \\
+        (P[N/x] \, Q[N/x]) & \text{if } M = (P Q)   \\
+        \lambda x. P & \text{if } M = \lambda x. P  \\
+        \lambda y. (P[N/x]) & \text{if } 
+            \begin{cases} 
+            M = \lambda y. P    \\
+            y \neq x            \\
+            y \notin FV(N)
+            \end{cases}         \\
+        \perp & \text{otherwise}
+    \end{cases}
+    \label{eq:substitution_algorithm}
+\end{equation}
+L'ultima clausola valida introduce una condizione cruciale ($y \notin FV(N)$) per evitare il fenomeno del \emph{variable capture} (cattura della variabile).
+Se $y$ facesse parte delle variabili libere di $N$, il legame introdotto da $\lambda y$ ne altererebbe il significato originale dopo la sostituzione. In questo 
+caso, si rende necessario applicare preventivamente la $\alpha$-equivalenza per rinominare la variabile legata $y$ con un nome nuovo.
 
 \subsection{\texorpdfstring{$\alpha$}{alpha}-equivalenza}
 la $\alpha$-equivalenza stabilisce che il nome delle variabili legate è irrilevante ai fini del significato del ternine. Due termini sono considerati 
