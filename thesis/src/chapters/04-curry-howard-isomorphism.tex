@@ -185,4 +185,48 @@ determinare il tipo in modo simmetrico, il caso dell'unione disgiunta ($+$) pres
 Si osservi infine la natura delle regole riguardanti i tipi $\mathbf{1}$ e $\mathbf{0}$. Mentre il tipo \emph{Unit} è abitato dall'unica costante $()$, il tipo \emph{Void} 
 non possiede costruttori espliciti: il termine $\mathsf{absurd}$ non produce un valore di tipo $\mathbf{0}$, ma ne richiede uno come input per derivare un tipo arbitrario $\tau$.
 
-\subsection{Corrispondenza con la logica proposizionale intuizionista}
+\subsubsection{Notazione relazionale}
+L'algoritmo di \emph{type checking} $\mathsf{type}(\Gamma, e)$ appena presentato definisce un processo deterministico per verificare l'univocità dei tipi. Al fine di allineare questa 
+trattazione alla formalizzazione logica necessaria per l'isomorfismo, da questo momento in poi esprimeremo l'output di tale algoritmo sotto forma di \emph{giudizio di tipizzazione} 
+(o relazione di tipizzazione), utilizzando la seguente notazione standard del sistema formale.
+\begin{equation}
+    \Gamma \vdash e : \tau \iff \mathsf{type}(\Gamma, e) = \tau
+\end{equation}
+Il simbolo $\vdash$ (chiamato \emph{turnstile}) asserisce che, all'interno del contesto d'ipotesi $\Gamma$, il termine $e$ possiede validamente il tipo $\tau$. Questa scrittura ci permette di 
+traslare la computazione ricorsiva dell'algoritmo in un sistema di regole d'inferenza statiche, dove la correttezza del programma coincide con l'esistenza di un \emph{albero di tipizzazione}. 
+Tale formalismo relazionale è il prerequisito sintattico essenziale per enunciare i lemmi strutturali e mappare le regole informatiche su quelle della deduzione naturale.
+
+\subsection{Lemmi fondamentali}
+Al fine di poter enunciare e dimostrare formalemente l'isomorfismo di Curry-Howard tra la logica proposizionale intuizionista (IPC) e il sistema di tipi $\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$, 
+è necessario stabilire alcuni lemmi fondamentali che garantiscano le proprietà essenziali che il sistema dei tipi deve soddisfare per essere considerato un modello fedele della logica. Tali lemmi riguardano 
+la manipolazione dei termini e dei tipi all'interno del sistema, assicurando che le operazioni di sostituzione e indebolimento preservino la validità delle tipizzazioni.
+
+\begin{lem}[Lemma d'indebolimento - weakening]
+    Se $\Gamma \vdash e : \tau$ e $x \notin FV(e)$, allora per ogni tipo $\sigma$ si ha $\Gamma, x:\sigma \vdash e : \tau$.
+\end{lem}
+\begin{proof}
+    La dimostrazione procede per induzione strutturale sul giudizio di tipizzazione o sulla sintassi del termine $e$. L'aggiunta di un'ipotesi inutilizzata non altera la 
+    validità dei sotto-termini.
+    \begin{description}[leftmargin=1.5em, style=nextline]
+        \item [Caso Variabile ($e = y$)] 
+            Se $\Gamma, y:\tau \vdash y : \tau$, allora anche $\Gamma, y:\tau, x:\sigma \vdash y : \tau$, poiché l'introduzione di $x$ non rimuove l'assegnamento preesistente di $y$ nel contesto.
+        \item [Caso Astrazione ($e = \lambda y:\tau_1. e_1$)] 
+            Per ipotesi induttiva su $e_1$, sappiamo che possiamo estendere il contesto. Assumendo per convenzione alfabetica che $y \neq x$ e $y \notin FV(e)$, se $\Gamma, y:\tau_1 \vdash e_1 : \tau_2$, 
+            per ipotesi induttiva si ha $\Gamma, y:\tau_1, x:\sigma \vdash e_1 : \tau_2$. Applicando la regola di tipizzazione dell'astrazione, otteniamo $\Gamma, x:\sigma \vdash \lambda y:\tau_1. e_1 : \tau_1 \to \tau_2$.
+        \item [Caso Coppia ($e = \langle e_1, e_2 \rangle$)] 
+            Per le regole dei FADT, il tipo è $\tau_1 \times \tau_2$. Per ipotesi induttiva applicata sui singoli membri, se $\Gamma \vdash e_1 : \tau_1$ e $\Gamma \vdash e_2 : \tau_2$, allora si ha 
+            $\Gamma, x:\sigma \vdash e_1 : \tau_1$ e $\Gamma, x:\sigma \vdash e_2 : \tau_2$. Riaplicando il costruttore prodotto si ottiene la tesi.
+        \item [Caso Analisi ($e = \mathsf{case} \, e_0 \, \mathsf{of} \, \{ \mathsf{inl} \, y \Rightarrow e_1 \mid \mathsf{inr} \, z \Rightarrow e_2 \}$)] 
+            L'indebolimento si distribuisce sul termine $e_0$ e, ipotizzando variabili le $y$ e $z$ non presenti del contesto, si applica induttivamente sui contesti estesi dei due rami 
+            ($\Gamma, y:\tau_1, x:\sigma \vdash e_1 : \rho$) e ($\Gamma, z:\tau_2, x:\sigma \vdash e_2 : \rho$). L'unificazione dei rami preserva il tipo $\rho$.
+        \item [Caso Unit ($e = ()$)] 
+            Per le regole di tipizzazione, la costante () ha tipo $\mathbf{1}$, sotto qualsiasi contesto, senza alcuna dipendenza. Abbiamo quindi che $\Gamma \vdash () : \mathbf{1}$ implica 
+            direttamente $\Gamma, x:\sigma \vdash () : \mathbf{1}$. Poiché per definizione $FV(()) = \emptyset$, l'estensione del contesto con l'ipotesi $x:\sigma$ non interferisce con la 
+            validità del giudizio statico, soddisfacendo banalmente la tesi senza richiedere alcuna ipotesi induttiva.
+        \item [Casi rimanenti ($\mathsf{fst}, \mathsf{snd}, \mathsf{inl}, \mathsf{inr}, \mathsf{absurd}$)]  
+            Tali casi seguono per scomposizione induttiva diretta sui sotto-termini senza alterare la struttura del contesto.
+    \end{description}
+\end{proof}
+
+\section{Dimostrazione del'isomorfismo IPC - \texorpdfstring{$\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$}{Lambda-Calculus with FADT}}
+% TODO
