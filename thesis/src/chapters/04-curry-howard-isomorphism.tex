@@ -196,37 +196,37 @@ Il simbolo $\vdash$ (chiamato \emph{turnstile}) asserisce che, all'interno del c
 traslare la computazione ricorsiva dell'algoritmo in un sistema di regole d'inferenza statiche, dove la correttezza del programma coincide con l'esistenza di un \emph{albero di tipizzazione}. 
 Tale formalismo relazionale è il prerequisito sintattico essenziale per enunciare i lemmi strutturali e mappare le regole informatiche su quelle della deduzione naturale.
 
-\subsection{Lemmi fondamentali}
-Al fine di poter enunciare e dimostrare formalemente l'isomorfismo di Curry-Howard tra la logica proposizionale intuizionista (IPC) e il sistema di tipi $\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$, 
-è necessario stabilire alcuni lemmi fondamentali che garantiscano le proprietà essenziali che il sistema dei tipi deve soddisfare per essere considerato un modello fedele della logica. Tali lemmi riguardano 
-la manipolazione dei termini e dei tipi all'interno del sistema, assicurando che le operazioni di sostituzione e indebolimento preservino la validità delle tipizzazioni.
+\subsection{Assiomi e proprietà del contesto}
+Il contesto di tipizzazione $\Gamma$ rappresenta formalmente l'insieme delle assunzioni e delle ipotesi attive in un determinato cammino deduttivo. Dal punto di vista algebrico, esso si comporta 
+come una funzione parziale dalle variabili ai tipi. Al fine di operare con il massimo rigore all'interno delle successive dimostrazioni induttive, elenchiamo di seguito le proprietà strutturali 
+fondamentali del contesto. Tali proprietà derivano direttamente dalla natura assiomatica dell'ambiente di tipizzazione e non necessitano di ulteriore dimostrazione.
 
-\begin{lem}[Lemma d'indebolimento - weakening]
-    Se $\Gamma \vdash e : \tau$ e $x \notin FV(e)$, allora per ogni tipo $\sigma$ si ha $\Gamma, x:\sigma \vdash e : \tau$.
-\end{lem}
-\begin{proof}
-    La dimostrazione procede per induzione strutturale sul giudizio di tipizzazione o sulla sintassi del termine $e$. L'aggiunta di un'ipotesi inutilizzata non altera la 
-    validità dei sotto-termini.
-    \begin{description}[leftmargin=1.5em, style=nextline]
-        \item [Caso Variabile ($e = y$)] 
-            Se $\Gamma, y:\tau \vdash y : \tau$, allora anche $\Gamma, y:\tau, x:\sigma \vdash y : \tau$, poiché l'introduzione di $x$ non rimuove l'assegnamento preesistente di $y$ nel contesto.
-        \item [Caso Astrazione ($e = \lambda y:\tau_1. e_1$)] 
-            Per ipotesi induttiva su $e_1$, sappiamo che possiamo estendere il contesto. Assumendo per convenzione alfabetica che $y \neq x$ e $y \notin FV(e)$, se $\Gamma, y:\tau_1 \vdash e_1 : \tau_2$, 
-            per ipotesi induttiva si ha $\Gamma, y:\tau_1, x:\sigma \vdash e_1 : \tau_2$. Applicando la regola di tipizzazione dell'astrazione, otteniamo $\Gamma, x:\sigma \vdash \lambda y:\tau_1. e_1 : \tau_1 \to \tau_2$.
-        \item [Caso Coppia ($e = \langle e_1, e_2 \rangle$)] 
-            Per le regole dei FADT, il tipo è $\tau_1 \times \tau_2$. Per ipotesi induttiva applicata sui singoli membri, se $\Gamma \vdash e_1 : \tau_1$ e $\Gamma \vdash e_2 : \tau_2$, allora si ha 
-            $\Gamma, x:\sigma \vdash e_1 : \tau_1$ e $\Gamma, x:\sigma \vdash e_2 : \tau_2$. Riaplicando il costruttore prodotto si ottiene la tesi.
-        \item [Caso Analisi ($e = \mathsf{case} \, e_0 \, \mathsf{of} \, \{ \mathsf{inl} \, y \Rightarrow e_1 \mid \mathsf{inr} \, z \Rightarrow e_2 \}$)] 
-            L'indebolimento si distribuisce sul termine $e_0$ e, ipotizzando variabili le $y$ e $z$ non presenti del contesto, si applica induttivamente sui contesti estesi dei due rami 
-            ($\Gamma, y:\tau_1, x:\sigma \vdash e_1 : \rho$) e ($\Gamma, z:\tau_2, x:\sigma \vdash e_2 : \rho$). L'unificazione dei rami preserva il tipo $\rho$.
-        \item [Caso Unit ($e = ()$)] 
-            Per le regole di tipizzazione, la costante () ha tipo $\mathbf{1}$, sotto qualsiasi contesto, senza alcuna dipendenza. Abbiamo quindi che $\Gamma \vdash () : \mathbf{1}$ implica 
-            direttamente $\Gamma, x:\sigma \vdash () : \mathbf{1}$. Poiché per definizione $FV(()) = \emptyset$, l'estensione del contesto con l'ipotesi $x:\sigma$ non interferisce con la 
-            validità del giudizio statico, soddisfacendo banalmente la tesi senza richiedere alcuna ipotesi induttiva.
-        \item [Casi rimanenti ($\mathsf{fst}, \mathsf{snd}, \mathsf{inl}, \mathsf{inr}, \mathsf{absurd}$)]  
-            Tali casi seguono per scomposizione induttiva diretta sui sotto-termini senza alterare la struttura del contesto.
-    \end{description}
-\end{proof}
+\begin{axi}[Permutazione]
+    L'ordine con cui le ipotesi indipendenti sono memorizzate nel contesto $\Gamma$ è irrilevante. Se vale il giudizio $\Gamma, x:\sigma, y:\rho \vdash e : \tau$, allora vale strettamente 
+    anche il giudizio permutato $\Gamma, y:\rho, x:\sigma \vdash e : \tau $.
+\end{axi}
+
+\begin{axi}[Indebolimento - Weakening]
+    È sempre possibile estendere il contesto di tipizzazione con ipotesi aggiuntive e ridondanti. Se un termine è ben tipato sotto un certo contesto, esso rimane ben tipato anche qualora si 
+    introduca una nuova variabile $x$ (purché non presente nel contesto), senza che ciò infici la validità del giudizio originario. Se $\Gamma \vdash e : \tau$ e $x \notin \text{dom}(\Gamma)$, 
+    allora $\Gamma, x:\sigma \vdash e : \tau$.
+\end{axi}
+
+\begin{axi}[Contrazione - Contraction]
+    Se una medesima ipotesi o risorsa viene assunta implicitamente o esplicitamente due volte all'interno del contesto per la derivazione dello stesso termine, le due occorrenze possono essere 
+    contratte in un'unica assunzione. Se $\Gamma, x:\sigma, y:\sigma \vdash e : \tau$, allora è sempre possibile ricondursi al giudizio contratto $\Gamma, z:\sigma \vdash e[z/x, z/y] : \tau$.
+\end{axi}
+
+\begin{axi}[Invarianza per $\alpha$-conversione]
+    I nomi delle variabili legate nei contesti e nei termini fungono da meri segnaposto (\emph{bound variables}). È sempre possibile rinominare uniformemente una variabile nel contesto e nel 
+    rispettivo legame del termine senza alterare l'identità del giudizio di tipizzazione.
+\end{axi}
+
+\subsection{Il principio di inversione della tipizzazione}
+Nelle dimostrazioni induttive che seguiranno, si farà un uso sistematico del \emph{Principio di Inversione} delle regole di tipizzazione. Poiché il sistema di tipi $\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$ 
+è guidato dalla sintassi (\emph{syntax-directed}), esiste una e una sola regola di tipizzazione applicabile per ogni costrutto sintattico. Il principio di inversione permette di leggere le regole formali dal basso 
+verso l'alto, se un termine composto possiede validamente un tipo $\tau$, le condizioni di tipizzazione dei suoi sotto-termini immediati devono essere necessariamente soddisfatte. Ad esempio, affermare che $\Gamma 
+\vdash \mathsf{fst} \, e : \tau$ significa, per inversione, che deve esistere un tipo $\sigma$ tale per cui vale necessariamente il giudizio interno $\Gamma \vdash e : \tau \times \sigma$.
 
 \section{Dimostrazione del'isomorfismo IPC - \texorpdfstring{$\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$}{Lambda-Calculus with FADT}}
 % TODO
