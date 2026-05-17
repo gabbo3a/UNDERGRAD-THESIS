@@ -298,7 +298,7 @@ utilizzando la notazione dei prodotti dipendenti è riportata la segnatura di $I
 In questa formalizzazione, il \emph{motivo} $P$ specifica il tipo del risultato (che può dipendere dal valore di $t$), la \emph{premessa maggiore} 
 $t$ è il termine da analizzare, e le \emph{premesse minori} $f_{c_i}$ forniscono le istruzioni locali per ogni costruttore.
 
-% TODO: aggiungere approfondimento sul motivo e sulle premesse minori
+% TODEEP: aggiungere approfondimento sul motivo e sulle premesse minori
 
 \paragraph{Esempio di segnatura del ricorsore per i numeri naturali.}
 \begin{center}
@@ -397,7 +397,7 @@ il testimone di accessibilità dell'input. Di seguito è riportato, il processo 
         Al livello del kernel, la ricorsione non avviene più sul valore dei dati, ma per \textbf{decrescita strutturale sul testimone di accessibilità}. 
         Poiché \texttt{Acc} è un tipo induttivo standard, la sua riduzione $\iota$ è nativamente supportata.
 \end{enumerate}
-% TODO: aggiungere esempio di definizione di funzione con ricorsione ben fondata (es. merge sort)
+% TODEEP: aggiungere esempio di definizione di funzione con ricorsione ben fondata (es. merge sort)
 In conclusione, la ricorsione ben fondata non è una primitiva del kernel di Lean, bensì una tecnica attuata dal elaboratore. Questo meccanismo sposta l'onere 
 della prova di terminazione dal kernel, che rimane minimale e limitato, al sistema logico superiore e all'elaboratore. Di consegunenza la complessità degli 
 algoritmi supportati è limitata solo dalla capacità del sistema di dimostrare la decrescita dei salti computazionali all'interno della relazione di accessibilità.
@@ -420,7 +420,7 @@ proprietà.
         a ottenere il secondo.
 \end{description}
 
-% TODO: aggiungere la definizione di \zeta e \delta conversioni (let e def)
+% TODEEP: aggiungere la definizione di \zeta e \delta conversioni (let e def)
 
 \subsection{Uguaglianza proposizionale (\texorpdfstring{$=$}{eq})}
 L'uguaglianza proposizionale, espressa tramite il tipo induttivo \texttt{Eq}, è un'affermazione logica che richiede una prova esplicita per essere 

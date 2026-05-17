@@ -170,7 +170,7 @@ Un aspetto architetturale di notevole eleganza è che la LCNF non è una rappres
 stesso di Lean 4. Grazie a questa scelta di \textit{self-hosting}, le complesse routine di ottimizzazione appena descritte non sono altro che pure funzioni ricorsive scritte in Lean, che ispezionano e riscrivono 
 l'albero sintattico operando tramite \textit{pattern matching}.
 
-% TODO: aggiungere una nota teorica $\lambda\mu$-calcolo e le classi di continuazioni
+% TODEEP: aggiungere una nota teorica $\lambda\mu$-calcolo e le classi di continuazioni
 
 \subsubsection{Lean IR, Gestione della memoria e in-place mutation}
 Terminata l'ottimizzazione a livello funzionale, il codice LCNF subisce un drastico cambio di paradigma, venendo abbassato nella \textbf{Lean IR} (\textit{Imperative Representation}). Questa astrazione abbandona la purezza 
