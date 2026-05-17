@@ -260,5 +260,61 @@ Al fine di poter enunciare e dimostrare formalemente l'isomorfismo di Curry-Howa
     premesse e vincoli sui tipi.
 \end{proof}
 
+\begin{lem}[Lemma di sostituzione - substitution]
+    Se $\Gamma, x:\sigma \vdash e_1 : \tau$ e $\Gamma \vdash e_2 : \sigma$, allora $\Gamma \vdash e_1[e_2/x] : \tau$.
+\end{lem}
+\begin{proof}
+    La dimostrazione procede per induzione strutturale sul termine $e_1$, analizzando analiticamente come l'operatore di 
+    sostituzione $[e_2/x]$ interagisce con ciascun costrutto del sistema $\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$:
+    \begin{description}[leftmargin=1.5em, style=nextline]
+        \item [Caso Variabile Identica ($e_1 = x$)] 
+            Se il termine coincide con la variabile da sostituire, dall'ipotesi $\Gamma, x:\sigma \vdash x : \tau$ si ricava per inversione che deve valere strettamente $\tau = \sigma$. Poiché per definizione 
+            algebrica della sostituzione si ha $x[e_2/x] = e_2$, il giudizio finale si riduce a $\Gamma \vdash e_2 : \sigma$, che è esattamente la nostra seconda ipotesi.
+        \item [Caso Variabile Distinta ($e_1 = y \neq x$)] 
+            Se il termine è una variabile differente, la sostituzione non ha effetto: $y[e_2/x] = y$. Dall'inversione di $\Gamma, x:\sigma \vdash y : \tau$ sappiamo che la coppia $(y:\tau)$ appartiene al contesto. 
+            Rimuovendo l'ipotesi inutilizzata $x:\sigma$ (proprietà di sfoltimento del contesto), il giudizio resta immutato nell'ambiente ridotto: $\Gamma \vdash y : \tau$.
+        \item [Caso Astrazione ($e_1 = \lambda y:\tau_1. e_3$)] 
+            Assumiamo senza perdita di generalità (tramite $\alpha$-conversione) che $y \neq x$ e $y \notin FV(e_2)$. Il tipo finale dedotto è un tipo funzione $\tau = \tau_1 \to \tau_2$. Dall'inversione del giudizio 
+            $\Gamma, x:\sigma \vdash \lambda y:\tau_1. e_3 : \tau_1 \to \tau_2$ otteniamo che nel contesto esteso vale $\Gamma, x:\sigma, y:\tau_1 \vdash e_3 : \tau_2$. Per la regola di permutazione dei contesti, possiamo 
+            scambiare l'ordine delle variabili indipendenti: $\Gamma, y:\tau_1, x:\sigma \vdash e_3 : \tau_2$. Applicando il \emph{Lemma di Indebolimento} alla nostra seconda ipotesi, possiamo estendere il contesto di $e_2$ 
+            ottenendo $\Gamma, y:\tau_1 \vdash e_2 : \sigma$. Ora, applicando l'ipotesi induttiva sul sotto-termine $e_3$, si ricava $\Gamma, y:\tau_1 \vdash e_3[e_2/x] : \tau_2$. Applicando la regola di introduzione dell'
+            astrazione, concludiamo che $\Gamma \vdash \lambda y:\tau_1. (e_3[e_2/x]) : \tau_1 \to \tau_2$, che per definizione di sostituzione equivale a $\Gamma \vdash (\lambda y:\tau_1. e_3)[e_2/x] : \tau_1 \to \tau_2$.
+        \item [Caso Applicazione ($e_1 = e_a \, e_b$)] 
+            Dall'inversione del giudizio sul termine applicativo sappiamo che esiste un tipo intermedio $\rho$ tale per cui $\Gamma, x:\sigma \vdash e_a : \rho \to \tau$ e $\Gamma, x:\sigma \vdash e_b : \rho$. 
+            Applicando l'ipotesi induttiva separatamente sui due sotto-termini, otteniamo $\Gamma \vdash e_a[e_2/x] : \rho \to \tau$ e $\Gamma \vdash e_b[e_2/x] : \rho$. Poiché la sostituzione si distribuisce 
+            linearmente sull'applicazione, l'applicazione dei due termini sostituiti preserva il tipo d'arrivo, $\Gamma \vdash (e_a[e_2/x]) \, (e_b[e_2/x]) : \tau$, ovvero $\Gamma \vdash (e_a \, e_b)[e_2/x] : \tau$.
+        \item [Caso Coppia ($e_1 = \langle a, b \rangle$)] 
+            Il tipo derivato è un tipo prodotto $\tau = \tau_1 \times \tau_2$. Dall'inversione delle regole FADT si ha che $\Gamma, x:\sigma \vdash a : \tau_1$ e $\Gamma, x:\sigma \vdash b : \tau_2$. 
+            L'ipotesi induttiva applicata in modo indipendente sui due membri garantisce che $\Gamma \vdash a[e_2/x] : \tau_1$ e $\Gamma \vdash b[e_2/x] : \tau_2$. Poiché la sostituzione agisce per via 
+            distributiva sulla coppia, ricostruiamo il tipo prodotto tramite la regola del costruttore: $\Gamma \vdash \langle a[e_2/x], b[e_2/x] \rangle : \tau_1 \times \tau_2$, che coincide con $\Gamma 
+            \vdash \langle a, b \rangle[e_2/x] : \tau_1 \times \tau_2$.
+        \item [Caso Proiezione Sinistra ($e_1 = \mathsf{fst} \, e_3$)] 
+            Dall'inversione sappiamo che il sotto-termine possiede un tipo prodotto, ovvero $\Gamma, x:\sigma \vdash e_3 : \tau \times \rho$. Per ipotesi induttiva su $e_3$, la sostituzione conserva la 
+            struttura del tipo: $\Gamma \vdash e_3[e_2/x] : \tau \times \rho$. Applicando la regola del distruttore di proiezione sinistra sul termine sostituito, otteniamo la tesi $\Gamma \vdash \mathsf{fst} 
+            \, (e_3[e_2/x]) : \tau$, che equivale a $\Gamma \vdash (\mathsf{fst} \, e_3)[e_2/x] : \tau$.
+        \item [Caso Proiezione Destra ($e_1 = \mathsf{snd} \, e_3$)] 
+            Il caso è perfettamente speculare al precedente: dall'inversione si ha $\Gamma, x:\sigma \vdash e_3 : \rho \times \tau$. L'ipotesi induttiva assicura che $\Gamma \vdash e_3[e_2/x] : \rho \times \tau$. 
+            Applicando la proiezione destra, ricaviamo la validità del giudizio $\Gamma \vdash \mathsf{snd} \, (e_3[e_2/x]) : \tau$, ovvero $\Gamma \vdash (\mathsf{snd} \, e_3)[e_2/x] : \tau$.
+        \item [Caso Iniezione Sinistra ($e_1 = \mathsf{inl}_{\rho} \, e_3$)] 
+            Il tipo risultante è un tipo somma $\tau = \tau_1 + \rho$. Dall'inversione della regola sintattica per le unioni disgiunte asimmetriche sappiamo che vale $\Gamma, x:\sigma \vdash e_3 : \tau_1$. 
+            L'ipotesi induttiva applicata a $e_3$ ci fornisce il giudizio $\Gamma \vdash e_3[e_2/x] : \tau_1$. Riapplicando il costruttore di iniezione sinistra, marchiamo il tipo mancante mantenendo l'univocità, 
+            $\Gamma \vdash \mathsf{inl}_{\rho} \, (e_3[e_2/x]) : \tau_1 + \rho$, che soddisfa la tesi $(\mathsf{inl}_{\rho} \, e_3)[e_2/x]$.
+        \item [Caso Iniezione Destra ($e_1 = \mathsf{inr}_{\rho} \, e_3$)] 
+            Simmetricamente, il tipo finale è $\tau = \rho + \tau_2$. Dall'inversione ricaviamo $\Gamma, x:\sigma \vdash e_3 : \tau_2$. L'ipotesi induttiva garantisce che $\Gamma \vdash e_3[e_2/x] : \tau_2$, 
+            consentendo di ricostruire l'iniezione destra tipata sotto il contesto modificato, $\Gamma \vdash \mathsf{inr}_{\rho} \, (e_3[e_2/x]) : \rho + \tau_2$.
+        \item [Caso Analisi per casi ($e_1 = \mathsf{case} \, e_0 \, \mathsf{of} \, \{ \mathsf{inl} \, y \Rightarrow a \mid \mathsf{inr} \, z \Rightarrow b \}$)] 
+            Assumendo per l'interazione dei legami che $y, z \neq x$ e $y, z \notin FV(e_2)$, la sostituzione penetra ricorsivamente in ogni ramo del blocco. Dall'inversione del tipo comune $\tau$ sappiamo che:
+            ($\Gamma, x:\sigma \vdash e_0 : \rho_1 + \rho_2$), ($\Gamma, x:\sigma, y:\rho_1 \vdash a : \tau$), ($\Gamma, x:\sigma, z:\rho_2 \vdash b : \tau$) Applichiamo l'ipotesi induttiva su $e_0$, ottenendo 
+            $\Gamma \vdash e_0[e_2/x] : \rho_1 + \rho_2$. Per i corpi dei rami $a$ e $b$, operiamo la permutazione dei contesti estesi ed applichiamo l'indebolimento su $e_2$ (esattamente come formalizzato nel 
+            caso dell'astrazione), potendo così invocare l'ipotesi induttiva che produce $\Gamma, y:\rho_1 \vdash a[e_2/x] : \tau$ e $\Gamma, z:\rho_2 \vdash b[e_2/x] : \tau$. Ricomponendo i pezzi tramite la 
+            regola del distruttore $\mathsf{case}$, l'espressione interamente sostituita mantiene stabilmente il tipo finale $\tau$ sotto il contesto coerente $\Gamma$.
+        \item [Caso Costante Unit ($e_1 = ()$)] 
+            La costante () possiede per definizione assiomatica il tipo Unit, ovvero $\tau = \mathbf{1}$. Poiché non contiene variabili libere, la sostituzione non produce alcun effetto sintattico: $()[e_2/x] = ()$. 
+            Rimuovendo dal contesto l'ipotesi superflua $x:\sigma$, il giudizio assiomatico si riduce direttamente a $\Gamma \vdash () : \mathbf{1}$, verificando la tesi.
+        \item [Caso Eliminazione del Falso ($e_1 = \mathsf{absurd}_{\tau} \, e_3$)] 
+            Dall'inversione della regola dell'ex falso quodlibet sappiamo che il sotto-termine testimone della contraddizione deve abitare il tipo vuoto: $\Gamma, x:\sigma \vdash e_3 : \mathbf{0}$. L'ipotesi induttiva applicata a $e_3$ ci assicura che la sostituzione non può generare arbitrariamente abitanti nel tipo vuoto, preservando la relazione $\Gamma \vdash e_3[e_2/x] : \mathbf{0}$. Poiché per definizione $\left(\mathsf{absurd}_{\tau} \, e_3\right)[e_2/x] = \mathsf{absurd}_{\tau} \, (e_3[e_2/x])$, la riapplicazione del distruttore del falso sotto il contesto $\Gamma$ conclude formalmente che il termine finale derivato mantiene validamente il tipo arbitrario $\tau$.
+    \end{description}
+\end{proof}
+
 \section{Dimostrazione del'isomorfismo IPC - \texorpdfstring{$\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$}{Lambda-Calculus with FADT}}
 % TODO
