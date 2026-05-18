@@ -1,4 +1,3 @@
-import Init.Data.Vector
 import CurryHoward.Lambda.Syntax
 import CurryHoward.Lambda.Typing
 import CurryHoward.Logic.Syntax
@@ -20,23 +19,25 @@ namespace CurryHoward.Isomorphism.ToLambda
     | .top       => .unit
     | .bot       => .void
 
-  def φ_lift {n : Nat} : (Γ : Context Formula n) → Context LType n :=
-    Vector.map φ
+  def φ_lift (Γ : Context Formula) : Context LType :=
+    Γ.map φ
 
-  theorem φ_lift_get_eq
-    {n : Nat} (Γ : Context Formula n) (i : Fin n) :
-    (φ_lift Γ).get i = φ (Γ.get i) := by sorry
+  theorem φ_lift_get_eq (Γ : Context Formula) (i : Fin Γ.length) :
+    have hl : (φ_lift Γ).length = Γ.length := by simp [φ_lift]
+    let i' : Fin (φ_lift Γ).length := ⟨i.val, hl.symm ▸ i.isLt⟩
+    φ (Γ.get i) = (φ_lift Γ).get i' := by sorry
 
-  theorem ctx_extend_eq
-    {n : Nat} (A : Formula) (Γ : Context Formula n) :
-    φ_lift (extend A Γ) = extend (φ A) (φ_lift Γ) := by sorry
+  theorem ctx_extend_eq (A : Formula) (Γ : Context Formula) :
+    φ_lift (A :: Γ) = (φ A) :: (φ_lift Γ) := by rfl
 
   def extract
-    {n : Nat} {Γ : Context Formula n} {A : Formula} (d : Derivation Γ A) :
+    {Γ : Context Formula} {A : Formula} (d : Derivation Γ A) :
     Σ (t : Term), Typing (φ_lift Γ) t (φ A) :=
     match d with
     | .hyp i =>
-      ⟨Term.var i, (φ_lift_get_eq Γ i)▸ .var i⟩
+      have h_len : Γ.length = (φ_lift Γ).length := by simp [φ_lift]
+      let i' := Fin.cast h_len i
+      ⟨Term.var i', (φ_lift_get_eq Γ i) ▸ .var i'⟩
 
     | .implI A B tree =>
       have h_ctx := ctx_extend_eq A Γ
