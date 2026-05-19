@@ -74,6 +74,7 @@ tipicamente avviene nelle introduzioni. L'indice i è fondamentale per collegare
 allora non si ottiene un teorema $\vdash \psi$, ma una formula dipendente da un contesto $A \vdash \psi$.
 
 \paragraph{Normalizzazione (Cut-elimination).}
+\label{par:cut-elimination}
 Quando una regola di introduzione è immediatamente seguita dall'eliminazione dello stesso connettivo si genera una ridondanza locale, nota storicamente come \emph{cut}. Il processo di \emph{normalizzazione} consiste 
 nell'eliminare algoritmicamente queste ridondanze. Prendendo come esempio l'implicazione, il taglio si verifica quando un'introduzione ($\to I$) viene immediatamente usata come premessa maggiore di un'eliminazione ($\to E$). 
 La riduzione sintattica di questo taglio si esprime graficamente come la sostituzione dell'ipotesi $[A]$ con la sua effettiva dimostrazione.

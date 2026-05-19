@@ -473,3 +473,11 @@ A completamento dell'impianto algebrico dell'isomorfismo, enunciamo il teorema f
     I restanti costrutti FADT (coppie, proiezioni, iniezioni, analisi per casi e costanti) si riducono similmente per ipotesi induttiva, completando la verifica di biunivocità 
     dell'isomorfismo statico.
 \end{proof}
+
+\subsection{Omomorfismo tra \texorpdfstring{$\beta$}{beta}-riduzione e cut-elimination}
+L'isomorfismo di Curry-Howard non si limita a mappare la struttura statica delle prove e dei tipi, ma stabilisce un'identità profonda tra la \emph{computazione} e 
+la \emph{semplificazione delle prove}, noto come normalizzazione o cut-elimination. In deduzione naturale, come riportato nel paragrafo \ref{par:cut-elimination}, 
+una situazione di ridondanza si verifica quando una regola di introduzione di un connettivo è immediatamente seguita dalla regola di eliminazione del medesimo 
+connettivo. Il processo di normalizzazione elimina questa ridondanza. Sotto l'isomorfismo, tale processo corrisponde esattamente a un passo di $\beta$-riduzione.
+Utilizzando il \emph{Lemma di Sostituzione} introdotto precedentemente, possiamo formalizzare questa equivalenza dinamica per ogni costrutto del sistema 
+$\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$.
