@@ -423,3 +423,15 @@ La scomposizione formale mappa ogni costrutto nel seguente schema logico.
         $$ \mathcal{G}(\Gamma \vdash () : \mathbf{1}) = \frac{}{\top} \, (\top I) \qquad 
            \mathcal{G}(\Gamma \vdash \mathsf{absurd}_{\tau} \, e : \tau) = \frac{\mathcal{G}(\Gamma \vdash e : \mathbf{0})}{\tau} \, (\bot E) $$
 \end{description}
+
+\subsection{Biunivocità e Round-Trip}
+A completamento dell'impianto algebrico dell'isomorfismo, enunciamo il teorema fondamentale di consistenza strutturale reciproca.
+
+\begin{thm}[Biiezione Speculare di Curry-Howard]
+    Sia $\mathcal{D}$ un albero di derivazione formale in $\mathcal{L}_{\text{NJ}}$ e sia $e$ 
+    un termine ben formato nel calcolo $\mathcal{C}_{\text{STLC}}$. Valgono le seguenti identità.
+    \begin{enumerate}
+        \item $\mathcal{G}(\mathcal{F}(\mathcal{D})) \equiv \mathcal{D}$ (L'immagine logica di un termine sintetizzata da una prova preserva l'albero originario).
+        \item $\mathcal{F}(\mathcal{G}(e))           \equiv e$           (Il termine computazionale estratto da una prova ri-sintetizzata è identico al codice sorgente).
+    \end{enumerate}
+\end{thm}
