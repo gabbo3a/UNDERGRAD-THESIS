@@ -54,7 +54,7 @@ risultano poco intuitivi per la pratica umana poiché richiedono costruzioni log
 \subsubsection{Deduzione naturale}
 Sviluppata da Gerhard Gentzen, la deduzione naturale mira a riprodurre fedelmente il modo in cui il ragionamento matematico avviene "in natura". Il sistema si basa su una struttura simmetrica: per ogni connettivo 
 logico esiste una regola di \emph{introduzione} (che definisce come costruire una formula con quel connettivo) e una regola di \emph{eliminazione} (che definisce come utilizzarla). Questo sistema è il pilastro della 
-logica intuizionista poiché.
+logica intuizionista.
 \begin{center}
     \begin{prooftree}
         \hypo{ [A]^i }
@@ -72,6 +72,37 @@ Nello specifico ogni regola di intriduzione ha il costrutto da cui prende il nom
 nelle regole viene mutuato i sostantivi di introduzione e eliminazione rispetto alla tesi. Un altro costrutto importante è ipotesi $[A]^i$. Una ipotesi è un debito logico, tramite il quale si puo assumere una verita, 
 tipicamente avviene nelle introduzioni. L'indice i è fondamentale per collegare la regola di introduzione alla specifica ipotesi, questa pratica si dice scaricare le ipotesi. Se non si scaricassero tutte le ipotesi
 allora non si ottiene un teorema $\vdash \psi$, ma una formula dipendente da un contesto $A \vdash \psi$.
+
+\paragraph{Normalizzazione (Cut-elimination).}
+Quando una regola di introduzione è immediatamente seguita dall'eliminazione dello stesso connettivo si genera una ridondanza locale, nota storicamente come \emph{cut}. Il processo di \emph{normalizzazione} consiste 
+nell'eliminare algoritmicamente queste ridondanze. Prendendo come esempio l'implicazione, il taglio si verifica quando un'introduzione ($\to I$) viene immediatamente usata come premessa maggiore di un'eliminazione ($\to E$). 
+La riduzione sintattica di questo taglio si esprime graficamente come la sostituzione dell'ipotesi $[A]$ con la sua effettiva dimostrazione.
+\begin{center}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \hspace{-0.6cm}\textbf{Prova ridondante} \\[1.5em]
+        \begin{prooftree}
+            \hypo{ [A]^i }
+            \infer1[\vdots]{ B }
+            \infer1[$(\to I^i)$]{ A \to B }
+            \hypo{ \vdots }
+            \infer1{ A }
+            \infer2[$(\to E)$]{ B }
+        \end{prooftree}
+    \end{minipage}
+    $\Longrightarrow$
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \textbf{Prova normalizzata} \\[2.5em]
+        \begin{prooftree}
+            \hypo{ \vdots }
+            \infer1{ A }
+            \infer1[\vdots]{ B }
+        \end{prooftree}
+    \end{minipage}
+\end{center}
+In questo modo, la derivazione della formula $A$ viene innestata direttamente all'interno della sottoproduzione di $B$ ovunque 
+comparisse l'ipotesi scaricata $[A]^i$. Questo meccanismo di riscrittura sara fondametale per la trattazione nel prossimo capitolo.
 
 \subsubsection{Calcolo dei sequenti}
 Sempre introdotto da Gentzen, il calcolo dei sequenti non opera su singole formule ma su \emph{sequenti} del tipo $\Gamma \vdash \Delta$, che rappresentano una relazione tra un insieme di assunzioni e un insieme di conclusioni. 
