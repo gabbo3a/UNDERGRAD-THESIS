@@ -456,4 +456,20 @@ A completamento dell'impianto algebrico dell'isomorfismo, enunciamo il teorema f
             viene preservata identicamente ($\mathcal{G}(\mathcal{F}(\mathcal{D}_\bot)) \equiv \mathcal{D}_\bot$), forzando la convergenza $\mathcal{G}(\mathcal{F}(\mathcal{D})) \equiv \mathcal{D}$.
     \end{description}
     I restanti casi (implicazione, disgiunzione, verità) seguono la medesima scomposizione per via di ipotesi induttiva sulle sotto-derivazioni.
+
+    \paragraph{Proprietà 2 ($\mathcal{F} \circ \mathcal{G} \equiv \text{id}$):}
+    Procediamo per induzione sulla struttura sintattica del termine tipato $e \in \mathcal{C}_{\text{STLC}}$:
+    \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+        \item[Caso Variabile] 
+            Sia $e = x:\tau$. L'omomorfismo inverso genera l'albero atomico dell'ipotesi logica $\mathcal{G}(\Gamma, x:\tau \vdash x:\tau) = [\phi^{-1}(\tau)]^x$. Quando 
+            applichiamo nuovamente la mappa diretta $\mathcal{F}$ su questa foglia, la regola dell'assioma impone la conversione nella variabile corrispondente avente come 
+            tipo all'esponente la traduzione della formula stessa: $x:{\phi(\phi^{-1}(\tau))}$. Poiché $\phi(\phi^{-1}(\tau)) = \tau$, riotteniamo il termine $x:\tau \equiv e$.
+        \item[Caso Astrazione]
+            Sia $e = \lambda x:\tau. \, M$. La funzione $\mathcal{G}$ mappa questo costrutto nell'albero di introduzione dell'implicazione $(\to I)$ avente come premessa 
+            l'albero di derivazione logica per il sotto-termine $M$. Riapplicando $\mathcal{F}$ a questa struttura astratta, la regola $(\to I)$ forza la costruzione di 
+            un'astrazione funzionale $\lambda x:{\phi(\phi^{-1}(\tau))}. \, \mathcal{F}(\mathcal{G}(M))$. Sfruttando l'ipotesi induttiva sul sotto-termine, vale che 
+            $\mathcal{F}(\mathcal{G}(M)) \equiv M$, riconducendo l'intera espressione a $\lambda x:\tau. \, M \equiv e$.
+    \end{description}
+    I restanti costrutti FADT (coppie, proiezioni, iniezioni, analisi per casi e costanti) si riducono similmente per ipotesi induttiva, completando la verifica di biunivocità 
+    dell'isomorfismo statico.
 \end{proof}
