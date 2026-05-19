@@ -22,28 +22,14 @@ namespace CurryHoward.Isomorphism.ToLambda
   def φ_lift (Γ : Context Formula) : Context LType :=
     Γ.map φ
 
+  theorem ctx_extend_eq (A : Formula) (Γ : Context Formula) :
+    φ_lift (A :: Γ) = (φ A) :: (φ_lift Γ) := by rfl
+
   theorem φ_lift_get_eq (Γ : Context Formula) :
     ∀ (i : Fin Γ.length),
     let hl : (φ_lift Γ).length = Γ.length := by simp [φ_lift]
     let i' : Fin (φ_lift Γ).length := ⟨i.val, hl.symm ▸ i.isLt⟩
-    φ (Γ.get i) = (φ_lift Γ).get i' := by
-    induction Γ with
-      | nil =>
-        intro i
-        nomatch i
-      | cons x xs ih =>
-        intro i
-        rcases i with ⟨iv, h_iv⟩
-        match iv with
-        | 0 =>
-          rfl
-        | iv' + 1 =>
-          have h_tail : iv' < xs.length := Nat.lt_of_succ_lt_succ h_iv
-          let i_tail : Fin xs.length := ⟨iv', h_tail⟩
-          exact ih i_tail
-
-  theorem ctx_extend_eq (A : Formula) (Γ : Context Formula) :
-    φ_lift (A :: Γ) = (φ A) :: (φ_lift Γ) := by rfl
+    φ (Γ.get i) = (φ_lift Γ).get i' := by simp [φ_lift]
 
   def extract
     {Γ : Context Formula} {A : Formula} (d : Derivation Γ A) :
