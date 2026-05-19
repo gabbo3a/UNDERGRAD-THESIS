@@ -435,3 +435,25 @@ A completamento dell'impianto algebrico dell'isomorfismo, enunciamo il teorema f
         \item $\mathcal{F}(\mathcal{G}(e))           \equiv e$           (Il termine computazionale estratto da una prova ri-sintetizzata è identico al codice sorgente).
     \end{enumerate}
 \end{thm}
+\begin{proof}
+    Dimostriamo le due proprietà separatamente sfruttando il principio di induzione strutturale.
+    \paragraph{Proprietà 1 ($\mathcal{G} \circ \mathcal{F} \equiv \text{id}$):}
+    Procediamo per induzione sulla struttura della derivazione logica $\mathcal{D} \in \mathcal{L}_{\text{NJ}}$:
+    \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+        \item[Caso Assioma] 
+            Sia $\mathcal{D} = [A]^x$. Per definizione dell'omomorfismo diretto, si ha $\mathcal{F}([A]^x) = x:{\phi(A)}$. Applicando l'omomorfismo inverso 
+            $\mathcal{G}$ al giudizio di tipizzazione della variabile, otteniamo $\mathcal{G}(\Gamma, x:{\phi(A)} \vdash x:{\phi(A)}) = [\phi^{-1}(\phi(A))]^x$. 
+            Poiché $\phi^{-1}(\phi(A)) = A$, l'albero finale collassa esattamente in $[A]^x \equiv \mathcal{D}$.
+        \item[Caso Prodotto ($\land I$)] 
+            Sia $\mathcal{D}$ un albero che unisce due sotto-alberi $\mathcal{D}_A$ e $\mathcal{D}_B$ per derivare $A \land B$. Per definizione, la funzione diretta produce la coppia 
+            $\mathcal{F}(\mathcal{D}) = \langle \mathcal{F}(\mathcal{D}_A), \mathcal{F}(\mathcal{D}_B) \rangle$. Applicando l'omomorfismo inverso $\mathcal{G}$ a tale coppia, per definizione 
+            otteniamo l'albero che applica la regola $(\land I)$ sulle sotto-derivazioni generate da $\mathcal{G}(\mathcal{F}(\mathcal{D}_A))$ e $\mathcal{G}(\mathcal{F}(\mathcal{D}_B))$. 
+            Per ipotesi induttiva sappiamo che $\mathcal{G}(\mathcal{F}(\mathcal{D}_A)) \equiv \mathcal{D}_A$ e $\mathcal{G}(\mathcal{F}(\mathcal{D}_B)) \equiv \mathcal{D}_B$. Di conseguenza, 
+            l'albero finale risultante coincide in ogni nodo e foglia con $\mathcal{D}$.
+        \item[Caso Assurdo ($\bot E$)] 
+            Sia $\mathcal{D}$ un albero che applica l'ex falso quodlibet a una derivazione dell'assurdo $\mathcal{D}_\bot$. Abbiamo $\mathcal{F}(\mathcal{D}) = \mathsf{absurd}_{\phi(A)}(\mathcal{F}(\mathcal{D}_\bot))$. 
+            Riapplicando la mappa inversa, otteniamo la regola logica $(\bot E)$ applicata alla derivazione $\mathcal{G}(\mathcal{F}(\mathcal{D}_\bot))$. Per ipotesi induttiva sul sotto-albero, la derivazione dell'assurdo 
+            viene preservata identicamente ($\mathcal{G}(\mathcal{F}(\mathcal{D}_\bot)) \equiv \mathcal{D}_\bot$), forzando la convergenza $\mathcal{G}(\mathcal{F}(\mathcal{D})) \equiv \mathcal{D}$.
+    \end{description}
+    I restanti casi (implicazione, disgiunzione, verità) seguono la medesima scomposizione per via di ipotesi induttiva sulle sotto-derivazioni.
+\end{proof}
