@@ -481,3 +481,56 @@ una situazione di ridondanza si verifica quando una regola di introduzione di un
 connettivo. Il processo di normalizzazione elimina questa ridondanza. Sotto l'isomorfismo, tale processo corrisponde esattamente a un passo di $\beta$-riduzione.
 Utilizzando il \emph{Lemma di Sostituzione} introdotto precedentemente, possiamo formalizzare questa equivalenza dinamica per ogni costrutto del sistema 
 $\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$.
+
+\begin{thm}[Isomorfismo delle Riduzioni]
+    Sia $\mathcal{D}$ un albero di derivazione logica contenente una ridondanza logica, e sia $e = \mathcal{F}(\mathcal{D})$ il termine ben tipato corrispondente ottenuto 
+    tramite l'omomorfismo diretto. Se $e \to_\beta e'$, allora esiste una semplificazione logica locale della dimostrazione $\mathcal{D} \to_{\text{NJ}} \mathcal{D}'$ tale 
+    che $\mathcal{F}(\mathcal{D}') \equiv e'$.
+\end{thm}
+\begin{proof}
+    La dimostrazione procede analizzando l'interazione tra i costruttori e i distruttori di ogni tipo algebrico (FADT) rispetto ad corrispettivo connettivo logico.
+    \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+        \item[Frammento Implicativo ($\to$)]
+            Una ridondanza logica per l'implicazione si verifica quando un'introduzione $(\to I)$ è seguita da un'eliminazione $(\to E)$. L'omomorfismo proietta questa 
+            configurazione strutturale ridondante sul piano computazionale separando l'albero dal termine associato.
+            \begin{gather*}
+                \mathcal{D} = \frac{\frac{\begin{array}{c} [A]^x \\ \vdots \\ \mathcal{D}_B \end{array}}{A \to B} (\to I) \quad \mathcal{D}_A}{B} (\to E) \\[10pt]
+                \quad \mathcal{F}(\mathcal{D}) = (\lambda x^{\phi(A)}. \, \mathcal{F}(\mathcal{D}_B)) \,\, \mathcal{F}(\mathcal{D}_A)
+            \end{gather*}
+            Il lambda-calcolo esegue la computazione tramite $\beta$-riduzione sul redex funzionale standard.
+            $$ (\lambda x^{\phi(A)}. \, \mathcal{F}(\mathcal{D}_B)) \,\, \mathcal{F}(\mathcal{D}_A) \to_\beta \mathcal{F}(\mathcal{D}_B)[\mathcal{F}(\mathcal{D}_A)/x] $$
+            Parallelamente, la logica semplifica la dimostrazione rimpiazzando ogni occorrenza dell'ipotesi scaricata $[A]^x$ con l'intero albero di derivazione $\mathcal{D}_A$.
+            $$ \mathcal{D}' = \begin{array}{c} \mathcal{D}_A \\ \vdots \\ \mathcal{D}_B \end{array} $$
+            Per il \textbf{Lemma di Sostituzione}, l'albero logico modificato corrisponde strutturalmente a 
+            $\mathcal{F}(\mathcal{D}') \equiv \mathcal{F}(\mathcal{D}_B)[\mathcal{F}(\mathcal{D}_A)/x]$, 
+            preservando l'identità dinamica.
+
+        \item[Frammento Prodotto ($\land$ / $\times$)]
+            Una ridondanza si verifica quando si introduce una congiunzione e immediatamente se ne proietta un membro. L'omomorfismo diretto mappa 
+            in modo verticale questo scenario come.
+            \begin{gather*}
+                \mathcal{D} = \frac{\frac{\mathcal{D}_A \quad \mathcal{D}_B}{A \land B} (\land I)}{A} (\land E_1) \\[10pt]
+                \implies \quad \mathcal{F}(\mathcal{D}) = \mathsf{fst} \, \langle \mathcal{F}(\mathcal{D}_A), \mathcal{F}(\mathcal{D}_B) \rangle
+            \end{gather*}
+            Sul fronte computazionale, la regola di riduzione per i FADT impone la proiezione.
+            $$ \mathsf{fst} \, \langle \mathcal{F}(\mathcal{D}_A), \mathcal{F}(\mathcal{D}_B) \rangle \to_\beta \mathcal{F}(\mathcal{D}_A) $$
+            Sul fronte logico, la semplificazione consiste nel gettare via l'albero ridondante $\mathcal{D}_B$ e tenere solo la derivazione d'interesse. Otteniamo l'albero 
+            semplificato $\mathcal{D}' = \mathcal{D}_A$, per il quale vale banalmente $\mathcal{F}(\mathcal{D}') \equiv \mathcal{F}(\mathcal{D}_A)$. Il caso per $\mathsf{snd}$ 
+            ed $\land E_2$ è perfettamente simmetrico \ref{eq:fadt_beta_reduction}.
+
+        \item[Frammento Somma ($\lor$ / $+$)]
+            Il taglio logico si verifica quando la regola di introduzione della disgiunzione è immediatamente seguita dalla sua eliminazione $(\lor E)$. Consideriamo il caso
+            in cui viene applicata la prima regola di introduzione ($\lor I_1$) a partire da una sotto-prova $\mathcal{D}_A$.
+            \begin{equation*}
+                \mathcal{D} = \frac{\dfrac{\mathcal{D}_A}{A \lor B} (\lor I_1) \qquad \begin{array}{c} [A]^x \\ \vdots \\ \mathcal{D}_1 \end{array} \qquad \begin{array}{c} [B]^y \\ \vdots \\ \mathcal{D}_2 \end{array}}{C} (\lor E)
+            \end{equation*}
+            L'omomorfismo diretto $\mathcal{F}$ mappa questa configurazione nell'interazione dinamica tra il costruttore di iniezione $\mathsf{inl}$ e il distruttore di analisi per casi $\mathsf{case}$.
+            $$ \mathcal{F}(\mathcal{D}) = \mathsf{case} \,\, (\mathsf{inl}_{\phi(B)} \, \mathcal{F}(\mathcal{D}_A)) \,\, \mathsf{of} \,\, \{ \mathsf{inl} \, x \Rightarrow \mathcal{F}(\mathcal{D}_1) \mid \mathsf{inr} \, y \Rightarrow \mathcal{F}(\mathcal{D}_2) \} $$
+            Sul fronte computazionale, la semantica operazionale dei FADT definisce la riduzione catturando il valore del ramo sinistro ed eseguendo la sostituzione della variabile libera $x$ nel corpo del primo termine:
+            $$ \mathsf{case} \,\, (\mathsf{inl}_{\phi(B)} \, \mathcal{F}(\mathcal{D}_A)) \,\, \mathsf{of} \,\, \{ \mathsf{inl} \, x \Rightarrow \mathcal{F}(\mathcal{D}_1) \mid \mathsf{inr} \, y \Rightarrow \mathcal{F}(\mathcal{D}_2) \} \to_\beta \mathcal{F}(\mathcal{D}_1)[\mathcal{F}(\mathcal{D}_A)/x] $$
+            Sul fronte logico, la presenza della sotto-prova $\mathcal{D}_A$ rende superflua l'intermediazione dell'analisi per casi. La derivazione si normalizza proiettando il cammino direttamente sul ramo sinistro, innestando la dimostrazione della premessa al posto dell'ipotesi locale $[A]^x$.
+            $$ \mathcal{D}' = \begin{array}{c} \mathcal{D}_A \\ \vdots \\ \mathcal{D}_1 \end{array} $$
+            In virtù del \textbf{Lemma di Sostituzione}, il termine associato alla derivazione normalizzata è $\mathcal{F}(\mathcal{D}') \equiv \mathcal{F}(\mathcal{D}_1)[\mathcal{F}(\mathcal{D}_A)/x]$. Viene così dimostrata l'
+            esatta coincidenza tra il passo di normalizzazione logica e la $\beta$-riduzione del tipo somma.
+    \end{description}
+\end{proof}
