@@ -2,6 +2,12 @@
 \chapter{Calcolo delle costruzioni induttive}
 \label{chap:cic}
 
+In questo capitolo viene analizzato il Calcolo delle Costruzioni Induttive (CiC), il modello logico alla base del kernel di Lean 4. L'analisi parte 
+dal superamento dei limiti fondazionali e computazionali delle codifiche alla Church, per poi approfondire la gerarchia degli universi, la separazione 
+tra rilevanza computazionale e verità logica. Vengono quindi definiti formalmente i tipi induttivi e i quozienti all'interno del sistema, descrivendo i 
+costrutti di formazione, introduzione ed eliminazione. Infine, l'attenzione si concentra sui criteri di terminazione del calcolo, dalla ricorsione strutturale 
+a quella ben fondata, e sulle strategie di elaborazione utilizzate dal kernel per ricondurre le strutture mutue e nidificate a schemi induttivi semplici.
+
 \section{Motivazioni}
 Per poter parlare del kernel di Lean 4, è necessario approfondire il modello logico che i progetisti del linguaggio hanno deciso di implementare
 e dei motivi per è stato necessario estendere il calcolo delle costruzioni. I sistemi di tipo e linguaggi finora esaminati appartenenti al lambda
