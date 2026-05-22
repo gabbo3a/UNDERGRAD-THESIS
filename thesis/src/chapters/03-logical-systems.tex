@@ -215,6 +215,7 @@ estensioni del cubo.
 \begin{equation}
     \begin{array}{lrll}
         \text{Formulas:} & \phi, \psi & ::= p \quad                  & \text{(Variabili proposizionali)} \\
+                         &            & \mid \top \quad              & \text{(Vero / Top)}               \\
                          &            & \mid \bot \quad              & \text{(Falso / Assurdo)}          \\
                          &            & \mid \phi \land \psi \quad   & \text{(Congiunzione)}             \\
                          &            & \mid \phi \lor \psi \quad    & \text{(Disgiunzione)}             \\
@@ -227,6 +228,12 @@ estensioni del cubo.
 
 \paragraph{Semantica.}
 \begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item[$\top$] 
+        Rappresenta la verità logica, la sua prova è costituita da una costruzione canonica banale che è sempre disponibile 
+        e non richiede informazioni preresse.
+    \item[$\bot$] 
+        Rappresenta l'assurdo logico e coerentemente non possiede alcuna prova, non è possibile fornire alcuna 
+        costruzione valida per questo enunciato.
     \item[$\phi \land \psi$] 
         Una prova è costituita da una coppia ordinata $\langle e_1, e_2 \rangle$ che contiene simultaneamente un'
         evidenza $e_1$ per $\phi$ e un'evidenza $e_2$ per $\psi$.
@@ -236,9 +243,6 @@ estensioni del cubo.
     \item[$\phi \to \psi$] 
         Una prova è una costruzione funzionale $f$ in grado di trasformare ogni possibile prova di $\phi$ in una prova 
         di $\psi$, definendo così un metodo effettivo di derivazione.
-    \item[$\bot$] 
-        Rappresenta l'assurdo logico e non possiede alcuna prova; coerentemente, non è possibile fornire alcuna 
-        costruzione valida per questo enunciato.
     \item[$\neg \phi$] 
         Equivalente a $\phi \to \bot$, la sua prova è una costruzione che trasforma ogni ipotetica evidenza di 
         $\phi$ in una prova della contraddizione ($\bot$), mostrandone l'asseribilità impossibile.
