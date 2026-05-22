@@ -52,4 +52,14 @@ namespace CurryHoward.Logic.Derivation
       Derivation Γ Formula.bot
       → Derivation Γ A
   deriving Repr
+
+  def bind (depth : Nat) (A : Formula) (Γ : Context Formula) : Context Formula :=
+    (Γ.take depth) ++ (A :: Γ.drop depth)
+
+  axiom subst {Γ : Context Formula} {A B : Formula} (depth : Nat) :
+    Derivation (bind depth A Γ) B → Derivation Γ A → Derivation Γ B
+
+  noncomputable def instantiate {Γ : Context Formula} {A B : Formula}
+      (body : Derivation (A :: Γ) B) (arg : Derivation Γ A) : Derivation Γ B :=
+    subst 0 body arg
 end CurryHoward.Logic.Derivation
