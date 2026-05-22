@@ -271,10 +271,10 @@ quantificare in sicurezza su funzioni e operatori astratti di qualunque compless
 \input{chapters/03-rules/ipcw.tex}
 
 \subsubsection{Combinazioni}
-In modo del tutto analogo a quanto osservato per il calcolo dei lambda-termini, l'interazione tra gli assi degli individui ($x$), degli ordini ($y$) e dei tipi ($z$) genera otto sistemi logici distinti. 
-Come mostrato nella Tabella \ref{tab:logic_cube_combinations}, ogni sistema poggia sulle fondamenta della logica proposizionale intuizionista (IPC), estendendone il potere espressivo attraverso diverse 
-forme di quantificazione. Questa gerarchia non è solo una classificazione tassonomica, ma rappresenta lo specchio logico del cubo di Barendregt: la perfetta corrispondenza tra queste classi di logiche e 
-i sistemi di tipo precedentemente analizzati costituisce il cuore dell'isomorfismo che verrà formalizzato nel prossimo capitolo.
+In modo del tutto analogo a quanto osservato per il calcolo dei lambda-termini, l'interazione tra gli assi degli individui ($x$), degli ordini ($y$) e dei tipi ($z$) genera otto sistemi logici distinti. Come 
+mostrato nella Tabella \ref{tab:logic_cube_combinations}, ogni sistema poggia sulle fondamenta della logica proposizionale intuizionista (IPC), estendendone il potenziale strutturale attraverso diverse forme 
+di azione dei binder. Questa gerarchia non è una mera classificazione tassonomica, ma rappresenta lo specchio logico del cubo di Barendregt: la perfetta corrispondenza tra il raggio d'azione sintattico dei 
+quantificatori e i sistemi di tipo precedentemente analizzati costituisce il cuore dell'isomorfismo che verrà formalizzato nel prossimo capitolo.
 
 \begin{table}[H]
     \centering
@@ -282,18 +282,18 @@ i sistemi di tipo precedentemente analizzati costituisce il cuore dell'isomorfis
     \setlength{\tabcolsep}{4pt}
     \begin{tabular}{ccccc}
         \hline
-        \textbf{Sistema}      & \textbf{IPC} & \textbf{Individui} & \textbf{Ordini}  & \textbf{Tipi}   \\ 
-        \textbf{Logico}       & (Connettivi) & (Primo Ordine)     & (Secondo Ordine) & (Tipi Semplici) \\ \hline
-        IPC                   & \checkmark   & --                 & --               & --              \\
-        IFOL                  & \checkmark   & \checkmark         & --               & --              \\
-        $\text{IPC}^2$        & \checkmark   & --                 & \checkmark       & --              \\
-        ISOL                  & \checkmark   & \checkmark         & \checkmark       & --              \\
-        $\text{IPC}_\omega$   & \checkmark   & --                 & --               & \checkmark      \\
-        $\text{IQC}_\omega$   & \checkmark   & \checkmark         & --               & \checkmark      \\
-        $\text{IPC}^2_\omega$ & \checkmark   & --                 & \checkmark       & \checkmark      \\
-        IHOL                  & \checkmark   & \checkmark         & \checkmark       & \checkmark      \\ \hline
+        \textbf{Sistema}      & \textbf{Connettivi} & \textbf{Binder su}           & \textbf{Binder su}     & \textbf{Binder su}                \\ 
+        \textbf{Formale}      & \textbf{Base}       & \textbf{Individui ($\iota$)} & \textbf{Formule ($o$)} & \textbf{Tipi ($\sigma \to \tau$)} \\ \hline
+        IPC                   & \checkmark          & --                           & --                     & --                                \\
+        IFOL                  & \checkmark          & \checkmark                   & --                     & --                                \\
+        $\text{IPC}^2$        & \checkmark          & --                           & \checkmark             & --                                \\
+        ISOL                  & \checkmark          & \checkmark                   & \checkmark             & --                                \\
+        $\text{IPC}_\omega$   & \checkmark          & --                           & --                     & \checkmark                        \\
+        $\text{IQC}_\omega$   & \checkmark          & \checkmark                   & --                     & \checkmark                        \\
+        $\text{IPC}^2_\omega$ & \checkmark          & --                           & \checkmark             & \checkmark                        \\
+        IHOL                  & \checkmark          & \checkmark                   & \checkmark             & \checkmark                        \\ \hline
     \end{tabular}
-    \caption{Le otto combinazioni del cubo logico intuizionista.}
+    \caption{Le otto combinazioni del cubo logico basate sul raggio d'azione dei binder.}
     \label{tab:logic_cube_combinations}
 \end{table}
 
