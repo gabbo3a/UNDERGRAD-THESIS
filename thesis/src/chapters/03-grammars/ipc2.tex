@@ -1,0 +1,17 @@
+\begin{equation}
+    \begin{array}{lrll}
+        \text{Formulas ($o$):}  & \phi, \psi & ::= X^o                   \quad  & \text{(Variabili proposizionali)} \\
+                                &            & \mid \dots                \quad  & \text{(Connettivi IPC)}           \\
+                                &            & \mid (\forall X^o \phi)^o \quad  & \text{(Binder Universale)}        \\
+                                &            & \mid (\exists X^o \phi)^o \quad  & \text{(Binder Esistenziale)}
+    \end{array}
+    \tag{$\text{IPC}^2$}
+    \label{eq:ipc2_grammar}
+\end{equation}
+
+\paragraph{Regole di formazione.}
+Le regole di buona formazione del secondo ordine estendono il concetto di sensatezza strutturale abilitando l'impredicatività 
+logica entro binari controllati \cite{hindley1997}. Il binder puo vincolare variabili associate a valori di verità ($o$). L'istanza 
+di buona formazione garantisce che una formula possa quantificare validamente sopra l'intero insieme dei tipi proposizionali (incluso 
+il tipo della formula definenda stessa) senza generare le contraddizioni autoreferenziali, poiché la stratificazione sintattica isola 
+il metalinguaggio dal linguaggio oggetto.

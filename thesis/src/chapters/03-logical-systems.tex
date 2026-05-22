@@ -245,23 +245,12 @@ l'esistenza di elementi all'interno di un dominio specifico di individui (termin
 La logica di secondo ordine proposizionale abilita il polimorfismo logico. In questo sistema è possibile quantificare non più solo sugli individui, ma sulle proposizioni stesse. 
 Questa capacità permette di definire operatori e connettivi "astratti" che funzionano indipendentemente dalle formule specifiche a cui sono applicati, introducendo un primo livello 
 di astrazione su tipi.
+
 \paragraph{Grammatica.}
-\begin{equation}
-    \begin{array}{lrll}
-        \text{Formulas:} & \phi, \psi & ::= X \quad                & \text{(Variabili proposizionali/predicative)} \\
-                         &            & \mid \bot \mid \dots \quad & \text{(Connettivi IPC)}                       \\
-                         &            & \mid \forall X \phi \quad  & \text{(Quantificatore su proposizioni)}       \\
-                         &            & \mid \exists X \phi \quad  & \text{(Esistenziale su proposizioni)}
-    \end{array}
-    \tag{$\text{IPC}^2$}
-    \label{eq:ipc2_grammar}
-\end{equation}
+\input{chapters/03-grammars/ipc2.tex}
 
 \paragraph{Semantica.}
-\begin{description}[leftmargin=3.5em, style=nextline]
-    \item[$\forall X \phi(X)$] Una costruzione generica che, per ogni possibile proposizione $A$, genera una prova di $\phi(A)$.
-    \item[$\exists X \phi(X)$] Una coppia $\langle A, e \rangle$ composta da una specifica proposizione $A$ e dalla sua relativa prova $e$.
-\end{description}
+\input{chapters/03-semantics/ipc2.tex}
 
 \paragraph{Regole.} \breakpara
 \input{chapters/03-rules/ipc2.tex}
