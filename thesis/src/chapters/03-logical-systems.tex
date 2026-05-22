@@ -144,6 +144,13 @@ Per orientarsi nell'ampio panorama dei sistemi logici, è utile l'individuazione
 I criteri utilizzati sono: \emph{la denotazione}, \emph{la natura della relazione di conseguenza} e \emph{l'identità delle dimostrazioni}. Tali criteri permettono di mappare l'evoluzione del 
 concetto di verità dal modello classico a quello categoriale. Un'analisi esaustiva di tali criteri richiederebbe tuttavia un apparato formale di cui non disponiamo ancora. 
 
+\subsection{Teoria semplice dei tipi}
+Prima di analizzare le gerarchie espressive dei sistemi formali, è necessario chiarire la natura e il ruolo dei tipi all'interno della logica pura. Storicamente, a partire dalle formulazioni di 
+Russell e Church, l'introduzione dei tipi non risponde alla necessità di estendere il potere semantico o il dominio di verità di un sistema, bensì soddisfa un'esigenza puramente \emph{negativa e 
+di sbarramento sintattico}. I tipi agiscono come regole di formazione rigide il cui unico scopo è definire in modo restrittivo l'insieme delle formule ben formate ($\mathcal{S}$), intercettando gli 
+errori semantici e i paradossi logici prima della fase di valutazione o deduzione. Una logica tipata è espressivamente equivalente a una corrispondente logica non tipata, i tipi non generano nuova 
+informazione, ma costringono le variabili entro binari strutturali statici, operando esclusivamente come guardiani della coerenza sintattica del \emph{metalinguaggio}.
+
 \subsection{Logica classica}
 Il sistema logico classico è emerso storicamente per rispondere alle esigenze di formalizzazione della matematica. Tuttavia, per sua natura la formalizzazione non è stata lineare, portando a una 
 struttura che predilige la verità dei risultati rispetto alla dinamica delle dimostrazioni. Una caratteristica cruciale della logica classica è infatti l'assenza di un'interpretazione computazionale 
@@ -186,21 +193,21 @@ della doppia degazione alla logica intuizionista per ottenere la logica classica
 La classificazione interna alla logica intuizionista puo essere rappresentata attraverso una struttura a cubo definita da tre assi di espansione. Questa classificazione si basa sulla natura delle
 entita quantificabili e sulla gerarchia linguaggio. Il sistema logico di partenza, ovvero il vertice meno espressivo, è chiamato \emph{Logica Proposizionale}.
 \begin{itemize}
-    \item \textbf{Asse $x$ (Individui):}  
-        Rappresenta l'espansione verso la \emph{logica del primo ordine intuizionista} (IFOL). Questo asse introduce la capacità di analizzare la struttura interna 
-        delle proposizioni attraverso l'uso di variabili individuali e costanti. In questa dimensione, i predicati sono trattati esclusivamente come 
-        parametri fissi (costanti sintattiche) e la quantificazione è limitata agli oggetti del dominio.
-    \item \textbf{Asse $y$ (Ordini):} 
-        Definisce la capacità di quantificare su entità di rango superiore, come proposizioni o proprietà. Questo asse conduce alla \emph{logica di secondo ordine intuizionista}. 
-        A differenza dell'asse $x$, qui le proprietà stesse diventano variabili del linguaggio, permettendo di esprimere principi universali sulle classi di oggetti 
-        e sulle verità logiche.
-    \item \textbf{Asse $z$ (Tipi):}
-        Introduce la \emph{gerarchia dei tipi} e l'astrazione funzionale. Questo asse permette di superare la distinzione rigida tra individuo e predicato, 
-        organizzando il linguaggio in una struttura ricorsiva di tipi semplici. In questa dimensione, ogni termine possiede un rango definito che ne determina 
-        il ruolo di funzione o di argomento.
+    \item \textbf{Asse $x$ (Individui - Primo Ordine):}  
+        Rappresenta l'espansione verso la \emph{logica del primo ordine intuizionista} (IFOL). In questa dimensione, il potere del binder è confinato e limitato agli oggetti del dominio: 
+        i quantificatori legano esclusivamente variabili individuali di tipo base. I predicati e le proprietà non possono essere vincolati da un binder e sono trattati come parametri costanti 
+        della sintassi.
+    \item \textbf{Asse $y$ (Ordini - Secondo Ordine):} 
+        Sblocca la capacità del binder di agire su entità di rango superiore. Questo asse conduce alla \emph{logica di secondo ordine intuizionista} ($\text{IPC}^2$), in cui le variabili 
+        predicative e le formule stesse cadono sotto il raggio d'azione del quantificatore. Il binder acquisisce natura impredicativa, permettendo a una formula 
+        di quantificare sull'intero universo delle proposizioni possibili.
+    \item \textbf{Asse $z$ (Tipi di alto rango - Ordine Superiore):}
+        Estende universalmente il dominio del binder all'interno dell'intera gerarchia funzionale dello spazio dei tipi semplici. Il quantificatore non incontra più sbarramenti 
+        categoriali e può legare variabili associate a funzioni o operatori logici astratti di qualunque complessità.
 \end{itemize}
-L'intersezione di questi tre assi genera otto sistemi logici distinti, il cui vertice di massima potenza espressiva è rappresentato dalla \emph{logica di ordine superiore intuizionista} (IHOL), 
-in cui la distinzione tra formule e termini viene unificata all'interno di una gerarchia tipata completa.
+L'intersezione di questi tre assi genera otto sistemi logici distinti, il cui vertice di massima potenza espressiva è rappresentato dalla \emph{logica di ordine superiore intuizionista} 
+(IHOL), in cui i tipi non operano come sorgente di espressività semantica, ma fungono da prerequisito strutturale di sicurezza per consentire al binder di quantificare su ordini infiniti 
+senza generare contraddizioni insanabili.
 
 \paragraph{Metodologia semantica.}
 È importante notare, che almeno per ora, limiteremo la trattazione della semantica delle logiche intuistioniste utilizzando la semantica BHK. Tale semantica sebbene informale (pre-matematica) 
