@@ -542,3 +542,24 @@ $\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$.
             esatta coincidenza tra il passo di normalizzazione logica e la $\beta$-riduzione del tipo somma.
     \end{description}
 \end{proof}
+
+\subsection{Estensione all'intero cubo}
+Sebbene la trattazione precedente si sia concentrata sul frammento proposizionale $\lambda^{\to}_{\times, +, \mathbf{1}, \mathbf{0}}$ e la logica IPC, la validità dell'isomorfismo 
+di Curry-Howard si estende simmetricamente all'intera struttura del Cubo di Barendregt e del corrispettivo Cubo Logico. Ciascuno dei tre assi di astrazione computazionale mappa 
+biunivocamente su una specifica estensione del raggio d'azione dei \emph{binder} logici, come segue.
+\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
+    \item[Asse $x$ (Tipi Dipendenti $\leftrightarrow$ Primo Ordine)] 
+        Il sistema $\lambda P$, in cui i tipi dipendono da termini (come i vettori indicizzati dalla lunghezza), si rivela strutturalmente isomorfo alla Logica Predicativa del 
+        Primo Ordine (IQC/IFOL). Il prodotto dipendente $\Pi x:A.B$ generalizza l'implicazione e formalizza sintatticamente il quantificatore universale $\forall x \in A. \Phi$.
+    \item[Asse $y$ (Polimorfismo $\leftrightarrow$ Secondo Ordine)] 
+        Il sistema $\lambda 2$ (System F), caratterizzato da termini che dipendono da tipi e dall'astrazione $\Lambda \alpha. M$, mappa esattamente sulla Logica Proposizionale 
+        del Secondo Ordine ($\text{IPC}^2$). La quantificazione universale sul tipo ($\forall \alpha$) funge da immagine speculare del binder impredicativo logico sulle formule.
+    \item[Asse $z$ (Operatori di Tipo $\leftrightarrow$ Ordine Superiore)] 
+        Il sistema $\lambda\underline{\omega}$, introducendo i \emph{kinds} come tipo dei tipi e abilitando i costruttori di tipo (funzioni da tipi a tipi), proietta la sintassi 
+        sul piano della Logica Tipata di Ordine Superiore ($\text{IPC}_\omega$). In questa dimensione, l'astrazione a livello di costruttori riflette la capacità logica di manipolare 
+        predicati e operatori astratti di rango infinito.
+\end{description}
+L'intersezione massimale di queste tre direzioni conduce alla perfetta coincidenza tra i due vertici opposti ai sistemi semplici, il Calcolo delle Costruzioni (CoC) sul fronte 
+computazionale e la Logica Intuizionista di Ordine Superiore (IHOL) sul fronte formale. Nel CoC, la fusione delle categorie sintattiche in un'unica gerarchia di pseudo-termini 
+e \emph{sorts} ($\ast, \square$) sublima l'isomorfismo, svelando come la verifica dei tipi (\emph{type checking}) e la deduzione logica siano manifestazioni algoritmiche della 
+medesima architettura concettuale.
