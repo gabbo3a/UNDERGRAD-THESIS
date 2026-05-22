@@ -1,0 +1,17 @@
+\begin{equation}
+    \begin{array}{lrll}
+        \text{Terms ($\iota$):} & t, u       & ::= x^\iota \mid c^\iota \mid f(t_1^\iota, \dots, t_n^\iota)^\iota   & \text{(Oggetti del dominio)} \\
+        \text{Formulas ($o$):}  & \Phi, \Psi & ::= P(t_1^\iota, \dots, t_n^\iota)^o \quad                           & \text{(Predicati atomici)}   \\
+                                &            & \mid \dots \quad                                                     & \text{(Connettivi IPC)}      \\
+                                &            & \mid (\forall x^\iota \Phi)^o \quad                                  & \text{(Binder Universale)}   \\
+                                &            & \mid (\exists x^\iota \Phi)^o \quad                                  & \text{(Binder Esistenziale)}
+    \end{array}
+    \tag{IQC}
+    \label{eq:iqc_grammar}
+\end{equation}
+
+\paragraph{Regole di formazione.}
+Le regole di buona formazione impongono in questo caso un controllo di tipo statico sulle segnature dei simboli non logici della teoria \cite{hindley1997}.  Un predicato $P$ 
+o una funzione $f$ generano un'espressione sintatticamente valida e ben formata se e solo se ciascun termine passato come argomento corrisponde esattamente al tipo richiesto 
+($\iota$). Inoltre, per evitare paradossi a livello predicativo, il ruolo dei binder ($\forall x^\iota, \exists x^\iota$) è restrittivamente limitato a vincolare variabili 
+individuali del dominio, vietando formalmente alla quantificazione di astrarre sopra il tipo $o$ delle formule o sui predicati stessi.

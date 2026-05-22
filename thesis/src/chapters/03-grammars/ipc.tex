@@ -1,0 +1,18 @@
+\begin{equation}
+    \begin{array}{lrll}
+        \text{Formulas:} & \phi, \psi & ::= p \quad                     & \text{(Variabili proposizionali)} \\
+                         &            & \mid \top^1 \quad               & \text{(Vero)}                     \\
+                         &            & \mid \bot^0 \quad               & \text{(Falso)}                    \\
+                         &            & \mid (\phi \land \psi)^{\times} & \text{(Congiunzione)}             \\
+                         &            & \mid (\phi \lor \psi)^{+}       & \text{(Disgiunzione)}             \\
+                         &            & \mid (\phi \to \psi)^{\to}      & \text{(Implicazione)}
+    \end{array}
+    \quad \text{con } \neg \phi \equiv \phi \to \bot^0
+    \tag{IPC}
+    \label{eq:ipc_grammar}
+\end{equation}
+
+\paragraph{Regole di formazione.}
+Le regole di buona formazione stabiliscono i criteri grammaticali per determinare se una stringa di simboli costituisca un enunciato sensato del linguaggio, agendo come filtro per intercettare l'errore prima della fase di deduzione \cite{hindley1997}. 
+Sotto la lente della Teoria Semplice dei Tipi, una formula è ben formata se e solo se la combinazione dei suoi sotto-enunciati rispetta rigorosamente l'arità dei costruttori di tipo ($\times, +, \to$) \cite{hindley1997}. Questo sbarramento sintattico 
+assicura la coerenza strutturale della sintassi ($\mathcal{S}$), impedendo la formazione di espressioni autoreferenziali o degeneri.

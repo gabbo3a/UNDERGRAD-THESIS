@@ -45,7 +45,7 @@ In questi sistemi, una dimostrazione è una sequenza lineare fi formule dove ogn
 risultano poco intuitivi per la pratica umana poiché richiedono costruzioni logiche molto complesse anche per enunciati semplici.
 \begin{center}
     $\begin{array}{rll}
-        1. & A \to B & \text{(Assioma o Ipotesi)}       \\
+        1. & A \to B  & \text{(Assioma o Ipotesi)}      \\
         2. & A        & \text{(Assioma o Ipotesi)}      \\
         3. & B        & \text{(Modus Ponens da 1, 2)}
     \end{array}$
@@ -144,7 +144,7 @@ Per orientarsi nell'ampio panorama dei sistemi logici, è utile l'individuazione
 I criteri utilizzati sono: \emph{la denotazione}, \emph{la natura della relazione di conseguenza} e \emph{l'identità delle dimostrazioni}. Tali criteri permettono di mappare l'evoluzione del 
 concetto di verità dal modello classico a quello categoriale. Un'analisi esaustiva di tali criteri richiederebbe tuttavia un apparato formale di cui non disponiamo ancora. 
 
-\subsection{Teoria semplice dei tipi}
+\subsection{Teoria dei tipi semplice}
 Prima di analizzare le gerarchie espressive dei sistemi formali, è necessario chiarire la natura e il ruolo dei tipi all'interno della logica pura. Storicamente, a partire dalle formulazioni di 
 Russell e Church, l'introduzione dei tipi non risponde alla necessità di estendere il potere semantico o il dominio di verità di un sistema, bensì soddisfa un'esigenza puramente \emph{negativa e 
 di sbarramento sintattico}. I tipi agiscono come regole di formazione rigide il cui unico scopo è definire in modo restrittivo l'insieme delle formule ben formate ($\mathcal{S}$), intercettando gli 
@@ -218,42 +218,12 @@ definisce la verità di una formula in termini di ciò che costituisce una sua d
 La logica proposizionale rappresenta il nucleo atomico dei sistemi logici. Essa permette di manipolare enunciati atomici e di comporli attraverso connettivi logici, 
 senza tuttavia poter analizzare la struttura interna delle proposizioni o quantificare su domini di oggetti. È il sistema di base su cui si innestano tutte le successive 
 estensioni del cubo.
+
 \paragraph{Grammatica.}
-\begin{equation}
-    \begin{array}{lrll}
-        \text{Formulas:} & \phi, \psi & ::= p \quad                  & \text{(Variabili proposizionali)} \\
-                         &            & \mid \top \quad              & \text{(Vero / Top)}               \\
-                         &            & \mid \bot \quad              & \text{(Falso / Assurdo)}          \\
-                         &            & \mid \phi \land \psi \quad   & \text{(Congiunzione)}             \\
-                         &            & \mid \phi \lor \psi \quad    & \text{(Disgiunzione)}             \\
-                         &            & \mid \phi \to \psi \quad     & \text{(Implicazione)}
-    \end{array}
-    \quad \text{con } \neg \phi \equiv \phi \to \bot
-    \tag{IPC}
-    \label{eq:ipc_grammar}
-\end{equation}
+\input{chapters/03-grammars/ipc.tex}
 
 \paragraph{Semantica.}
-\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
-    \item[$\top$] 
-        Rappresenta la verità logica, la sua prova è costituita da una costruzione canonica banale che è sempre disponibile 
-        e non richiede informazioni preresse.
-    \item[$\bot$] 
-        Rappresenta l'assurdo logico e coerentemente non possiede alcuna prova, non è possibile fornire alcuna 
-        costruzione valida per questo enunciato.
-    \item[$\phi \land \psi$] 
-        Una prova è costituita da una coppia ordinata $\langle e_1, e_2 \rangle$ che contiene simultaneamente un'
-        evidenza $e_1$ per $\phi$ e un'evidenza $e_2$ per $\psi$.
-    \item[$\phi \lor \psi$] 
-        Una prova è una coppia $\langle i, e \rangle$ dove l'indice $i \in \{0, 1\}$ agisce da selettore: se $i=0$ 
-        l'evidenza $e$ prova il disgiunto $\phi$, mentre se $i=1$ essa prova il disgiunto $\psi$.
-    \item[$\phi \to \psi$] 
-        Una prova è una costruzione funzionale $f$ in grado di trasformare ogni possibile prova di $\phi$ in una prova 
-        di $\psi$, definendo così un metodo effettivo di derivazione.
-    \item[$\neg \phi$] 
-        Equivalente a $\phi \to \bot$, la sua prova è una costruzione che trasforma ogni ipotetica evidenza di 
-        $\phi$ in una prova della contraddizione ($\bot$), mostrandone l'asseribilità impossibile.
-\end{description}
+\input{chapters/03-semantics/ipc.tex}
 
 \paragraph{Regole.} \breakpara
 \input{chapters/03-rules/ipc.tex}
@@ -263,23 +233,10 @@ L'introduzione della logica del primo ordine permette di analizzare la struttura
 l'esistenza di elementi all'interno di un dominio specifico di individui (termini), rendendo il linguaggio capace di modellare domini matematici come l'aritmetica.
 
 \paragraph{Grammatica.}
-\begin{equation}
-    \begin{array}{lrll}
-        \text{Terms:}    & t, u       & ::= x \mid c \mid f(t_1, \dots, t_n) & \text{(Variabili, Costanti, Funzioni)} \\
-        \text{Formulas:} & \Phi, \Psi & ::= P(t_1, \dots, t_n) \quad         & \text{(Predicati atomici)}             \\
-                         &            & \mid \bot \mid \dots \quad           & \text{(Connettivi IPC)}                \\
-                         &            & \mid \forall x \Phi \quad            & \text{(Quantificatore Universale)}     \\
-                         &            & \mid \exists x \Phi \quad            & \text{(Quantificatore Esistenziale)}
-    \end{array}
-    \tag{IQC}
-    \label{eq:iqc_grammar}
-\end{equation}
+\input{chapters/03-grammars/ifol.tex}
 
 \paragraph{Semantica.}
-\begin{description}[leftmargin=3.5em, style=nextline]
-    \item[$\forall x \Phi(x)$] Una funzione che, dato un elemento $d$ del dominio, restituisce una prova della proprietà $\Phi(d)$.
-    \item[$\exists x \Phi(x)$] Una coppia $\langle d, e \rangle$ dove $d$ è l'individuo scelto (testimone) ed $e$ è l'evidenza che soddisfa $\Phi(d)$.
-\end{description}
+\input{chapters/03-semantics/ifol.tex}
 
 \paragraph{Regole.} \breakpara
 \input{chapters/03-rules/ifol.tex}
