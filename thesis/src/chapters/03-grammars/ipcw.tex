@@ -1,0 +1,20 @@
+\begin{equation}
+    \begin{array}{lrll}
+        \text{Types:}            & \sigma, \tau & ::= \iota \mid o \mid \sigma \to \tau        & \text{(Individui, Formule, Funzioni)}  \\
+        \text{Terms ($\sigma$):} & M, N         & ::= x^\sigma \mid c^\sigma    \quad          & \text{(Variabili e costanti tipate)}   \\
+                                 &              & \mid (M N)^\tau                              & \text{(Applicazione)}                  \\
+                                 &              & \mid (\lambda x^\sigma. M)^{\sigma \to \tau} & \text{(Astrazione)}                    \\
+        \text{Formulas ($o$):}   & \Phi, \Psi   & ::= M^o                        \quad         & \text{(Termini di tipo } o \text{)}    \\
+                                 &              & \mid \dots                     \quad         & \text{(Connettivi IPC)}                \\
+                                 &              & \mid (\forall x^\sigma \Phi)^o \quad         & \text{(Binder universale )}            \\
+                                 &              & \mid (\exists x^\sigma \Phi)^o \quad         & \text{(Binder esistenziale)}
+    \end{array}
+    \tag{$\text{IPC}_\omega$}
+    \label{eq:ipcw_grammar}
+\end{equation}
+
+\paragraph{Regole di formazione.}
+Le regole di formazione agiscono come un algoritmo di \emph{type checking funzionale statico} \cite{hindley1997}. Un termine rappresenta una formula ben formata 
+se e solo se l'applicazione e l'astrazione funzionale rispettano la coerenza della griglia dei tipi, riducendosi interamente al tipo base dei valori di verità 
+($o$) \cite{hindley1997}. Questa stratificazione restrittiva consente ai binder ($\forall x^\sigma, \exists x^\sigma$) di quantificare stabilmente sopra funzioni 
+e operatori astratti di rango superiore, neutralizzando all'origine i paradossi logici per incompatibilità sintattica dei tipi \cite{hindley1997}.

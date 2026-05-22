@@ -256,35 +256,16 @@ di astrazione su tipi.
 \input{chapters/03-rules/ipc2.tex}
 
 \subsubsection{Logica tipata di ordine superiore (\texorpdfstring{$\text{IPC}_\omega$}{IPCw})}
-L'introduzione dell'asse $z$ abilita la \textbf{gerarchia dei tipi semplici} e l'astrazione funzionale. In questo sistema, la distinzione rigida tra oggetti e funzioni svanisce: 
-ogni entità logica possiede un tipo definito (come $\sigma \to \tau$) e la logica può quantificare su funzioni di qualunque complessità. Questa struttura trasforma il linguaggio 
-in un sistema ricorsivo dove le formule stesse sono trattate come termini di un tipo speciale ($o$), unificando formalmente il calcolo con la logica e ponendo le basi per 
-l'integrazione completa tra sintassi e semantica.
+L'introduzione dell'asse $z$ abilita la \textbf{gerarchia dei tipi semplici} all'astrazione funzionale nel linguaggio \cite{hindley1997}. In questo sistema, la distinzione rigida tra oggetti 
+e funzioni viene strutturata sintatticamente, ogni entità logica possiede un tipo definito (come $\sigma \to \tau$) e le formule stesse sono trattate come termini di un tipo speciale ($o$) 
+\cite{hindley1997}. Questa griglia restrittiva non espande l'espressività semantica in modo diretto, ma funge da guardiano sintattico per i binder ($\forall, \exists$), consentendo loro di 
+quantificare in sicurezza su funzioni e operatori astratti di qualunque complessità senza generare paradossi autoreferenziali \cite{hindley1997}.
+
 \paragraph{Grammatica.}
-\begin{equation}
-    \begin{array}{lrll}
-        \text{Types:}       & \sigma, \tau & ::= \iota \mid o \mid \sigma \to \tau                  & \text{(Individui, Formule, Funzioni)}  \\
-        \text{Terms:}       & M, N         & ::= x^\sigma \mid c^\sigma \quad                       & \text{(Variabili e costanti tipate)}   \\
-                            &              & \mid (M N) \mid (\lambda x^\sigma. M)                  & \text{(Applicazione e Astrazione)}     \\
-        \text{Formulas:}    & \Phi, \Psi   & ::= M^o \mid \bot \mid \dots \quad                     & \text{(Termini di tipo } o \text{)}    \\
-                            &              & \mid \forall x^\sigma \Phi \mid \exists x^\sigma \Phi  & \text{(Quantificazione su ogni tipo)}
-    \end{array}
-    \tag{$\text{IPC}_\omega$}
-    \label{eq:ipcw_grammar}
-\end{equation}
+\input{chapters/03-grammars/ipcw.tex}
 
 \paragraph{Semantica.}
-\begin{description}[leftmargin=1.5em, style=nextline, font=\bfseries]
-    \item[Termini $M^o$] 
-        Il significato di una formula è determinato dal contenuto informativo (valore) della costruzione definita
-        dal termine di tipo $o$; la verità risiede nell'effettiva esecuzione del processo logico descritto.
-    \item[$\forall x^\sigma \Phi$] 
-        Una prova è una costruzione funzionale il cui dominio è l'intero insieme di tutti i termini (costruzioni) 
-        appartenenti al tipo $\sigma$ all'interno della gerarchia definita.
-    \item[Identità] 
-        La relazione di identità tra prove è determinata dalla convertibilità (riduzione) tra termini: due prove 
-        sono considerate identiche se i processi di calcolo che esse sottendono convergono allo stesso risultato.
-\end{description}
+\input{chapters/03-semantics/ipcw.tex}
 
 \paragraph{Regole.} \breakpara
 \input{chapters/03-rules/ipcw.tex}
