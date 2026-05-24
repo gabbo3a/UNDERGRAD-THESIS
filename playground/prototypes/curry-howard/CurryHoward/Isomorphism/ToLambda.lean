@@ -31,9 +31,8 @@ namespace CurryHoward.Isomorphism.ToLambda
     let i' : Fin (φ_lift Γ).length := ⟨i.val, hl.symm ▸ i.isLt⟩
     φ (Γ.get i) = (φ_lift Γ).get i' := by simp [φ_lift]
 
-  def extract
-    {Γ : Context Formula} {A : Formula} (d : Derivation Γ A) :
-    Σ (t : Term), Typing (φ_lift Γ) t (φ A) :=
+  def extract {Γ : Context Formula} {A : Formula}
+    (d : Derivation Γ A) : Σ (t : Term), Typing (φ_lift Γ) t (φ A) :=
     match d with
     | .hyp i =>
       have h_len : Γ.length = (φ_lift Γ).length := by simp [φ_lift]
