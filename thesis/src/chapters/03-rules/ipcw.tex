@@ -1,8 +1,8 @@
-\ruleblock{Quantificatore Universale Dipendente ($\forall$)}{
+\ruleblock{Quantificatore Universale ($\forall$)}{
     \begin{minipage}{0.48\textwidth}
         \centering
         \begin{prooftree}
-            \hypo{x:\sigma \vdash \Phi} 
+            \hypo{\Phi}
             \infer1[($\forall I$)]{\forall x^\sigma \Phi}
         \end{prooftree}
     \end{minipage}%
@@ -10,33 +10,33 @@
     \begin{minipage}{0.48\textwidth}
         \centering
         \begin{prooftree}
-            \hypo{\forall x^\sigma \Phi} 
-            \hypo{t:\sigma} 
+            \hypo{\forall x^\sigma \Phi}
+            \hypo{t:\sigma}
             \infer2[($\forall E$)]{\Phi[t/x]}
         \end{prooftree}
     \end{minipage}
-}{Nel caso dipendente, la regola di introduzione richiede che il termine $x$ sia 
-di tipo $\sigma$. La regola di eliminazione utilizza un testimone $t:\sigma$ per 
-istanziare il predicato $\Phi$, risultando nella sostituzione $\Phi[t/x]$.}
+}{Condizione sulla variabile: nella regola di introduzione ($\forall I$), la variabile $x^\sigma$ non 
+deve comparire libera in alcuna ipotesi attiva al momento della derivazione \cite{hindley1997}.}
 
-\ruleblock{Quantificatore Esistenziale Dipendente ($\exists$)}{
-    \begin{minipage}{0.42\textwidth}
+\ruleblock{Quantificatore Esistenziale ($\exists$)}{
+    \begin{minipage}{0.45\textwidth}
         \centering
         \begin{prooftree}
-            \hypo{t:\sigma} 
-            \hypo{\Phi[t/x]} 
+            \hypo{t:\sigma}
+            \hypo{\Phi[t/x]}
             \infer2[($\exists I$)]{\exists x^\sigma \Phi}
         \end{prooftree}
     \end{minipage}%
     \hfill
-    \begin{minipage}{0.55\textwidth}
+    \begin{minipage}{0.51\textwidth}
         \centering
         \begin{prooftree}
-            \hypo{\exists x^\sigma \Phi} 
-            \hypo{x:\sigma, [\Phi]^i \vdash \Psi} 
+            \hypo{\exists x^\sigma \Phi}
+            \hypo{[x:\sigma, \Phi]^i}
+            \infer1{\Psi}
             \infer2[($\exists E^i$)]{\Psi}
         \end{prooftree}
     \end{minipage}
-}{L'introduzione esistenziale richiede sia il testimone $t$ che il suo tipo $\sigma$. 
-Per l'eliminazione, la variabile $x$ di tipo $\sigma$ viene scaricata insieme all'ipotesi 
-$\Phi$ per raggiungere la conclusione $\Psi$.}
+}{Condizione sulla variabile: nella regola di eliminazione ($\exists E$), la variabile $x^\sigma$ non 
+deve essere libera in $\Psi$ o in qualunque altra ipotesi attiva esterna al ramo di scaricamento $i$ 
+\cite{hindley1997}.}
