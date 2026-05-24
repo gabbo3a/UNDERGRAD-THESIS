@@ -1,0 +1,23 @@
+Ogni entità logica del linguaggio possiede un tipo esplicito derivato dalla gerarchia ricorsiva generata dai tipi base $\iota$ (individui) e 
+$o$ (valori di verità) \cite{hindley1997}. La sintassi unificata del sistema si esprime come segue.
+\begin{equation}
+    \begin{array}{lrll}
+        \text{Types:}            & \sigma, \tau & ::= \iota \mid o \mid \sigma \to \tau         & \text{(Individui, Formule, Funzioni)} \\
+        \text{Terms ($\sigma$):} & M, N         & ::= x^\sigma  \quad                           & \text{(Variabili)}                    \\
+                                 &              & \mid c^\sigma \quad                           & \text{(Costanti tipate)}              \\
+                                 &              & \mid (M N)^\tau                               & \text{(Applicazione)}                 \\
+                                 &              & \mid (\lambda x^\sigma. M)^{\sigma \to \tau}  & \text{(Astrazione)}                   \\
+        \text{Formulas ($o$):}   & \Phi, \Psi   & ::= M^o \quad                                 & \text{(Termini di tipo } o\text{)}    \\
+                                 &              & \mid \dots \quad                              & \text{(Connettivi IPC)}               \\
+                                 &              & \mid (\forall x^\sigma \Phi)^o \quad          & \text{(Binder universale )}           \\
+                                 &              & \mid (\exists x^\sigma \Phi)^o \quad          & \text{(Binder esistenziale)}
+    \end{array}
+    \tag{IHOL}
+    \label{eq:ihol_grammar}
+\end{equation}
+
+\paragraph{Regole di formazione.}
+Le regole di formazione si identificano interamente con un algoritmo di \emph{type checking funzionale statico} sul linguaggio oggetto \cite{hindley1997}. 
+Un termine rappresenta una formula legittima se e solo se l'operazione sintattica di applicazione e astrazione obbedisce alle regole sintattiche di calcolo 
+dei tipi di Church, riducendosi univocamente al tipo base $o$ \cite{hindley1997}. La gerarchia restrittiva dei tipi ($\sigma \to \tau$) agisce come sbarramento, 
+permettendo ai binder ($\forall x^\sigma, \exists x^\sigma$) di quantificare in sicurezza sopra funzioni e relazioni di alto rango.

@@ -303,34 +303,15 @@ tra termini, formule e funzioni all'interno di una gerarchia di tipi completa. I
 può spaziare su qualsiasi tipo della gerarchia. Rappresenta il sistema più espressivo, dove il confine tra logica e calcolo diventa puramente sintattico.
 
 \paragraph{Grammatica.}
-\begin{equation}
-    \begin{array}{lrll}
-        \text{Types:}       & \sigma, \tau & ::= \iota \mid o \mid \sigma \to \tau                  & \text{(Individui, Formule, Funzioni)}  \\
-        \text{Terms:}       & M, N         & ::= x^\sigma \mid c^\sigma \quad                       & \text{(Variabili e costanti tipate)}   \\
-                            &              & \mid (M N) \mid (\lambda x^\sigma. M)                  & \text{(Applicazione e Astrazione)}     \\
-        \text{Formulas:}    & \Phi, \Psi   & ::= M^o \mid \bot \mid \dots \quad                     & \text{(Termini di tipo } o \text{)}    \\
-                            &              & \mid \forall x^\sigma \Phi \mid \exists x^\sigma \Phi  & \text{(Quantificazione su ogni tipo)}
-    \end{array}
-    \tag{IHOL}
-    \label{eq:ihol_grammar}
-\end{equation}
+\input{chapters/03-grammars/ihol.tex}
 
 \paragraph{Semantica.}
-\begin{description}[leftmargin=3.5em, style=nextline, font=\bfseries]
-    \item[Termini $M^o$] 
-        Il contenuto informativo (o valore) della costruzione definita dal termine di tipo $o$. 
-        La verità di una formula è legata alla capacità di esibire un termine che la abiti.
-    \item[$\forall x^\sigma \Phi$] 
-        Una costruzione funzionale il cui dominio è l'insieme di tutti i termini appartenenti 
-        al tipo $\sigma$ nella gerarchia.
-    \item[Identità] 
-        La relazione di convertibilità (riduzione) tra termini, intesa come equivalenza tra processi 
-        di calcolo che convergono allo stesso risultato.
-\end{description}
+\input{chapters/03-semantics/ihol.tex}
 
 \paragraph{Regole.} \breakpara
 \input{chapters/03-rules/ihol.tex}
 
+\begin{comment}
 \subsection{Relazioni di calcolo}
 In IHOL, la verità di una formula non è un valore statico, ma è legata alla dinamica di riduzione del termine che la rappresenta. Le relazioni di $\beta$-riduzione, introdotte 
 originariamente per i termini del $\lambda$-calcolo, operano qui per determinare l'equivalenza tra formule. Due enunciati sono considerati logicamente indistinguibili se i 
@@ -344,15 +325,4 @@ La gerarchia dei tipi di IHOL permette al quantificatore universale ($\forall x^
     \item Se $\sigma = \tau \to o$, si quantifica su predicati o proprietà di ordine superiore.
 \end{itemize}
 Inoltre, se la variabile $x$ non occorre libera in $\Phi$, il costruttore della funzione tra tipi ($\sigma \to \tau$) modella semanticamente l'implicazione logica.
-
-\begin{comment}
-\subsection{Normalizzazione forte}
-Il sistema IHOL gode della proprietà di \textbf{normalizzazione forte}. Poiché ogni termine ben tipato riduce in un numero finito di passi a una forma normale, il sistema è 
-intrinsecamente coerente. Questo garantisce l'assenza di paradossi logici e assicura che non sia possibile fornire una prova per l'assurdo ($\bot$), mantenendo la validità 
-del sistema di prova.
-
-\subsection{Type checking}
-Il processo di verifica della correttezza di una prova in IHOL è decidibile. Analogamente a quanto visto per i sistemi di tipi complessi, il controllo si basa sulla riduzione 
-dei termini alle rispettive forme normali. Se una prova $M$ abita il tipo rappresentato dalla formula $\Phi$, il sistema ne garantisce la validità attraverso un algoritmo di 
-confronto sintattico modulo $\beta$-conversione.
 \end{comment}
