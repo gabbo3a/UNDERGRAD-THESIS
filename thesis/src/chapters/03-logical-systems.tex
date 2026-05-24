@@ -311,12 +311,6 @@ può spaziare su qualsiasi tipo della gerarchia. Rappresenta il sistema più esp
 \paragraph{Regole.} \breakpara
 \input{chapters/03-rules/ihol.tex}
 
-\begin{comment}
-\subsection{Relazioni di calcolo}
-In IHOL, la verità di una formula non è un valore statico, ma è legata alla dinamica di riduzione del termine che la rappresenta. Le relazioni di $\beta$-riduzione, introdotte 
-originariamente per i termini del $\lambda$-calcolo, operano qui per determinare l'equivalenza tra formule. Due enunciati sono considerati logicamente indistinguibili se i 
-termini di tipo $o$ che li definiscono sono convertibili tra loro.
-
 \subsection{Unificazione dei costrutti in IHOL}
 La gerarchia dei tipi di IHOL permette al quantificatore universale ($\forall x^\sigma \Phi$) di assumere significati logici differenti a seconda del tipo $\sigma$ su cui agisce:
 \begin{itemize}[leftmargin=1.5em]
@@ -325,4 +319,3 @@ La gerarchia dei tipi di IHOL permette al quantificatore universale ($\forall x^
     \item Se $\sigma = \tau \to o$, si quantifica su predicati o proprietà di ordine superiore.
 \end{itemize}
 Inoltre, se la variabile $x$ non occorre libera in $\Phi$, il costruttore della funzione tra tipi ($\sigma \to \tau$) modella semanticamente l'implicazione logica.
-\end{comment}

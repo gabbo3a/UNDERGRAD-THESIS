@@ -1,25 +1,43 @@
-\ruleblock{Regole Unificate (Stile Sequente)}{
-    \begin{prooftree}
-        \hypo{\Gamma, x:\sigma \vdash \Phi} 
-        \infer1[($\forall I$)]{\Gamma \vdash \forall x^\sigma \Phi}
-    \end{prooftree}
-    \qquad
-    \begin{prooftree}
-        \hypo{\Gamma \vdash \forall x^\sigma \Phi} 
-        \hypo{\Gamma \vdash t:\sigma} 
-        \infer2[($\forall E$)]{\Gamma \vdash \Phi[t/x]}
-    \end{prooftree}
-    \\[2em]
-    \begin{prooftree}
-        \hypo{\Gamma \vdash t:\sigma} 
-        \hypo{\Gamma \vdash \Phi[t/x]} 
-        \infer2[($\exists I$)]{\Gamma \vdash \exists x^\sigma \Phi}
-    \end{prooftree}
-    \qquad
-    \begin{prooftree}
-        \hypo{\Gamma \vdash \exists x^\sigma \Phi} 
-        \hypo{\Gamma, x:\sigma, \Phi \vdash \Psi} 
-        \infer2[($\exists E$)]{\Gamma \vdash \Psi}
-    \end{prooftree}
-}{Regole unificate per la logica dei predicati nella notazione basata sul contesto 
-$\Gamma \vdash \Phi$, che integrano il controllo dei tipi e la derivazione logica.}
+\ruleblock{Quantificatore Universale ($\forall$)}{
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\Phi}
+            \infer1[($\forall I$)]{\forall x^\sigma \Phi}
+        \end{prooftree}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\forall x^\sigma \Phi}
+            \hypo{t:\sigma}
+            \infer2[($\forall E$)]{\Phi[t/x]}
+        \end{prooftree}
+    \end{minipage}
+}{Condizione sulla variabile: nella regola di introduzione ($\forall I$), 
+la variabile $x^\sigma$ non deve comparire libera in alcuna ipotesi attiva 
+al momento della derivazione \cite{hindley1997}.}
+
+\ruleblock{Quantificatore Esistenziale ($\exists$)}{
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{t:\sigma}
+            \hypo{\Phi[t/x]}
+            \infer2[($\exists I$)]{\exists x^\sigma \Phi}
+        \end{prooftree}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.51\textwidth}
+        \centering
+        \begin{prooftree}
+            \hypo{\exists x^\sigma \Phi}
+            \hypo{[x:\sigma, \Phi]^i}
+            \infer1{\Psi}
+            \infer2[($\exists E^i$)]{\Psi}
+        \end{prooftree}
+    \end{minipage}
+}{Condizione sulla variabile: nella regola di eliminazione ($\exists E$), la 
+variabile $x^\sigma$ non deve essere libera in $\Psi$ o in qualunque altra ipotesi 
+attiva esterna al ramo di scaricamento $i$ \cite{hindley1997}.}
