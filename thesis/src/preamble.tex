@@ -69,6 +69,15 @@
     \vspace{1.5em}
 }
 
+% Unicode character resolution for pdfLaTeX (main text)
+\DeclareUnicodeCharacter{03C6}{\ensuremath{\phi}}                % Risolve φ (U+03C6)
+\DeclareUnicodeCharacter{03C3}{\ensuremath{\sigma}}              % Risolve σ (U+03C3)
+\DeclareUnicodeCharacter{0393}{\ensuremath{\Gamma}}              % Risolve Γ (U+0393)
+\DeclareUnicodeCharacter{25B8}{\ensuremath{\blacktriangleright}} % Risolve ▸ (U+25B8)
+\DeclareUnicodeCharacter{2502}{\ensuremath{\vert}}               % Risolve │ (U+2502) 
+\DeclareUnicodeCharacter{2500}{\ensuremath{-}}                   % Risolve ─ (U+2500)
+\DeclareUnicodeCharacter{2514}{\ensuremath{\llcorner}}           % Risolve └ (U+2514)
+
 % Lean Language Configuration (Safe for UTF-8)
 \lstdefinelanguage{lean}{
     keywords={
@@ -98,11 +107,13 @@
     breaklines=true,
     extendedchars=false,
     literate={
-        {α}{{$\alpha$}}1      {β}{{$\beta$}}1        {γ}{{$\gamma$}}1           {λ}{{$\lambda$}}1
-        {→}{{$\to$}}1         {∀}{{$\forall$}}1      {∃}{{$\exists$}}1          {⊢}{{$\vdash$}}1
-        {:=}{{$:=$}}1         {Π}{{$\Pi$}}1          {Σ}{{$\Sigma$}}1           {∧}{{$\wedge$}}1
-        {∨}{{$\vee$}}1        {¬}{{$\neg$}}1         {↔}{{$\leftrightarrow$}}1  {∘}{{$\circ$}}1
-        {₁}{{$_1$}}1          {₂}{{$_2$}}1           {₃}{{$_3$}}1               {…}{{$\dots$}}1
-        {⟨}{{$\langle$}}1     {⟩}{{$\rangle$}}1      {⦃}{{$\{\!\{$}}1           {⦄}{{$\}\!\}$}}1
+        {α}{{$\alpha$}}1      {β}{{$\beta$}}1               {γ}{{$\gamma$}}1                {λ}{{$\lambda$}}1
+        {→}{{$\to$}}1         {∀}{{$\forall$}}1             {∃}{{$\exists$}}1               {⊢}{{$\vdash$}}1
+        {:=}{{$:=$}}1         {Π}{{$\Pi$}}1                 {Σ}{{$\Sigma$}}1                {∧}{{$\wedge$}}1
+        {∨}{{$\vee$}}1        {¬}{{$\neg$}}1                {↔}{{$\leftrightarrow$}}1       {∘}{{$\circ$}}1
+        {₁}{{$_1$}}1          {₂}{{$_2$}}1                  {₃}{{$_3$}}1                    {…}{{$\dots$}}1
+        {⟨}{{$\langle$}}1     {⟩}{{$\rangle$}}1             {⦃}{{$\{\!\{$}}1                {⦄}{{$\}\!\}$}}1
+        {φ}{{$\phi$}}1        {▸}{{$\blacktriangleright$}}1 {∷}{{$\mathrel{\because}$}}1    {σ}{{$\sigma$}}1      
+        {Γ}{{$\Gamma$}}1
     } 
 }
