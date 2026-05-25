@@ -201,4 +201,39 @@ namespace CurryHoward.Isomorphism.Theorems
       h_ctx ▸ h_type ▸ (embed jt)
     ) ⟨t, jt⟩ := by sorry
 
+  theorem coherent_implies_embed_inverse {Γ : Context Formula} {A : Formula}
+    {d : Derivation Γ A} {jt : Σ (t : Term), Typing (φ_lift Γ) t (φ A)}
+    (h : Coherent d jt) :
+    have h_ctx : iφ_lift (φ_lift Γ) = Γ := by
+      change (iφ_lift ∘ φ_lift) Γ = id Γ
+      rw [iφ_lift_φ_lift_eq]
+    have h_type : iφ (φ A) = A := by
+      change (iφ ∘ φ) A = id A
+      rw [iφ_φ_eq]
+    h_ctx ▸ h_type ▸ (embed jt.2) = d := by
+    sorry
+
+  theorem embed_extract_inverse {Γ : Context Formula} {A : Formula}
+    (d : Derivation Γ A) :
+    have h_ctx : iφ_lift (φ_lift Γ) = Γ := by
+      change (iφ_lift ∘ φ_lift) Γ = id Γ
+      rw [iφ_lift_φ_lift_eq]
+    have h_type : iφ (φ A) = A := by
+      change (iφ ∘ φ) A = id A
+      rw [iφ_φ_eq]
+    h_ctx ▸ h_type ▸ (embed (extract d).2) = d := by
+      intro h_ctx h_type
+      have h_coh := extract_is_coherent d
+      exact coherent_implies_embed_inverse h_coh
+
+  theorem embed_instantiate_commute {Γ : Context LType} {σ₁ σ₂ : LType} {t_body t_arg : Term}
+      (body : Typing (σ₁ :: Γ) t_body σ₂) (arg : Typing Γ t_arg σ₁)
+      (p_subst : Typing Γ (CurryHoward.Lambda.Reduction.instantiate t_body t_arg) σ₂) :
+      embed p_subst = CurryHoward.Logic.Derivation.instantiate (embed body) (embed arg) := by sorry
+
+  theorem reduction_isomorphism_embed {Γ : Context LType} {σ : LType} {t t' : Term}
+      (p : Typing Γ t σ) :
+      CurryHoward.Lambda.Reduction.step t = some t' →
+      ∃ (p' : Typing Γ t' σ), CurryHoward.Logic.Cut.step (embed p) = some (embed p')  := by sorry
+
 end CurryHoward.Isomorphism.Theorems
