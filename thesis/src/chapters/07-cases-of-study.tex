@@ -1,8 +1,62 @@
-% !TEX root = ../main.tex
-\chapter{Casi di studio}
+% !TEX root = main.tex
+\chapter{Caso di studio}
 \label{chap:cases_of_study}
 
 In questo capitolo viene presentata la declinazione pratica dei concetti teorici analizzati nella prima parte della trattazione. L'obiettivo 
 di tale capitolo è duplice: da un lato, mostrare come il modello logico di Lean 4 permetta una delle possibili formalizzazioni dell'isomorfismo 
 di Curry-Howard per la logica proposizionale e dall'altro, presentare lo sviluppo di un framework algebrico basato sulla metaprogrammazione per 
 l'inferenza e la verifica formale della complessità asintotica del software.
+
+\section{Obiettivi}
+L'impiego di Lean 4 come linguaggio di sviluppo risponde alla volontà di apprenderne l'utilizzo pratico e comprenderne le potenzialità su un'implementazione 
+caratterizzata da una complessità strutturale non banale. Il sistema sfrutta la duplice natura di Lean 4, capace di coniugare un ambiente di programmazione 
+funzionale puro a un assistente interattivo alla dimostrazione. L'obiettivo primario dell'implementazione è tradurre in codice sorgente i costrutti formali 
+descritti nel Capitolo \ref{chap:curry_howard_isomorphism}, garantendo che la struttura dei moduli e degli algoritmi sia quanto più possibile fedele alle 
+definizioni teoriche e alle dimostrazioni della corrispondenza di Curry-Howard.
+
+\section{Struttura del progetto}
+L'organizzazione dei moduli sorgente riflette in modo diretto la scomposizione concettuale dell'isomorfismo di Curry-Howard. Al fine di preservare 
+l'indipendenza formale tra i due sistemi prima della loro unificazione, il codice è strutturato separando nettamente l'ambiente logico, l'ambiente 
+computazionale e lo strato software adibito alla loro interconnessione. Per facilitare la navigazione all'interno del codice sorgente e comprendere 
+la separazione delle preoccupazioni architetturali, viene di seguito illustrato l'albero delle cartelle completo che compone l'implementazione dell'
+isomorfismo.
+
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            basicstyle=\ttfamily\small, 
+            gobble=12, 
+            breaklines=true]
+            .
+            |-- CurryHoward/
+            |   |-- Context.lean        # Definizione del contesto
+            |   |-- Isomorphism/        
+            |   |   |-- Theorems.lean   # Teoremi dell'isomorfismo
+            |   |   |-- ToLambda.lean   # Prove -> Termini
+            |   |   `-- ToLogic.lean    # Termini -> Prove
+            |   |-- Lambda/
+            |   |   |-- Reduction.lean  # Beta-riduzione
+            |   |   |-- Syntax.lean     # Grammatica di LType e Term
+            |   |   `-- Typing.lean     # Relazione di tipizzazione
+            |   `-- Logic/
+            |       |-- Cut.lean        # Eliminazione del taglio
+            |       |-- Derivation.lean # Relazione di ND
+            |       `-- Syntax.lean     # Grammatica di Formula
+            |-- CurryHoward.lean
+            |-- Main.lean             
+            |-- README.md    
+            |-- lake-manifest.json
+            |-- lakefile.toml
+            `-- lean-toolchain
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+l'implemetazione è stata inizializzata tramite lo strumento di configurazione nativo \texttt{lake init}, ereditando di conseguenza l'architettura standard prevista 
+per i pacchetti e le librerie in Lean 4. I file di configurazione presenti nella radice (\texttt{lakefile.toml}, \texttt{lake-manifest.json} e \texttt{lean-toolchain}) 
+assicurano la gestione del build system e l'accoppiamento deterministico con la versione del compilatore. L'esecuzione dell'eseguibile si ramifica a partire dall'entry 
+point \texttt{Main.lean}, che a sua volta espone l'intera libreria attraverso il modulo di frontiera \texttt{CurryHoward.lean}. Il nucleo profondo dell'implementazione 
+risiede nella directory \texttt{CurryHoward/}, ripartito in tre sottomoduli concettualmente indipendenti. Il file \texttt{Context.lean} fornisce le strutture dati per 
+la manipolazione e la gestione formale dei contesti di assunzione, i quali sono condivisi pariteticamente da entrambe le componenti del sistema. I sottomoduli denominati 
+\texttt{Logic/} e \texttt{Lambda/} isolano le grammatiche, i sistemi di riscrittura, le relazioni di giudizio e le dinamiche di riduzione rispettivamente della Deduzione 
+Naturale e del $\lambda$-calcolo tipato. Infine, il sottomodulo \texttt{Isomorphism/} rappresenta il ponte algoritmico della tesi, poiché contiene le funzioni costruttive 
+di traduzione bidirezionale (\texttt{extract} ed \texttt{embed}) e teoremi di coerenza strutturale.
