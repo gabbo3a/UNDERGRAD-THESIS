@@ -60,3 +60,80 @@ la manipolazione e la gestione formale dei contesti di assunzione, i quali sono 
 \texttt{Logic/} e \texttt{Lambda/} isolano le grammatiche, i sistemi di riscrittura, le relazioni di giudizio e le dinamiche di riduzione rispettivamente della Deduzione 
 Naturale e del $\lambda$-calcolo tipato. Infine, il sottomodulo \texttt{Isomorphism/} rappresenta il ponte algoritmico della tesi, poiché contiene le funzioni costruttive 
 di traduzione bidirezionale (\texttt{extract} ed \texttt{embed}) e teoremi di coerenza strutturale.
+
+
+\section{Sintassi dei linguaggi oggetto}
+La fondazione del framework poggia sulla definizione sintattica dei due mondi, logico e computazionale. Entrambi i sistemi condividono la nozione di ambiente di assunzioni, 
+formalizzata mediante un costrutto di contesto generato sopra una lista strutturata di elementi (\texttt{Context $\alpha$}). Al fine di garantire il massimo rigore logico e 
+consentire la dimostrazione dei teoremi di coerenza strutturale, l'implementazione adotta una strategia di \emph{deep embedding}. Questa scelta progettuale prevede che sia la 
+sintassi delle formule, sia la grammatica dei termini e dei tipi del $\lambda$-calcolo vengano codificate come tipi di dato induttivi nativi ed espliciti in Lean 4. In questo modo, 
+i linguaggi oggetto vengono isolati dal meta-linguaggio ospite, permettendo la manipolazione diretta e la riscrittura della loro sintassi astratta come puri oggetti matematici.
+
+\subsection{La sintassi logica}
+Nel file \texttt{CurryHoward/Logic/Syntax.lean}, l'espressività della logica proposizionale intuizionista è implementata tramite il tipo induttivo \texttt{Formula}. Ciascun 
+connettivo logico è mappato su un costruttore atomico, realizzando un \emph{deep embedding} puro in cui la struttura ad albero delle proposizioni è esplicitamente ispezionabile.
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=12,
+            caption={Definizione sintattica delle formule logiche}
+        ]
+            inductive Formula where
+              | atom : String → Formula
+              | impl : Formula → Formula → Formula
+              | and  : Formula → Formula → Formula
+              | or   : Formula → Formula → Formula
+              | top  : Formula
+              | bot  : Formula
+            deriving Repr, DecidableEq
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+
+\subsection{La sintassi computazionale e gli indici di de Bruijn}
+Nel file \texttt{CurryHoward/Lambda/Syntax.lean}, i tipi computazionali (\texttt{LType}) ricalcano specularmente l'alfabeto dei connettivi logici. Essi vengono implementati tramite 
+un tipo induttivo dedicato, isolando i costruttori sintattici all'interno del linguaggio oggetto.
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=12,
+            caption={Definizione sintattica di LType}
+        ]
+            inductive LType where
+              | base  : String → LType
+              | arrow : LType → LType → LType
+              | prod  : LType → LType → LType
+              | sum   : LType → LType → LType
+              | unit  : LType
+              | void  : LType
+            deriving Repr, DecidableEq
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+I termini del calcolo (\texttt{Term}) sono formalizzati estendendo il paradigma del \emph{deep embedding} mediante l'integrazione degli indici di de Bruijn. Le variabili libere e legate 
+sono espresse tramite valori numerici (\texttt{Nat}), una scelta che azzera i problemi tradizionali legati alla $\alpha$-conversione e al fenomeno del \emph{variable capture}.
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=12,
+            caption={Definizione sintattica di Term}
+        ]
+            inductive Term where
+              | var    : Nat → Term
+              | lam    : LType → Term → Term
+              | app    : Term → Term → Term
+              | pair   : Term → Term → Term
+              | fst    : Term → Term
+              | snd    : Term → Term
+              | inl    : LType → Term → Term
+              | inr    : LType → Term → Term
+              | cases  : Term → Term → Term → Term
+              | unit   : Term
+              | absurd : LType → Term → Term
+            deriving Repr, DecidableEq
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
