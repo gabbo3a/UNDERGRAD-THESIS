@@ -3,9 +3,8 @@
 \label{chap:cases_of_study}
 
 In questo capitolo viene presentata la declinazione pratica dei concetti teorici analizzati nella prima parte della trattazione. L'obiettivo 
-di tale capitolo è duplice: da un lato, mostrare come il modello logico di Lean 4 permetta una delle possibili formalizzazioni dell'isomorfismo 
-di Curry-Howard per la logica proposizionale e dall'altro, presentare lo sviluppo di un framework algebrico basato sulla metaprogrammazione per 
-l'inferenza e la verifica formale della complessità asintotica del software.
+di tale capitolo è mostrare come il modello logico di Lean 4 permetta una delle possibili formalizzazioni dell'isomorfismo di Curry-Howard per 
+la logica proposizionale.
 
 \section{Obiettivi}
 L'impiego di Lean 4 come linguaggio di sviluppo risponde alla volontà di apprenderne l'utilizzo pratico e comprenderne le potenzialità su un'implementazione 
@@ -60,7 +59,6 @@ la manipolazione e la gestione formale dei contesti di assunzione, i quali sono 
 \texttt{Logic/} e \texttt{Lambda/} isolano le grammatiche, i sistemi di riscrittura, le relazioni di giudizio e le dinamiche di riduzione rispettivamente della Deduzione 
 Naturale e del $\lambda$-calcolo tipato. Infine, il sottomodulo \texttt{Isomorphism/} rappresenta il ponte algoritmico della tesi, poiché contiene le funzioni costruttive 
 di traduzione bidirezionale (\texttt{extract} ed \texttt{embed}) e teoremi di coerenza strutturale.
-
 
 \section{Sintassi dei linguaggi oggetto}
 La fondazione del framework poggia sulla definizione sintattica dei due mondi, logico e computazionale. Entrambi i sistemi condividono la nozione di ambiente di assunzioni, 
@@ -137,3 +135,28 @@ sono espresse tramite valori numerici (\texttt{Nat}), una scelta che azzera i pr
         \end{lstlisting}
     \end{minipage}
 \end{center}
+
+\section{Semantica statica e sistemi di giudizio}
+La semantica statica dei linguaggi oggetto si basano sulla formalizzazione delle relazioni di giudizio. In questa sezione viene presentata l'implementazione induttiva 
+dei sistemi di derivazione per la logica proposizionale intuizionista e della relazione di tipizzazione per il $\lambda$-calcolo, seguendo una progressione che muove 
+dalle regole del ragionamento puro verso la loro interpretazione computazionale.
+
+\subsection{Relazione di deduzione naturale}
+Nel file \texttt{CurryHoward/Logic/Derivation.lean}, la relazione di Deduzione Naturale (ND) viene codificata come un tipo di dato induttivo dipendente denominato \texttt{Derivation}. 
+Ciascun costruttore del tipo mappa in modo biunivoco una regola di inferenza logica del sistema di Gentzen (regole di introduzione ed eliminazione per ciascun connettivo). Il tipo induttivo 
+è indicizzato dal contesto delle assunzioni (\texttt{Context Formula}) e dalla formula di cui costituisce la prova (\texttt{Formula}). L'utilizzo del tipo dipendente assicura che un oggetto 
+di tipo \texttt{Derivation \(\Gamma\) A} sia, per costruzione, una prova matematicamente valida della proposizione \(A\) sotto le ipotesi \(\Gamma\), scaricando sul validatore di Lean 4 il 
+compito di garantirne la correttezza strutturale. Il costruttore \texttt{hyp} formalizza l'assioma di identità estraendo un'ipotesi dal contesto locale mediante un indice a puntamento sicuro 
+(\texttt{Fin \(\Gamma\).length}). La manipolazione formale delle derivazioni logiche durante la risoluzione dei tagli richiede una nozione di sostituzione di alberi di prova. A tal fine, viene 
+definita la funzione \texttt{bind} per riorganizzare il contesto a una determinata profondità (\texttt{depth}), seguita dall'assioma \texttt{subst}, il quale modella la sostituzione strutturale 
+di un'ipotesi scaricata con una derivazione valida del medesimo tipo. La funzione \texttt{instantiate} specializza tale meccanismo ancorando la sostituzione alla radice dell'albero (\texttt{subst 0 body arg}).
+
+\subsection{Relazione di tipizzazione}
+Nel sottomodulo computazionale, l'albero di prova logico cede il posto al giudizio di tipizzazione (\(\Gamma \vdash t : \sigma\)). Nel file \texttt{CurryHoward/Lambda/Typing.lean}, tale relazione è implementata 
+dal tipo induttivo dipendente \texttt{Typing}, indicizzato dal contesto dei tipi (\texttt{Context LType}), dal termine oggetto (\texttt{Term}) e dal tipo assegnato (\texttt{LType}). I costruttori di \texttt{Typing} 
+evidenziano in modo cristallino l'isomorfismo di Curry-Howard: la struttura delle regole di tipizzazione per i termini del $\lambda$-calcolo esteso ricalca specularmente la struttura delle regole di inferenza della 
+Deduzione Naturale descritta nel paragrafo precedente. Le variabili corrispondono alle ipotesi, le astrazioni alle introduzioni dell'implicazione, e le applicazioni alle eliminazioni (\emph{Modus Ponens}). A differenza 
+delle derivazioni logiche pure, dove l'albero viene costruito esplicitamente come testimone della prova, nell'ambiente computazionale è cruciale poter decidere e sintetizzare algoritmicamente il tipo di un termine 
+arbitrario. Tale proprietà è implementata dalla funzione ricorsiva \texttt{derive}. La funzione \texttt{derive} accetta un contesto \texttt{\(\Gamma\)} e un \texttt{Term}, e restituisce un tipo opzionale contenente la 
+corrispettiva coppia dipendente (\(\Sigma \, \sigma, \mathtt{Typing}\ \Gamma\ t\ \sigma\)). Sfruttando la monade \texttt{Option}, l'algoritmo implementa un vero e proprio generatore di alberi di tipizzazione strutturato per 
+\emph{pattern matching}. Esso verifica la coerenza dei contesti e mappa dinamicamente i vincoli del tipo oggetto.
