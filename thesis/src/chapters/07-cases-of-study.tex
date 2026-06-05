@@ -160,3 +160,30 @@ delle derivazioni logiche pure, dove l'albero viene costruito esplicitamente com
 arbitrario. Tale proprietà è implementata dalla funzione ricorsiva \texttt{derive}. La funzione \texttt{derive} accetta un contesto \texttt{\(\Gamma\)} e un \texttt{Term}, e restituisce un tipo opzionale contenente la 
 corrispettiva coppia dipendente (\(\Sigma \, \sigma, \mathtt{Typing}\ \Gamma\ t\ \sigma\)). Sfruttando la monade \texttt{Option}, l'algoritmo implementa un vero e proprio generatore di alberi di tipizzazione strutturato per 
 \emph{pattern matching}. Esso verifica la coerenza dei contesti e mappa dinamicamente i vincoli del tipo oggetto.
+
+\section{Dinamica dei sistemi}
+La semantica esecutiva dei linguaggi in \emph{deep embedding} non sfrutta la valutazione nativa di Lean 4, ma richiede la specifica formale delle relazioni di riscrittura sintattica. Questo approccio permette di verificare 
+internamente al framework le proprietà dinamiche fondamentali dell'isomorfismo, traducendo i concetti teorici di evoluzione in algoritmi deterministici di calcolo. Al fine di preservare la continuità con la semantica statica, 
+viene analizzato il meccanismo di semplificazione delle prove logiche, per poi passare all'ispezione della contrazione dei termini.
+
+\subsection{La semplificazione logica ed eliminazione dei tagli}
+Nel sottomodulo logico (\texttt{CurryHoward/Logic/Cut.lean}), la dinamica si focalizza sul principio della \emph{cut-elimination} (eliminazione dei tagli). Un taglio rappresenta una ridondanza locale nell'albero di prova, caratterizzata 
+da una regola di introduzione di un connettivo seguita immediatamente dalla sua eliminazione. L'algoritmo implementato nella funzione \texttt{step} intercetta queste configurazioni critiche (come una \texttt{.implE} applicata a una \texttt{.implI}) 
+e risolve il taglio istanziando l'ipotesi scaricata direttamente nella struttura profonda della derivazione.
+
+\subsection{La \texorpdfstring{$\beta$}{Beta}-riduzione del calcolo}
+Nel sottomodulo computazionale (\texttt{CurryHoward/Lambda/Reduction.lean}), la semantica si traduce nella $\beta$-riduzione sui termini del $\lambda$-calcolo esteso. Come previsto dall'isomorfismo, le regole di riscrittura ricalcano specularmente i 
+passi di eliminazione dei tagli logici, svelandone l'identica natura algebrica profonda. Tuttavia, la manipolazione diretta dei termini mediante gli indici di de Bruijn richiede una gestione rigorosa delle variabili libere e legate per evitare il 
+fenomeno del \emph{variable capture}. La funzione \texttt{shift} incrementa gli indici superiori a una determinata soglia (\emph{cutoff}), mentre l'algoritmo \texttt{subst} esegue la sostituzione vera e propria decrementando gli indici superiori per 
+riflettere la rimozione del binder consumato dalla riduzione. La riduzione a un passo è definita dalla funzione parziale \texttt{step}, che isola i \emph{redex} fondamentali (come l'applicazione di una lambda o l'analisi per casi delle somme) e propaga 
+la riscrittura per congruenza strutturale.
+
+\subsection{Terminazione e convergenza dei sistemi}
+La definizione di una funzione di riduzione totalmente libera verrebbe rifiutata dal validatore strutturale di Lean 4, il quale richiede che ogni funzione ricorsiva esibisca una decrescenza strutturale evidente per garantirne la terminazione certa a priori. 
+Per ovviare a questo vincolo in entrambi i moduli, l'operazione di normalizzazione viene vincolata da un parametro esplicito di \emph{fuel} (carburante numerico). Il decremento progressivo del fuel a ogni chiamata ricorsiva assicura la terminazione algoritmica 
+richiesta dal compilatore, arrestando il calcolo in modo sicuro qualora il carburante si esaurisca. La stabilità finale viene espressa dal predicato \texttt{isNormalForm}, formalizzato dall'assenza di ulteriori transizioni (\texttt{(step t).isNone}). Il legame 
+di coerenza fra la riscrittura vincolata e la nozione teorica di forma normale è sancito dal teorema \texttt{normalize\_converged}, il quale prova che se l'aggiunta di un'unità di carburante non modifica il risultato finale della normalizzazione, allora il sistema 
+ha raggiunto stabilmente la sua forma normale definitiva, priva di passi ridondanti.
+\begin{equation}
+    \forall x, n. \! \quad (\mathtt{normalize}\,(n + 1)\,x = \mathtt{normalize}\,n\,x) \! \implies \! \mathtt{isNormalForm}\,(\mathtt{normalize}\,n\,x)
+\end{equation}
