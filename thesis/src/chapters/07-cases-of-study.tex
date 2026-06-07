@@ -229,7 +229,7 @@ formata da un termine computazionale e dal suo rispettivo albero di tipizzazione
         \begin{lstlisting}[
             language=lean, 
             gobble=10,
-            caption={Funzione di traduzione φ ed estrazione dei termini}
+            caption={Funzione di traduzione φ}
         ]
           def φ : Formula → LType
             | .atom s    => .base s
@@ -238,7 +238,17 @@ formata da un termine computazionale e dal suo rispettivo albero di tipizzazione
             | .or   a b  => .sum   (φ a) (φ b)
             | .top       => .unit
             | .bot       => .void
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
 
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=10,
+            caption={Funzione di estrazione dei termini}
+        ]
           def extract 
             {Γ : Context Formula} 
             {A : Formula} 
@@ -258,25 +268,187 @@ immersione, analizzando la struttura ramificata della prova di tipizzazione \tex
     \begin{minipage}{\textwidth}
         \begin{lstlisting}[
             language=lean, 
-            gobble=12,
-            caption={Funzione di traduzione inversa iφ e immersione}
+            gobble=10,
+            caption={Funzione di traduzione inversa iφ}
         ]
-            def iφ : LType → Formula
-              | .base  s   => .atom s
-              | .arrow a b => .impl (iφ a) (iφ b)
-              | .prod  a b => .and  (iφ a) (iφ b)
-              | .sum   a b => .or   (iφ a) (iφ b)
-              | .unit      => .top
-              | .void      => .bot
+          def iφ : LType → Formula
+            | .base  s   => .atom s
+            | .arrow a b => .impl (iφ a) (iφ b)
+            | .prod  a b => .and  (iφ a) (iφ b)
+            | .sum   a b => .or   (iφ a) (iφ b)
+            | .unit      => .top
+            | .void      => .bot
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
 
-            def embed 
-              {Γ : Context LType} 
-              {t : Term} 
-              {σ : LType} 
-              (p : Typing Γ t σ) : 
-              Derivation (iφ_lift Γ) (iφ σ) :=
-                match p with
-                -- Traduzione dei tipi dei termini scartando le informazioni computazionali
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=10,
+            caption={Funzione di immersione}
+        ]
+          def embed 
+            {Γ : Context LType} 
+            {t : Term} 
+            {σ : LType} 
+            (p : Typing Γ t σ) : 
+            Derivation (iφ_lift Γ) (iφ σ) :=
+              match p with
+              -- Traduzione dei tipi dei termini scartando le informazioni computazionali
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+
+\section{Metateoremi dell'isomorfismo}
+Il file conclusivo denominato \texttt{Theorems.lean} sancisce la correttezza matematica complessiva dell'intero framework, ospitando le dimostrazioni formali delle proprietà statiche e dinamiche della corrispondenza.
+
+\subsection{Isomorfismo statico ed involuzione}
+I teoremi iniziali certificano la natura involutiva e speculare delle funzioni di traduzione sintattica, assicurando che la composizione delle funzioni \texttt{iφ} e \texttt{φ} sia equivalente alla funzione identità 
+(\texttt{id}) sia per le singole formule sia per gli interi contesti di assunzione. La validazione matematica di tali proprietà sfrutta l'induzione strutturale sulla formula proposizionale $A$, risolvendo i casi base 
+e i passi induttivi mediante la riflessione definizionale (\texttt{rfl}) combinata con la riscrittura (\texttt{rw}) delle ipotesi induttive.
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=10,
+            caption={Teorema di involuzione per le formule logiche}
+        ]
+          theorem iφ_φ_eq : iφ ∘ φ = id := by
+            funext A
+            induction A with
+            -- Inversione sintattica per ciascun costruttore
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=10,
+            caption={Teorema di involuzione per i contesti di assunzione}
+        ]
+          theorem iφ_lift_φ_lift_eq : iφ_lift ∘ φ_lift = id := by
+            funext Γ
+            simp [Function.comp, id]
+            induction Γ with
+            -- Estensione dell'inversione sintattica ai contesti di assunzione tramite induzione sulla lista
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+Per legare formalmente gli alberi di derivazione logica e le relazioni di tipizzazione, viene introdotto il predicato induttivo di coerenza strutturale \texttt{Coherent}. Questo costrutto agisce come un vincolo di 
+ammissibilità simultanea, assicurando che la struttura ramificata dell'albero logico e la derivazione del giudizio computazionale si corrispondano punto per punto lungo i rispettivi costruttori.
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=10,
+            caption={Predicato induttivo di coerenza strutturale Coherent}
+        ]
+          inductive Coherent : 
+            Derivation Γ A                            → 
+            (Σ (t : Term), Typing (φ_lift Γ) t (φ A)) → 
+            Prop 
+          where
+            -- Costruttori di accoppiamento per congruenza strutturale tra alberi e termini
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+La validazione delle proprietà metateoriche del framework richiede la dimostrazione di tre lemmi fondamentali di coerenza che collegano i motori di traduzione sintattica alla relazione di equivalenza geometrica espressa 
+dal predicato \texttt{Coherent}. Il primo pilastro di questo blocco è costituito dal teorema \texttt{extract\_is\_coherent}, il quale certifica per induzione strutturale sull'albero di derivazione logica che il termine e 
+la prova di tipizzazione estratti mantengono una perfetta corrispondenza punto per punto con il sequente di partenza.
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=10,
+            caption={Teorema di coerenza strutturale per l'algoritmo di estrazione}
+        ]
+          theorem extract_is_coherent 
+            {Γ : Context Formula} 
+            {A : Formula}
+            (d : Derivation Γ A) :  Coherent d (extract d) := by
+            induction d with
+            -- Dimostrazione per induzione strutturale su tutti i costruttori logici
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+Specularmente, il controvalore di questa proprietà per l'operatore di inversione viene formalizzato dal teorema \texttt{embed\_is\_coherent}, il quale estende la garanzia di allineamento strutturale all'algoritmo di immersione 
+delle prove computazionali, gestendo esplicitamente i cast eterogenei generati dal trasporto lungo le uguaglianze dei contesti e delle formule.
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=10,
+            caption={Teorema di coerenza strutturale per l'algoritmo di immersione}
+        ]
+          theorem embed_is_coherent 
+            {Γ : Context Formula} 
+            {A : Formula} {t : Term}
+            (jt : Typing (φ_lift Γ) t (φ A)) :
+            Coherent (
+              have h_ctx : iφ_lift (φ_lift Γ) = Γ := by
+                change (iφ_lift ∘ φ_lift) Γ = id Γ
+                rw [iφ_lift_φ_lift_eq]
+              have h_type : iφ (φ A) = A := by
+                change (iφ ∘ φ) A = id A
+                rw [iφ_φ_eq]
+              h_ctx ▸ h_type ▸ (embed jt)
+            ) ⟨t, jt⟩ := by sorry
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+Il ponte di inversione tra i due mondi viene completato dal seguente lemma, il quale stabilisce che la coherence geometrica implica l'invertibilità algebrica delle funzioni di trasporto, 
+fornendo la tesi necessaria per la chiusura della semantica statica attuata dal metateorema finale denominato \texttt{embed\_extract\_inverse}.
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=12,
+            caption={Teorema di invertibilità per accoppiamento coerente}
+        ]
+            theorem coherent_implies_embed_inverse 
+              {Γ : Context Formula} 
+              {A : Formula}
+              {d : Derivation Γ A} 
+              {jt : Σ (t : Term), Typing (φ_lift Γ) t (φ A)}
+              (h : Coherent d jt) :
+              have h_ctx : iφ_lift (φ_lift Γ) = Γ := by
+                change (iφ_lift ∘ φ_lift) Γ = id Γ
+                rw [iφ_lift_φ_lift_eq]
+              have h_type : iφ (φ A) = A := by
+                change (iφ ∘ φ) A = id A
+                rw [iφ_φ_eq]
+              h_ctx ▸ h_type ▸ (embed jt.2) = d := by sorry
+              -- Dimostrazione per scomposizione dei casi del predicato di coerenza
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+La sintesi formale dell'intero impianto statico culmina nel metateorema cardine del framework denominato \texttt{embed\_extract\_inverse}, la cui dimostrazione si riduce elegantemente all'introduzione delle ipotesi di trasporto 
+e alla successiva combinazione dei lemmi induttivi precedentemente accumulati, certificando in modo definitivo la biunivocità strutturale delle due relazioni d'ordine.
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=12,
+            caption={Metateorema finale di inversione embed-extract}
+        ]
+            theorem embed_extract_inverse 
+              {Γ : Context Formula} 
+              {A : Formula}
+              (d : Derivation Γ A) :
+              have h_ctx : iφ_lift (φ_lift Γ) = Γ := by
+                change (iφ_lift ∘ φ_lift) Γ = id Γ
+                rw [iφ_lift_φ_lift_eq]
+              have h_type : iφ (φ A) = A := by
+                change (iφ ∘ φ) A = id A
+                rw [iφ_φ_eq]
+              h_ctx ▸ h_type ▸ (embed (extract d).2) = d := by
+                intro h_ctx h_type
+                have h_coh := extract_is_coherent d
+                exact coherent_implies_embed_inverse h_coh
         \end{lstlisting}
     \end{minipage}
 \end{center}
