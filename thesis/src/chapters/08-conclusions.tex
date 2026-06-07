@@ -1,0 +1,51 @@
+% !TEX root = ../main.tex
+\chapter{Conclusioni e Sviluppi Futuri}
+\label{chap:conclusions}
+
+\section{Risultati ottenuti}
+Il presente lavoro di tesi ha permesso di esplorare in modo sistematico il profondo legame sussistente tra l'informatica teorica e la logica matematica, 
+culminando nella formalizzazione parziale dell'isomorfismo di Curry-Howard all'interno dell'assistente alla dimostrazione Lean 4. Partendo dalle fondamenta 
+del $\lambda$-calcolo e dei sistemi di tipi, si è analizzata l'evoluzione sintattica e semantica che conduce al Calcolo delle Costruzioni Induttive (CiC). 
+Dal punto di vista pratico, l'indagine ha dimostrato l'efficacia di Lean 4 come ambiente unificato: il framework implementato mappa con successo le formule 
+logiche della logica proposizionale intuizionista (IPC) sui tipi ed esprime il processo di semplificazione delle prove come $\beta$-riduzione computazionale. 
+Nonostante la deliberata scelta metodologica di lasciare alcune dimostrazioni algebricamente onerose postulate tramite l'operatore \texttt{sorry}, l'architettura 
+delle segnature e la simmetria dei tipi dipendenti descritte nel caso di studio confermano la solidità del modello teorico proposto.
+
+\section{Sviluppi futuri}
+L'analisi condotta in questa trattazione apre la strada a progetti future focalizzate sulle capacità di Lean 4 come linguaggio di programmazione e assistente di 
+dimostrazione per l'automazione dell'analisi del software. In particolare, per stringenti ragioni di tempo, non è stato possibile implementare in questa tesi un 
+progetto nativo in Lean 4, volto a sfruttare le strutture algebriche e coalgebriche per il calcolo automatico e formalmente verificato della complessità asintotica 
+dei programmi. Di seguito viene delineata l'architettura formale di questo sistema, concepito per unire strumenti analitici e metaprogrammazione.
+
+\subsection{Inferenza automatica della complessità asintotica}
+L'obiettivo centrale della componente software pianificata consiste nell'utilizzare l'espressività di Lean 4 per realizzare un sistema di inferenza automatica della complessità 
+asintotica delle funzioni. Al fine di garantire l'attendibilità e il rispetto dei principi della verifica formale, il problema viene strutturato in due macro-fasi distinte:
+
+\begin{enumerate}
+    \item \textbf{Composizione dei costi tramite monadi di complessità:} 
+        La prima parte del sistema affronta la combinazione di funzioni sequenziali. Il costo computazionale non viene calcolato empiricamente, ma viene 
+        internalizzato direttamente all'interno degli effetti collaterali del tipo di ritorno mediante l'uso di una specifica \emph{monade di complessità}. 
+        Questa struttura monadica si occupa di accumulare e propagare la complessità asintotica man mano che le funzioni vengono composte, trasformando 
+        il calcolo del costo in un'operazione guidata dal sistema dei tipi.
+    
+    \item \textbf{Analisi della ricorsione tramite metaprogrammazione:} 
+        La seconda parte del problema richiede l'uso della metaprogrammazione nativa di Lean 4. Attraverso la scrittura di macro e tattiche personalizzate, 
+        il software ispeziona l'albero di sintassi astratta (AST) del codice a tempo di compilazione per ``leggere'' la forma della ricorsione. Il meta-programma 
+        ha il compito di isolare autonomamente i casi base e i passi ricorsivi, traducendo la struttura sintattica della funzione in un'equazione di ricorrenza formale.
+\end{enumerate}
+Una volta estratta l'equazione di ricorrenza, il sistema utilizza teoremi e strumenti analitici pre-dimostrati (come le variazioni del \textit{Master Theorem}) per ricavare 
+in modo autonomo e matematicamente certo la complessità asintotica finale. L'intero processo garantisce un'affidabilità totale: ogni inferenza prodotta non è una mera stima, 
+ma genera un termine di prova che certifica la correttezza del calcolo asintotico rispetto al kernel.
+
+\subsection{Integrazione con Mathlib}
+Per mantenere il sistema focalizzato sugli aspetti concettuali e di automazione, l'architettura del progetto rigetta programmaticamente la scrittura di codice non didattico 
+o ridondante. Invece di reimplementare i numeri reali ($\mathbb{R}$), le relazioni di disuguaglianza asintotica (la notazione $O$-grande) e il calcolo delle funzioni reali, 
+il software delega interamente queste nozioni a \texttt{Mathlib}, la libreria standard di Lean 4. Sfruttando i teoremi dell'analisi già formalizzati e verificati all'interno 
+dell'ecosistema di \texttt{Mathlib}, lo sforzo implementativo si concentra esclusivamente sulla logica di metaprogrammazione per l'estrazione delle ricorrenze e sulla loro 
+risoluzione automatica.
+
+\subsection{Integrazione nella rappresentazione LCNF}
+Infine, per massimizzare l'attendibilità dell'inferenza rispetto all'eseguibile finale, l'analisi sintattica della complessità potrebbe essere spostata dal Frontend 
+direttamente alla forma normale del compilatore (Lean Compiler Normal Form - LCNF), analizzata nel Capitolo \ref{chap:architecture}. In questo modo, l'inferenza della 
+complessità terrebbe conto delle ottimizzazioni reali introdotte dal compilatore (come l'inlining e il \textit{destructive update} tramite reference counting), valutando 
+il comportamento effettivo a runtime e non la mera astrazione del codice sorgente inserito dall'utente.
