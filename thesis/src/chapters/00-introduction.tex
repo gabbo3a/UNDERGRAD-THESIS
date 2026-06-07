@@ -118,7 +118,11 @@ Un obiettivo cruciale è comprendere perché il risultato di Lean sia considerat
         mantenere alte prestazioni senza compromettere la sicurezza logica.
 \end{itemize}
 
-% TODO: Aggiungere l'obbietivo sulle implememtazioni e esempi concreti di codice per perndere dimestichezza con gli strumenti.
+\subsection{Sviluppo applicativo e sperimentazione pratica}
+Accanto all'indagine puramente teorica, la tesi si propone l'obiettivo di declinare i concetti esposti in un framework concreto ed eseguibile. Questo 
+traguardo viene perseguito mediante lo sviluppo di un caso di studio pratico in Lean 4, volto a sperimentare direttamente l'espressività dei tipi 
+dipendenti e della metaprogrammazione nella formalizzazione dell'isomorfismo oggetto. L'analisi del software sviluppato mira a comprendere l'impatto 
+dei vincoli sintattici del kernel sull'onere implementativo, valutando i vantaggi del deep embedding e le strategie per la gestione sintattica nelle prove.
 
 \section{Struttura del lavoro}
 Il presente lavoro è organizzato secondo un percorso logico che conduce dal formalismo computazionale puro verso l'unificazione tra logica 
@@ -151,12 +155,23 @@ l'approfondimento di Lean 4.
         assistente alla dimostrazione e un linguaggio di programmazione moderno. Tale obiettivo sara perpetuato percorrendo lintera pipeline di compilazione,
         dalla rappresentazione testuale fino alle ottimizzazione piu avanzate del backend.
     
-    % TODO: Add 7 e 8
+    \item \textbf{Capitolo \ref{chap:cases_of_study} --- Caso di studio:} 
+        In questo capitolo viene presentata l'architettura del framework sviluppato in Lean 4 per la formalizzazione della corrispondenza di Curry-Howard. 
+        Viene analizzato l'uso del deep embedding e degli indici di de Bruijn, approfondendo le barriere sintattiche imposte dai tipi dipendenti e le soluzioni 
+        adottate per la convergenza delle prove statiche e dinamiche.
+    
+    \item \textbf{Capitolo \ref{chap:conclusions} --- Conclusioni e sviluppi futuri:} 
+        In questo capitolo finale si traggono le conclusioni metodologiche sul lavoro svolto e si delineano i possibili sviluppi futuri, focalizzati sull'integrazione 
+        con \texttt{Mathlib} e sulla metaprogrammazione in forma normale LCNF per l'inferenza automatica della complessità asintotica del software.
 \end{itemize}
 
 \subsection{Metodologia di ricerca e implementazione}
-% TODO: Aggingere metodologie di studio e apporfondimento
+La metodologia adottata in questo lavoro coniuga l'indagine teorico-fondazionale top-down con una verifica sperimentale bottom-up. 
+La prima fase ha previsto lo studio critico della letteratura logica e informatica, mappando i sistemi formali lungo le direttrici 
+del Cubo di Barendregt fino al Calcolo delle Costruzioni Induttive. La seconda fase ha integrato la ricerca teorica con lo sviluppo 
+attivo del codice in ambiente Lean 4. Al fine di preservare la chiarezza concettuale delle strutture e delle segnature dipendenti, 
+i lemmi strutturali più onerosi e ripetitivi sono stati isolati e postulati, demandando la stabilità del framework alla coerenza 
+delle relazioni introdotte.
 
 \vfill
 % TODO: Opzionale aggiungere citazione di qualche matematico, Gemini dice che di solito si fa :).
-
