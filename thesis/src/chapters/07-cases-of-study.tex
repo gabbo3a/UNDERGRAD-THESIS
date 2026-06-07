@@ -184,6 +184,99 @@ Per ovviare a questo vincolo in entrambi i moduli, l'operazione di normalizzazio
 richiesta dal compilatore, arrestando il calcolo in modo sicuro qualora il carburante si esaurisca. La stabilità finale viene espressa dal predicato \texttt{isNormalForm}, formalizzato dall'assenza di ulteriori transizioni (\texttt{(step t).isNone}). Il legame 
 di coerenza fra la riscrittura vincolata e la nozione teorica di forma normale è sancito dal teorema \texttt{normalize\_converged}, il quale prova che se l'aggiunta di un'unità di carburante non modifica il risultato finale della normalizzazione, allora il sistema 
 ha raggiunto stabilmente la sua forma normale definitiva, priva di passi ridondanti.
-\begin{equation}
-    \forall x, n. \! \quad (\mathtt{normalize}\,(n + 1)\,x = \mathtt{normalize}\,n\,x) \! \implies \! \mathtt{isNormalForm}\,(\mathtt{normalize}\,n\,x)
-\end{equation}
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=10,
+            caption={Teorema di convergenza per la normalizzazione logica}
+        ]
+          theorem normalize_converged 
+            {Γ : Context Formula} 
+            {A : Formula} 
+            {d : Derivation Γ A} 
+            {n : Nat} :
+            (h : normalize (n + 1) d = normalize n d) → 
+            isNormalForm (normalize n d) := by sorry
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=10,
+            caption={Teorema di convergenza per la normalizzazione computazionale}
+        ]
+          theorem normalize_converged 
+            {t : Term} 
+            {n : Nat} :
+            (h : normalize (n + 1) t = normalize n t) → 
+            isNormalForm (normalize n t) := by sorry
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+
+\section{Morfismi di traduzione e funzioni sintattiche}
+Il nucleo statico dell'isomorfismo risiede nelle funzioni di omomorfismo sintattico che collegano in modo diretto i costruttori induttivi dei due mondi linguistici, definite ed isolate all'interno della directory di frontiera \texttt{CurryHoward/Isomorphism/}.
+
+\subsection{Dal mondo logico al mondo computazionale}
+La funzione denominata \texttt{φ} esegue la mappatura strutturale originaria delle formule proposizionali nei rispettivi tipi computazionali del calcolo, mentre l'operazione \texttt{φ\_lift} estende tale comportamento combinatorio agli interi contesti di 
+assunzione mediante un'applicazione simmetrica del costrutto \texttt{map}. L'algoritmo \texttt{extract} implementa la traduzione costruttiva vera e propria, convertendo in modo ricorsivo un albero induttivo di derivazione logica in una coppia dipendente 
+formata da un termine computazionale e dal suo rispettivo albero di tipizzazione validato.
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=10,
+            caption={Funzione di traduzione φ ed estrazione dei termini}
+        ]
+          def φ : Formula → LType
+            | .atom s    => .base s
+            | .impl a b  => .arrow (φ a) (φ b)
+            | .and  a b  => .prod  (φ a) (φ b)
+            | .or   a b  => .sum   (φ a) (φ b)
+            | .top       => .unit
+            | .bot       => .void
+
+          def extract 
+            {Γ : Context Formula} 
+            {A : Formula} 
+            (d : Derivation Γ A) : 
+            Σ (t : Term), Typing (φ_lift Γ) t (φ A) :=
+            match d with
+            -- Traduzione dei costruttori di derivazione logica nei costruttori di tipizzazione
+            -- (Tramite estarzone dei termini corrispondenti)
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+
+\subsection{Dal mondo computazionale al mondo logico}
+Specularmente, la funzione induttiva denominata \texttt{iφ} mappa i tipi computazionali del linguaggio oggetto nelle corrispettive formule della logica proposizionale intuizionista. L'algoritmo \texttt{embed} agisce come un operatore di inversione e di 
+immersione, analizzando la struttura ramificata della prova di tipizzazione \texttt{Typing} per estrarre e ricostruire un corrispondente albero di derivazione formale della Deduzione Naturale.
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=12,
+            caption={Funzione di traduzione inversa iφ e immersione}
+        ]
+            def iφ : LType → Formula
+              | .base  s   => .atom s
+              | .arrow a b => .impl (iφ a) (iφ b)
+              | .prod  a b => .and  (iφ a) (iφ b)
+              | .sum   a b => .or   (iφ a) (iφ b)
+              | .unit      => .top
+              | .void      => .bot
+
+            def embed 
+              {Γ : Context LType} 
+              {t : Term} 
+              {σ : LType} 
+              (p : Typing Γ t σ) : 
+              Derivation (iφ_lift Γ) (iφ σ) :=
+                match p with
+                -- Traduzione dei tipi dei termini scartando le informazioni computazionali
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
