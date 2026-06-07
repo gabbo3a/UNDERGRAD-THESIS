@@ -25,6 +25,14 @@
 \usepackage{enumitem}
 \usepackage{float}
 
+% Epigraph configuration (compact style)
+\usepackage{epigraph}
+\setlength{\epigraphwidth}{0.65\textwidth}        % Narrower width to balance the compact vertical spacing
+\setlength{\epigraphrule}{0pt}                    % Removes the horizontal rule for a modern look
+    \renewcommand{\epigraphflush}{center}         % Centers the entire epigraph block for visual symmetry
+    \renewcommand{\epigraphsize}{\small\itshape}  % Sets the quote text font size to small and italic
+    \renewcommand{\sourceflush}{flushright}       % Aligns the author's name to the right beneath the quote
+
 % Theorem Environments with UniTo Style
 \usepackage{amsmath, amssymb, amsthm}   % Mathematical packages
 \theoremstyle{plain}
