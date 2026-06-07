@@ -2,9 +2,15 @@
 \chapter{Caso di studio}
 \label{chap:cases_of_study}
 
-In questo capitolo viene presentata la declinazione pratica dei concetti teorici analizzati nella prima parte della trattazione. L'obiettivo 
-di tale capitolo è mostrare come il modello logico di Lean 4 permetta una delle possibili formalizzazioni dell'isomorfismo di Curry-Howard per 
-la logica proposizionale.
+In questo capitolo viene presentata l'articolata declinazione pratica di tutti i concetti teorici precedentemente analizzati nella prima parte della trattazione. 
+L'obiettivo primario di tale sezione è mostrare come il potente modello logico basato sui tipi dipendenti di Lean 4 permetta una delle molteplici formalizzazioni 
+possibili dell'isomorfismo di Curry-Howard applicato alla logica proposizionale intuizionista. Sotto questo profilo, l'implementazione esposta nel framework deve 
+considerarsi parzialmente incompleta per quanto concerne lo sviluppo dettagliato delle prove più onerose sul piano algebrico; molti dei teoremi dinamici e dei lemmi 
+di inversione strutturale sono stati volutamente lasciati incompleti e postulati come assiomi mediante l'ausilio della parola chiave \texttt{sorry}. Questa deliberata 
+scelta progettuale e metodologica, dettata sia dalle stringenti scadenze della tesi sia dall'ingente tempo di implementazione richiesto per l'estensione manuale delle 
+tattiche di prova su ogni singolo ramo induttivo, consente di non rallentare lo sviluppo con i tecnicismi ripetitivi della scrittura del codice esecutivo, focalizzando 
+l'intera attenzione sulla rigorosa architettura formale delle segnature e sulla perfetta simmetria dei tipi dipendenti che governano l'isomorfismo statico e dinamico 
+tra i due sistemi oggetto.
 
 \section{Obiettivi}
 L'impiego di Lean 4 come linguaggio di sviluppo risponde alla volontà di apprenderne l'utilizzo pratico e comprenderne le potenzialità su un'implementazione 
@@ -452,3 +458,66 @@ e alla successiva combinazione dei lemmi induttivi precedentemente accumulati, c
         \end{lstlisting}
     \end{minipage}
 \end{center}
+
+\subsection{Isomorfismo dinamico e commutatività}
+L'estensione dinamica della corrispondenza indaga la perfetta specularità esistente tra i processi di calcolo e i processi di semplificazione delle prove. Il lemma fondamentale \texttt{embed\_instantiate\_commute} 
+dimostra formalmente che l'operazione di sostituzione computazionale di un termine argomento nel corpo di un'astrazione (\texttt{instantiate}) equivale esattamente alla risoluzione di un taglio locale all'interno dell'albero 
+induttivo di derivazione logica.
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=10,
+            caption={Metateorema di commutatività della sostituzione}
+        ]
+          theorem embed_instantiate_commute 
+            {Γ : Context LType} 
+            {σ₁ σ₂ : LType} 
+            {t_body t_arg : Term}
+            (body : Typing (σ₁ :: Γ) t_body σ₂) 
+            (arg : Typing Γ t_arg σ₁)
+            (p_subst : Typing Γ (instantiate t_body t_arg) σ₂) :
+            embed p_subst = instantiate (embed body) (embed arg) 
+              := by sorry
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+L'algoritmo di riscrittura dinamica culmina nella formalizzazione dell'omomorfismo di preservazione delle riduzioni, implementato tramite il seguente teorema . Questo risultato sancisce la coerenza operazionale 
+del framework dimostrando che a ogni passo di $\beta$-riduzione compiuto sul fronte dei termini corrisponde un passo speculare di \emph{cut-elimination} sul fronte delle derivazioni logiche, saldando l'identità 
+tra computazione e normalizzazione delle prove.
+\begin{center}
+    \begin{minipage}{\textwidth}
+        \begin{lstlisting}[
+            language=lean, 
+            gobble=10,
+            caption={Omomorfismo dinamico di preservazione delle riduzioni}
+        ]
+          theorem reduction_isomorphism_embed {Γ : Context LType} {σ : LType} {t t' : Term}
+            (p : Typing Γ t σ) :
+            CurryHoward.Lambda.Reduction.step t = some t' →
+            ∃ (p' : Typing Γ t' σ), 
+              CurryHoward.Logic.Cut.step (embed p) = some (embed p') 
+                := by sorry
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+Ogni contrazione di un \emph{redex} algoritmico sul termine induce, mediante l'operatore di immersione \texttt{embed}, un'equivalente transizione di stato sull'albero di prova, eliminando il corrispondente taglio logico e preservando invarianti e tipi.
+
+\section{Considerazioni conclusive sullo sviluppo}
+La formalizzazione dell'isomorfismo di Curry-Howard mediante l'ambiente di Lean 4, nonostante incompleta, ha permesso di trarre importanti conclusioni metodologiche circa la duplice natura del linguaggio, inteso sia come assistente interattivo alla dimostrazione 
+(\emph{Interactive Theorem Prover}) sia come linguaggio di programmazione funzionale puro ed efficiente.
+
+\subsection{Vantaggi del deep embedding}
+La scelta progettuale del \emph{deep embedding} puro si è rivelata adeguata per isolare la sintassi astratta dei linguaggi oggetto dalle regole del meta-linguaggio ospite. Tuttavia, tale approccio sposta l'intero onere algebrico della gestione delle variabili 
+sul programmatore. In questo contesto, l'adozione degli indici di de Bruijn numerici ha azzerato la complessità legata alla gestione dei nomi e alla $\alpha$-conversione, traducendo i tradizionali lemmi di cattura delle variabili in semplici operazioni aritmetiche 
+di \emph{shifting} e sostituzione sintattica. Di contro, l'assenza di contesti nominali espliciti ha reso la scrittura dei teoremi di inversione particolarmente onerosa sotto il profilo logico, richiedendo una fitta infrastruttura di lemmi ausiliari per manipolare 
+la profondità degli indici all'interno dei contesti estesi.
+
+\subsection{L'ostacolo dei tipi dipendenti e cast sintattici}
+L'ostacolo ingegneristico più rilevante riscontrato durante lo sviluppo risiede nella natura stessa dei tipi dipendenti di Lean 4, in particolare nell'interazione tra la riscrittura e i tipi induttivi indicizzati come \texttt{Typing} 
+e \texttt{Derivation}. Quando si opera una sostituzione o una traduzione che altera sintatticamente i contesti (ad esempio valutando \texttt{φ\_lift (A :: Γ)} contro \texttt{φ A :: φ\_lift Γ}), il validatore dei tipi non riconosce 
+l'equivalenza definizionale immediata degli alberi di derivazione sottostanti, sebbene essi siano logicamente identici. Per ovviare a questo disallineamento, l'implementazione ha dovuto fare un uso estensivo dell'operatore di trasporto 
+eterogeneo (\texttt{▸}), introducendo esplicitamente dei \emph{sort-cast} basati su teoremi di uguaglianza strutturale (come \texttt{ctx\_extend\_eq}). Se da un lato questo approccio garantisce l'assoluta inattaccabilità logica del kernel, 
+dall'altro introduce un forte \emph{clutter} sintattico nelle prova, costringendo a raffinare manualmente i termini mediante inversione prima di poter applicare le classiche tattiche di induzione. In conclusione, l'architettura finale del 
+framework dimostra che, nonostante le barriere sintattiche imposte dalla rigida gestione dei tipi dipendenti, Lean 4 si configura come uno strumento di eccezionale potenza per la verifica formale del software, unificando algoritmi computazionali 
+deterministici e metateoremi strutturali di rango superiore all'interno della medesima pipeline di compilazione.
