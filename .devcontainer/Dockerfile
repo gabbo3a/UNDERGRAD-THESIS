@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     libgmp-dev \
     gcc \
+    pandoc \
+    poppler-utils \
     texlive-latex-base \
     texlive-latex-extra \
     texlive-science \
