@@ -25,7 +25,7 @@
 \definecolor{unitored}{RGB}{218, 24, 56}         % UniTO primary brand red
 \definecolor{unitoslate}{RGB}{30, 41, 59}        % Primary slate text
 \definecolor{unitogray}{RGB}{246, 247, 249}      % Neutral block/code background
-\definecolor{thanksgray}{HTML}{444B52}            % Charcoal gray for subtitles and "Grazie"
+\definecolor{thanksgray}{HTML}{444B52}           % Charcoal gray for subtitles and "Grazie"
 
 % Global beamer settings
 \usetheme{default}
@@ -42,33 +42,54 @@
 
 % Slide header (slate color matching main title, smaller size, larger logo on the right, no lines)
 \setbeamercolor{frametitle}{fg=unitoslate, bg=white}
-\setbeamertemplate{frametitle}{%
-    \vskip 0.20cm%
-    \begin{columns}[c, onlytextwidth]%
-        \begin{column}{0.68\textwidth}%
-            {\fontsize{13pt}{15pt}\selectfont\bfseries\color{unitoslate}\insertframetitle}%
-        \end{column}%
-        \begin{column}{0.31\textwidth}%
-            \raggedleft\includegraphics[height=1.45cm]{unito.png}%
-        \end{column}%
-    \end{columns}%
-    \vskip 0.15cm%
+\setbeamertemplate{frametitle}{
+    \vskip 0.20cm
+    \begin{columns}[c, onlytextwidth]
+        \begin{column}{0.68\textwidth}
+            {\fontsize{13pt}{15pt}
+            \selectfont
+            \bfseries
+            \color{unitoslate}
+            \insertframetitle}
+        \end{column}
+        \begin{column}{0.31\textwidth}
+            \raggedleft
+            \includegraphics[height=1.45cm]{unito.png}
+        \end{column}
+    \end{columns}
+    \vskip 0.15cm
 }
 
 % Footer (page number only, author removed)
-\setbeamertemplate{footline}{%
-    \leavevmode%
-    \hbox{%
-        \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1ex,right]{date in head/foot}%
-            \scriptsize\color{gray}\insertframenumber{} / \inserttotalframenumber\hspace*{3ex}%
-        \end{beamercolorbox}%
-    }%
-    \vskip 0.15cm%
+\setbeamertemplate{footline}{
+    \leavevmode
+    \hbox{
+        \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1ex,right]{date in head/foot}
+            \scriptsize\color{gray}\insertframenumber{} / \inserttotalframenumber\hspace*{3ex}
+        \end{beamercolorbox}
+    }
+    \vskip 0.15cm
 }
 
 % Block environments
 \setbeamercolor{block title}{fg=white, bg=unitored}
 \setbeamercolor{block body}{fg=unitoslate, bg=unitogray}
+
+% Divider on a white background with a red bar
+\newcommand{\sectiondivider}[2]{{
+    \setbeamercolor{background canvas}{bg=white}
+    \begin{frame}[plain]
+        \vspace*{2.0cm}
+        \begin{center}
+            {\fontsize{22pt}{26pt}
+            \selectfont
+            \bfseries
+            \color{unitoslate} #1}\\[0.25cm]
+            {\color{unitored}\rule{3.0cm}{1.5pt}}\\[0.35cm]
+            {\large\color{thanksgray} #2}
+        \end{center}
+    \end{frame}
+}}
 
 % Lean 4 syntax highlighting
 \lstdefinelanguage{lean4}{

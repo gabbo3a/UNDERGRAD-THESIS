@@ -1,3 +1,5 @@
+\sectiondivider{Parte II}{L'Interactive Theorem Prover Lean 4}
+
 % Slide 01 (Lean4)
 \begin{frame}{Calcolo delle Costruzioni Induttive (CiC)}
     \begin{itemize}
@@ -8,25 +10,29 @@
         \]
     \end{itemize}
 
-    \vskip 0.25cm
-    \begin{columns}[t]
+    \vskip 0.20cm
+    \begin{columns}[t, onlytextwidth]
         \begin{column}{0.48\textwidth}
             \begin{block}{Universo Prop}
-                \begin{itemize}
-                    \item Riservato alle asserzioni logiche.
-                    \item \textbf{Proof Irrelevance}: due dimostrazioni della stessa proposizione sono sintatticamente indistinguibili.
-                    \item Cancellazione a runtime (zero overhead).
-                \end{itemize}
+                \begin{minipage}[t][2.5cm][t]{\linewidth}
+                    \begin{itemize}
+                        \item Riservato alle asserzioni logiche.
+                        \item \textbf{Proof Irrelevance}: due dimostrazioni della stessa proposizione sono sintatticamente indistinguibili.
+                        \item Cancellazione a runtime (zero overhead).
+                    \end{itemize}
+                \end{minipage}
             \end{block}
         \end{column}
 
         \begin{column}{0.48\textwidth}
             \begin{block}{Gerarchia Type}
-                \begin{itemize}
-                    \item Riservata ai dati e alle computazioni.
-                    \item Contenuto computazionale rilevante (es. numeri, liste, alberi di sintassi).
-                    \item Eseguibile ed estraibile in codice nativo C.
-                \end{itemize}
+                \begin{minipage}[t][2.5cm][t]{\linewidth}
+                    \begin{itemize}
+                        \item Riservata ai dati e alle computazioni.
+                        \item Contenuto computazionale rilevante (es. numeri, liste, alberi di sintassi).
+                        \item Eseguibile ed estraibile in codice nativo C.
+                    \end{itemize}
+                \end{minipage}
             \end{block}
         \end{column}
     \end{columns}
