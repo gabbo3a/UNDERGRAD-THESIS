@@ -1,0 +1,71 @@
+% Slide 01 (Lean4)
+\begin{frame}{Calcolo delle Costruzioni Induttive (CiC)}
+    \begin{itemize}
+        \item Lean 4 è basato sul \textbf{Calculus of Inductive Constructions} (CiC).
+        \item Gerarchia rigorosa degli universi per prevenire paradossi (es. Girard):
+        \[
+        \mathtt{Prop} \equiv \mathtt{Sort}\ 0 \quad\prec\quad \mathtt{Type}\ 0 \equiv \mathtt{Sort}\ 1 \quad\prec\quad \mathtt{Type}\ 1 \quad\dots
+        \]
+    \end{itemize}
+
+    \vskip 0.25cm
+    \begin{columns}[t]
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Universo Prop}
+                \begin{itemize}
+                    \item Riservato alle asserzioni logiche.
+                    \item \textbf{Proof Irrelevance}: due dimostrazioni della stessa proposizione sono sintatticamente indistinguibili.
+                    \item Cancellazione a runtime (zero overhead).
+                \end{itemize}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Gerarchia Type}
+                \begin{itemize}
+                    \item Riservata ai dati e alle computazioni.
+                    \item Contenuto computazionale rilevante (es. numeri, liste, alberi di sintassi).
+                    \item Eseguibile ed estraibile in codice nativo C.
+                \end{itemize}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% Slide 02 (Lean4)
+\begin{frame}{Il legame tra CiC e Logica in Lean 4}
+    \begin{itemize}
+        \item Il \textbf{Calculus of Inductive Constructions} (CiC) non è solo un linguaggio di programmazione, ma la formulazione computazionale della \textbf{logica intuizionista di ordine superiore} (IHOL).
+        \item In Lean 4 la logica non è un modulo aggiuntivo, ma emerge nativamente dal calcolo dei tipi:
+    \end{itemize}
+
+    \begin{block}{I due pilastri logici del CiC}
+        \begin{itemize}
+            \item \textbf{Tipi Dipendenti ($\Pi$)}: generalizzano l'implicazione alla quantificazione universale ($\forall x. P(x)$). Il passaggio logico dall'ipotesi alla tesi coincide con l'applicazione funzionale.
+            \item \textbf{Tipi Induttivi}: definiscono i predicati e i connettivi logici. Le regole di introduzione sono i \emph{costruttori}, l'eliminazione coincide con l'induzione/ricorsione (\texttt{.rec}).
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Conseguenza fondamentale}
+        In Lean 4 \textbf{non esiste un motore di inferenza logica}: verificare la validità di una dimostrazione coincide interamente con il \emph{type checking} del kernel sul termine generato.
+    \end{block}
+\end{frame}
+
+% Slide 03 (Lean4)
+\begin{frame}{Architettura TCB e Principio di de Bruijn}
+    \begin{block}{Small Trusted Kernel (TCB minimale)}
+        L'affidabilità dell'intero sistema non dipende dalla complessità del compilatore o delle tattiche, ma esclusivamente da un kernel compatto.
+    \end{block}
+
+    \vskip 0.20cm
+    \begin{itemize}
+        \item \textbf{Principio di de Bruijn}:
+        \begin{itemize}
+            \item Le tattiche (automazione, metaprogrammazione) generano $\lambda$-termini espliciti.
+            \item Solo il micro-kernel verifica la tipabilità del termine finale prima di certificarlo.
+            \item Se una tattica contiene un bug, il kernel rifiuta il termine: la correttezza è garantita.
+        \end{itemize}
+        \item Indipendenza da assunti complessi: la Trusted Computing Base rimane verificabile formalmente anche 
+        all'esterno di Lean.
+    \end{itemize}
+\end{frame}
