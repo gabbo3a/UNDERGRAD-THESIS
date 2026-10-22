@@ -42,27 +42,27 @@
 
 % Slide header (slate color matching main title, smaller size, larger logo on the right, no lines)
 \setbeamercolor{frametitle}{fg=unitoslate, bg=white}
-\setbeamertemplate{frametitle}{
-    \vskip 0.20cm
-    \begin{columns}[c]
-        \begin{column}{0.68\textwidth}
-            {\fontsize{13pt}{15pt}\selectfont\bfseries\color{unitoslate}\insertframetitle}
-        \end{column}
-        \begin{column}{0.32\textwidth}
-            \raggedleft\includegraphics[height=1.65cm]{unito.png}\hspace*{0.1cm}
-        \end{column}
-    \end{columns}
-    \vskip 0.15cm
+\setbeamertemplate{frametitle}{%
+    \vskip 0.20cm%
+    \begin{columns}[c, onlytextwidth]%
+        \begin{column}{0.68\textwidth}%
+            {\fontsize{13pt}{15pt}\selectfont\bfseries\color{unitoslate}\insertframetitle}%
+        \end{column}%
+        \begin{column}{0.31\textwidth}%
+            \raggedleft\includegraphics[height=1.45cm]{unito.png}%
+        \end{column}%
+    \end{columns}%
+    \vskip 0.15cm%
 }
 
 % Footer (page number only, author removed)
-\setbeamertemplate{footline}{
-    \leavevmode
-    \hbox{
-        \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1ex,right]{date in head/foot}
-            \scriptsize\color{gray}\insertframenumber{} / \inserttotalframenumber\hspace*{3ex}
+\setbeamertemplate{footline}{%
+    \leavevmode%
+    \hbox{%
+        \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1ex,right]{date in head/foot}%
+            \scriptsize\color{gray}\insertframenumber{} / \inserttotalframenumber\hspace*{3ex}%
         \end{beamercolorbox}%
-    }
+    }%
     \vskip 0.15cm%
 }
 

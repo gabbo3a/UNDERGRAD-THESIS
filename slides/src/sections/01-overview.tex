@@ -1,0 +1,23 @@
+\begin{frame}{Struttura della Presentazione}
+    \begin{enumerate}
+        \item \textbf{La corrispondenza di Curry-Howard (CH)}
+        \begin{itemize}
+            \item Il ponte strutturale tra logica intuizionista e teoria dei tipi.
+            \item Isomorfismo statico (formule $\leftrightarrow$ tipi) e dinamico (cut-elimination $\leftrightarrow$ $\beta$-riduzione).
+        \end{itemize}
+        
+        \item \textbf{Che cos'è Lean 4 e cosa ha a che vedere con CH}
+        \begin{itemize}
+            \item Il Calculus of Inductive Constructions (CiC) e la gerarchia degli universi (\texttt{Prop} vs \texttt{Type}).
+            \item Small Trusted Kernel (principio di de Bruijn) e garanzie della Trusted Computing Base (TCB).
+        \end{itemize}
+        
+        % TODO: modificare titolo
+        \item \textbf{Cosa si può effettivamente provare di CH in Lean (Capitolo 8)}
+        \begin{itemize}
+            \item Deep embedding e gestione delle variabili mediante indici di de Bruijn.
+            \item Morfismi costruttivi ed eseguibili \texttt{extract} ed \texttt{embed}.
+            \item Metateoremi provati: involuzione sintattica, coerenza geometrica e commutatività dinamica.
+        \end{itemize}
+    \end{enumerate}
+\end{frame}

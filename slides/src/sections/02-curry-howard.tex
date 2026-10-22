@@ -1,0 +1,72 @@
+% Slide 01 (CH)
+\begin{frame}{Il ponte logico-computazionale (CH)}
+    \begin{itemize}
+        \item \textbf{Intuizione di base}: le proposizioni sono \textbf{tipi}, le prove sono \textbf{programmi}.
+        \item Corrispondenza biunivoca tra logica intuizionista e calcoli tipati:
+    \end{itemize}
+
+    \vskip 0.30cm
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{lll}
+            \toprule
+                \textbf{Logica intuizionista} & \textbf{Teoria dei Tipi}   & \textbf{Termine Computazionale}              \\
+            \midrule
+                Proposizione $A$              & Tipo $A$                   & Termine $t : A$                              \\
+                Implicazione $A \to B$        & Tipo funzione $A \to B$    & Astrazione $\lambda x. t$                    \\
+                Congiunzione $A \land B$      & Tipo prodotto $A \times B$ & Coppia ordinata $\langle t_1, t_2 \rangle$   \\
+                Disgiunzione $A \lor B$       & Tipo somma $A + B$         & Costruttori $\mathsf{inl}, \mathsf{inr}$     \\
+                Assurdo $\bot$                & Tipo vuoto $\mathbf{0}$    & Funzione esuriente (assurdo)                 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \vskip 0.20cm
+    \noindent
+    \begin{block}{Principio fondamentale}
+        Dimostrare un teorema equivale a sintetizzare un programma conforme alla specifica di tipo.
+    \end{block}
+\end{frame}
+
+% Slide 02 (CH)
+\begin{frame}{Isomorfismo statico e dinamico}
+    \begin{columns}[t, onlytextwidth]
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Dimensione statica}
+                \begin{minipage}[t][4.0cm][t]{\linewidth}
+                    \begin{itemize}
+                        \item Formule $\longleftrightarrow$ Tipi
+                        \item Derivazioni logiche $\longleftrightarrow$ Termini tipati
+                        \item \textbf{Validità}:
+                        \vskip -0.15cm
+                        \[
+                            \Gamma \vdash A \iff \Gamma \vdash t : A
+                        \]
+                        \vskip -0.15cm
+                        \item Il \emph{type checking} decide la validità della dimostrazione.
+                    \end{itemize}
+                \end{minipage}
+            \end{block}
+        \end{column}
+
+        \begin{column}{0.48\textwidth}
+            \begin{block}{Dimensione dinamica}
+                \begin{minipage}[t][4.0cm][t]{\linewidth}
+                    \begin{itemize}
+                    \item Cut-elimination $\longleftrightarrow$ $\beta$-riduzione
+                    \item Semplificazione di lemmi come esecuzione.
+                    \item \textbf{Normalizzazione}:
+                        \vskip -0.15cm
+                        \[
+                        \mathcal{D} \rightsquigarrow^* \mathcal{D}_{\text{norm}} \iff t \to_\beta^* v
+                        \]
+                        \vskip -0.15cm
+                    \item Prove canoniche: forme normali (prive di redex).
+                    \end{itemize}
+                \end{minipage}
+            \end{block}
+        \end{column}
+    \end{columns}
+\end{frame}
